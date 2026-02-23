@@ -1,13 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import Navbar from './Navbar.jsx'
 
-const accounts = [
-  { id: 'row-1' },
-  { id: 'row-2' },
-  { id: 'row-3' },
-  { id: 'row-4' },
-]
-
 const addUserOptions = [
   'Add Superadmin',
   'Add Administrator',
@@ -22,6 +15,70 @@ const addUserOptions = [
 
 const exportOptions = ['All Export', 'Active Filter Export']
 const confirmationOptions = ['Confirmed', 'Not Confirmed']
+const countryPhoneOptions = [
+  { flag: '🇮🇳', country: 'India', code: '+91' },
+  { flag: '🇺🇸', country: 'United States', code: '+1' },
+  { flag: '🇨🇦', country: 'Canada', code: '+1' },
+  { flag: '🇬🇧', country: 'United Kingdom', code: '+44' },
+  { flag: '🇦🇺', country: 'Australia', code: '+61' },
+  { flag: '🇳🇿', country: 'New Zealand', code: '+64' },
+  { flag: '🇸🇬', country: 'Singapore', code: '+65' },
+  { flag: '🇦🇪', country: 'UAE', code: '+971' },
+  { flag: '🇸🇦', country: 'Saudi Arabia', code: '+966' },
+  { flag: '🇶🇦', country: 'Qatar', code: '+974' },
+  { flag: '🇰🇼', country: 'Kuwait', code: '+965' },
+  { flag: '🇧🇭', country: 'Bahrain', code: '+973' },
+  { flag: '🇴🇲', country: 'Oman', code: '+968' },
+  { flag: '🇩🇪', country: 'Germany', code: '+49' },
+  { flag: '🇫🇷', country: 'France', code: '+33' },
+  { flag: '🇮🇹', country: 'Italy', code: '+39' },
+  { flag: '🇪🇸', country: 'Spain', code: '+34' },
+  { flag: '🇵🇹', country: 'Portugal', code: '+351' },
+  { flag: '🇳🇱', country: 'Netherlands', code: '+31' },
+  { flag: '🇧🇪', country: 'Belgium', code: '+32' },
+  { flag: '🇸🇪', country: 'Sweden', code: '+46' },
+  { flag: '🇳🇴', country: 'Norway', code: '+47' },
+  { flag: '🇩🇰', country: 'Denmark', code: '+45' },
+  { flag: '🇫🇮', country: 'Finland', code: '+358' },
+  { flag: '🇨🇭', country: 'Switzerland', code: '+41' },
+  { flag: '🇦🇹', country: 'Austria', code: '+43' },
+  { flag: '🇮🇪', country: 'Ireland', code: '+353' },
+  { flag: '🇵🇱', country: 'Poland', code: '+48' },
+  { flag: '🇨🇿', country: 'Czech Republic', code: '+420' },
+  { flag: '🇬🇷', country: 'Greece', code: '+30' },
+  { flag: '🇹🇷', country: 'Turkey', code: '+90' },
+  { flag: '🇷🇺', country: 'Russia', code: '+7' },
+  { flag: '🇺🇦', country: 'Ukraine', code: '+380' },
+  { flag: '🇯🇵', country: 'Japan', code: '+81' },
+  { flag: '🇰🇷', country: 'South Korea', code: '+82' },
+  { flag: '🇨🇳', country: 'China', code: '+86' },
+  { flag: '🇭🇰', country: 'Hong Kong', code: '+852' },
+  { flag: '🇹🇼', country: 'Taiwan', code: '+886' },
+  { flag: '🇲🇾', country: 'Malaysia', code: '+60' },
+  { flag: '🇹🇭', country: 'Thailand', code: '+66' },
+  { flag: '🇻🇳', country: 'Vietnam', code: '+84' },
+  { flag: '🇵🇭', country: 'Philippines', code: '+63' },
+  { flag: '🇮🇩', country: 'Indonesia', code: '+62' },
+  { flag: '🇵🇰', country: 'Pakistan', code: '+92' },
+  { flag: '🇧🇩', country: 'Bangladesh', code: '+880' },
+  { flag: '🇱🇰', country: 'Sri Lanka', code: '+94' },
+  { flag: '🇳🇵', country: 'Nepal', code: '+977' },
+  { flag: '🇿🇦', country: 'South Africa', code: '+27' },
+  { flag: '🇳🇬', country: 'Nigeria', code: '+234' },
+  { flag: '🇪🇬', country: 'Egypt', code: '+20' },
+  { flag: '🇰🇪', country: 'Kenya', code: '+254' },
+  { flag: '🇬🇭', country: 'Ghana', code: '+233' },
+  { flag: '🇪🇹', country: 'Ethiopia', code: '+251' },
+  { flag: '🇲🇦', country: 'Morocco', code: '+212' },
+  { flag: '🇹🇿', country: 'Tanzania', code: '+255' },
+  { flag: '🇦🇷', country: 'Argentina', code: '+54' },
+  { flag: '🇧🇷', country: 'Brazil', code: '+55' },
+  { flag: '🇲🇽', country: 'Mexico', code: '+52' },
+  { flag: '🇨🇱', country: 'Chile', code: '+56' },
+  { flag: '🇨🇴', country: 'Colombia', code: '+57' },
+  { flag: '🇵🇪', country: 'Peru', code: '+51' },
+  { flag: '🇺🇾', country: 'Uruguay', code: '+598' },
+]
 
 function IconUsers() {
   return (
@@ -48,17 +105,20 @@ function IconFilter() {
 }
 
 function UserAccount({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, onOpenChannelPartners, onOpenEmails, onOpenSms, onSignOut }) {
+  const [accounts, setAccounts] = useState([])
   const [isAddUserOpen, setIsAddUserOpen] = useState(false)
   const [isAddUserFormOpen, setIsAddUserFormOpen] = useState(false)
   const [selectedAddUserRole, setSelectedAddUserRole] = useState('Add Superadmin')
   const [isExportOpen, setIsExportOpen] = useState(false)
   const [isFilterOpen, setIsFilterOpen] = useState(false)
   const [isConfirmationOpen, setIsConfirmationOpen] = useState(false)
+  const [confirmationDropdownPos, setConfirmationDropdownPos] = useState({ top: 0, left: 0, width: 0 })
   const [addUserFormValues, setAddUserFormValues] = useState({
     firstName: '',
     lastName: '',
     email: '',
     phone: '',
+    countryCode: '+91',
     timeZone: '(GMT+05:30) Mumbai',
   })
   const [filterValues, setFilterValues] = useState({
@@ -80,6 +140,8 @@ function UserAccount({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, o
   const exportMenuRef = useRef(null)
   const filterPanelRef = useRef(null)
   const confirmationMenuRef = useRef(null)
+  const confirmationButtonRef = useRef(null)
+  const confirmationDropdownRef = useRef(null)
 
   useEffect(() => {
     const onPointerDown = (event) => {
@@ -93,7 +155,9 @@ function UserAccount({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, o
         setIsExportOpen(false)
       }
       if (confirmationMenuRef.current && !confirmationMenuRef.current.contains(event.target)) {
-        setIsConfirmationOpen(false)
+        if (!confirmationDropdownRef.current || !confirmationDropdownRef.current.contains(event.target)) {
+          setIsConfirmationOpen(false)
+        }
       }
       if (filterPanelRef.current && !filterPanelRef.current.contains(event.target)) {
         setIsFilterOpen(false)
@@ -161,6 +225,30 @@ function UserAccount({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, o
     return () => tl.kill()
   }, [isFilterOpen])
 
+  useEffect(() => {
+    if (!isConfirmationOpen || !confirmationButtonRef.current) {
+      return
+    }
+
+    const updatePosition = () => {
+      const rect = confirmationButtonRef.current.getBoundingClientRect()
+      setConfirmationDropdownPos({
+        top: rect.bottom + 4,
+        left: rect.left,
+        width: rect.width,
+      })
+    }
+
+    updatePosition()
+    window.addEventListener('resize', updatePosition)
+    window.addEventListener('scroll', updatePosition, true)
+
+    return () => {
+      window.removeEventListener('resize', updatePosition)
+      window.removeEventListener('scroll', updatePosition, true)
+    }
+  }, [isConfirmationOpen])
+
   const setFilterField = (field, value) => {
     setFilterValues((prev) => ({ ...prev, [field]: value }))
   }
@@ -175,6 +263,7 @@ function UserAccount({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, o
       lastName: '',
       email: '',
       phone: '',
+      countryCode: '+91',
       timeZone: '(GMT+05:30) Mumbai',
     })
   }
@@ -189,6 +278,34 @@ function UserAccount({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, o
     })
     setIsConfirmationOpen(false)
     setIsFilterOpen(false)
+  }
+
+  const handleSaveUser = () => {
+    const required = ['firstName', 'lastName', 'email', 'phone']
+    const hasMissing = required.some((field) => !String(addUserFormValues[field] || '').trim())
+
+    if (hasMissing) {
+      return
+    }
+
+    const fullName = `${addUserFormValues.firstName} ${addUserFormValues.lastName}`.trim()
+    const userRow = {
+      id: `row-${Date.now()}`,
+      name: fullName,
+      email: addUserFormValues.email,
+      phone: addUserFormValues.phone,
+      countryCode: addUserFormValues.countryCode,
+      sellDoLeadId: '-',
+      payment: '-',
+      role: selectedAddUserRole,
+      status: 'Active',
+      action: '...',
+    }
+
+    setAccounts((prev) => [userRow, ...prev])
+    setIsAddUserFormOpen(false)
+    setIsAddUserOpen(false)
+    resetAddUserForm()
   }
 
   useEffect(() => {
@@ -435,7 +552,7 @@ function UserAccount({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, o
 
         {isFilterOpen && (
           <div className="ua-filter-overlay fixed inset-0 z-[260] flex items-center justify-center bg-[#0f2244]/22 px-4 py-6 backdrop-blur-[2px]">
-            <div ref={filterPanelRef} className="w-full max-w-4xl rounded-xl border border-[#c9d3e8] bg-[#f7f9fd] shadow-2xl shadow-[#1f365d]/15">
+            <div ref={filterPanelRef} className="w-full max-w-4xl overflow-visible rounded-xl border border-[#c9d3e8] bg-[#f7f9fd] shadow-2xl shadow-[#1f365d]/15">
               <div className="flex items-center justify-between border-b border-[#cdd7ee] px-6 py-4">
                 <h2 className="text-2xl font-semibold text-[#20385f]">Filter</h2>
               </div>
@@ -483,6 +600,7 @@ function UserAccount({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, o
                   <label className="text-sm font-semibold text-[#1f3558]">Confirmation</label>
                   <div className="relative">
                     <button
+                      ref={confirmationButtonRef}
                       type="button"
                       onClick={() => setIsConfirmationOpen((prev) => !prev)}
                       className="flex w-full items-center justify-between rounded-md border border-[#b8c4d8] bg-white px-4 py-2.5 text-left text-base text-[#1f2f45] transition hover:border-[#9fb0cc] focus:border-[#7f8cff]"
@@ -492,23 +610,6 @@ function UserAccount({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, o
                         <IconChevron />
                       </span>
                     </button>
-                    {isConfirmationOpen && (
-                      <div className="absolute left-0 top-[calc(100%+0.15rem)] z-[300] w-full rounded-md border border-[#c7d0df] bg-white shadow-lg">
-                        {confirmationOptions.map((option) => (
-                          <button
-                            key={option}
-                            type="button"
-                            onClick={() => {
-                              setFilterField('confirmation', option)
-                              setIsConfirmationOpen(false)
-                            }}
-                            className="block w-full px-4 py-2 text-left text-base text-[#1f2f45] hover:bg-[#e7edf5]"
-                          >
-                            {option}
-                          </button>
-                        ))}
-                      </div>
-                    )}
                   </div>
                 </div>
 
@@ -544,6 +645,28 @@ function UserAccount({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, o
                 </button>
               </div>
             </div>
+          </div>
+        )}
+
+        {isFilterOpen && isConfirmationOpen && (
+          <div
+            ref={confirmationDropdownRef}
+            style={{ top: confirmationDropdownPos.top, left: confirmationDropdownPos.left, width: confirmationDropdownPos.width }}
+            className="fixed z-[1000] max-h-56 overflow-y-auto rounded-md border border-[#c7d0df] bg-white shadow-2xl"
+          >
+            {confirmationOptions.map((option) => (
+              <button
+                key={option}
+                type="button"
+                onClick={() => {
+                  setFilterField('confirmation', option)
+                  setIsConfirmationOpen(false)
+                }}
+                className="block w-full px-4 py-2 text-left text-base text-[#1f2f45] hover:bg-[#e7edf5]"
+              >
+                {option}
+              </button>
+            ))}
           </div>
         )}
 
@@ -595,8 +718,17 @@ function UserAccount({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, o
                 <div className="ua-add-user-field space-y-2">
                   <label className="text-base font-semibold text-[#1f3557]">Phone <span className="text-[#e54848]">*</span></label>
                   <div className="flex items-center rounded-md border border-[#c6d4ea] bg-white px-3 py-2.5">
-                    <span className="text-lg">🇮🇳</span>
-                    <span className="mx-2 text-[#61708a]">▼</span>
+                    <select
+                      value={addUserFormValues.countryCode}
+                      onChange={(event) => setAddUserField('countryCode', event.target.value)}
+                      className="max-w-[170px] border-0 bg-transparent pr-2 text-base text-[#2d4568] outline-none"
+                    >
+                      {countryPhoneOptions.map((option) => (
+                        <option key={`${option.country}-${option.code}`} value={option.code}>
+                          {option.flag} {option.country} ({option.code})
+                        </option>
+                      ))}
+                    </select>
                     <input
                       type="text"
                       value={addUserFormValues.phone}
@@ -623,7 +755,7 @@ function UserAccount({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, o
               <div className="flex justify-end border-t border-[#d2dbee] bg-white/75 px-5 py-4">
                 <button
                   type="button"
-                  onClick={() => setIsAddUserFormOpen(false)}
+                  onClick={handleSaveUser}
                   className="ua-add-user-action rounded-md bg-[#1d73ce] px-5 py-2 text-lg font-semibold text-white transition hover:brightness-110"
                 >
                   Save
@@ -633,8 +765,8 @@ function UserAccount({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, o
           </div>
         )}
 
-        <div ref={tableRef} className="mt-6 overflow-hidden rounded-2xl border border-[#6d64f8]/20 bg-white/70 shadow-2xl shadow-[#2f3fa9]/12 backdrop-blur-xl">
-          <div className="grid grid-cols-[2fr_1.4fr_1fr_0.8fr_0.8fr_0.8fr] bg-[linear-gradient(90deg,#124785_0%,#1e78c8_56%,#30a7c2_100%)] text-sm font-bold tracking-wide text-white lg:text-base">
+        <div ref={tableRef} className="mt-6 overflow-x-auto overflow-y-hidden rounded-2xl border border-[#6d64f8]/20 bg-white/70 shadow-2xl shadow-[#2f3fa9]/12 backdrop-blur-xl">
+          <div className="grid min-w-[980px] grid-cols-[2fr_1.4fr_1fr_1fr_0.8fr_0.6fr] bg-[linear-gradient(90deg,#124785_0%,#1e78c8_56%,#30a7c2_100%)] text-sm font-bold tracking-wide text-white lg:text-base">
             <div className="px-6 py-5">Name/Email/Phone</div>
             <div className="px-6 py-5">Sell.Do Lead ID</div>
             <div className="px-6 py-5">Payment</div>
@@ -644,25 +776,31 @@ function UserAccount({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, o
           </div>
 
           <div className="divide-y divide-[#dbe4f7] bg-white/90">
-            {accounts.map((row, index) => (
-              <div
-                key={row.id}
-                ref={(node) => {
-                  rowRefs.current[index] = node
-                }}
-                className="ua-row grid grid-cols-[2fr_1.4fr_1fr_0.8fr_0.8fr_0.8fr] px-2 py-2 [transform-style:preserve-3d]"
-              >
-                <div className="px-4 py-3">
-                  <p className="text-lg font-semibold text-[#213a64]">&nbsp;</p>
-                  <p className="text-sm text-[#6e83a6]">&nbsp;</p>
-                </div>
-                <div className="px-4 py-3 text-base font-semibold text-[#344f7f]">&nbsp;</div>
-                <div className="px-4 py-3 text-base font-semibold text-[#344f7f]">&nbsp;</div>
-                <div className="px-4 py-3 text-base font-semibold text-[#344f7f]">&nbsp;</div>
-                <div className="px-4 py-3">&nbsp;</div>
-                <div className="px-4 py-3">&nbsp;</div>
+            {accounts.length === 0 ? (
+              <div className="ua-row grid min-w-[980px] grid-cols-[2fr_1.4fr_1fr_1fr_0.8fr_0.6fr] px-2 py-4">
+                <div className="col-span-6 px-4 py-3 text-center text-sm font-semibold text-[#6e83a6]">No users added yet.</div>
               </div>
-            ))}
+            ) : (
+              accounts.map((row, index) => (
+                <div
+                  key={row.id}
+                  ref={(node) => {
+                    rowRefs.current[index] = node
+                  }}
+                  className="ua-row grid min-w-[980px] grid-cols-[2fr_1.4fr_1fr_1fr_0.8fr_0.6fr] items-center px-2 py-2 [transform-style:preserve-3d]"
+                >
+                  <div className="px-4 py-3">
+                    <p className="text-base font-semibold text-[#213a64]">{row.name}</p>
+                    <p className="text-sm text-[#6e83a6]">{`${row.email} | ${row.countryCode || ''} ${row.phone}`.trim()}</p>
+                  </div>
+                  <div className="px-4 py-3 text-sm font-semibold text-[#344f7f]">{row.sellDoLeadId}</div>
+                  <div className="px-4 py-3 text-sm font-semibold text-[#344f7f]">{row.payment}</div>
+                  <div className="px-4 py-3 text-sm font-semibold text-[#344f7f]">{row.role}</div>
+                  <div className="px-4 py-3 text-sm font-semibold text-[#344f7f]">{row.status}</div>
+                  <div className="px-4 py-3 text-center text-base font-semibold text-[#344f7f]">{row.action}</div>
+                </div>
+              ))
+            )}
           </div>
         </div>
       </section>

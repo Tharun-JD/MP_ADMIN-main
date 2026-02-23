@@ -143,22 +143,11 @@ function Dashbord({ onSignOut, onBackToDashboard, onOpenUserAccount, onOpenLeadA
   }
 
   const toggleChannelFilter = () => {
-    setIsChannelFilterOpen((current) => {
-      const next = !current
-      if (next) {
-        setIsFilterOpen(false)
-        setIsIncentiveFilterOpen(false)
-        setIsManagerFilterOpen(false)
-      }
-      return next
-    })
+    setIsChannelFilterOpen((current) => !current)
   }
 
-  const openManagerFilter = () => {
-    setIsFilterOpen(false)
-    setIsIncentiveFilterOpen(false)
-    setIsChannelFilterOpen(false)
-    setIsManagerFilterOpen(true)
+  const toggleManagerFilter = () => {
+    setIsManagerFilterOpen((current) => !current)
   }
 
   useEffect(() => {
@@ -766,32 +755,14 @@ function Dashbord({ onSignOut, onBackToDashboard, onOpenUserAccount, onOpenLeadA
           >
             <div className="flex flex-wrap items-center justify-between gap-3">
               <h4 className="text-base font-black text-[#1b3e72]">Channel Partner Performance</h4>
-              <button
-                ref={channelFilterRef}
-                type="button"
-                onClick={toggleChannelFilter}
-                aria-label="Open channel partner filter"
-                className="relative z-10 flex cursor-pointer items-center rounded-xl border border-[#1a79d1]/20 bg-white p-2 text-[#1a79d1] pointer-events-auto"
-              >
-                <Icon name="filter" className="h-5 w-5" />
-              </button>
             </div>
 
-            {isChannelFilterOpen && (
-              <div
-                ref={channelFilterPanelRef}
-                className="relative z-20 mt-4 overflow-hidden rounded-lg border border-[#d3dbe9] bg-[#f3f5f9]"
-              >
+            <div
+              ref={channelFilterPanelRef}
+              className="relative z-20 mt-4 overflow-hidden rounded-lg border border-[#d3dbe9] bg-[#f3f5f9]"
+            >
                 <div className="flex items-center justify-between border-b border-[#d3dbe9] px-4 py-3.5">
                   <h5 className="text-xl font-medium leading-none text-[#2f3e56]">Filter</h5>
-                  <button
-                    type="button"
-                    onClick={() => setIsChannelFilterOpen(false)}
-                    aria-label="Close channel filter"
-                    className="rounded-md p-1 text-[#3d516d] transition hover:bg-[#e8edf6]"
-                  >
-                    <span className="text-2xl leading-none">&times;</span>
-                  </button>
                 </div>
 
                 <div className="space-y-6 px-4 py-5">
@@ -839,7 +810,6 @@ function Dashbord({ onSignOut, onBackToDashboard, onOpenUserAccount, onOpenLeadA
                       setChannelFromDate('')
                       setChannelToDate('')
                       setChannelProject('')
-                      setIsChannelFilterOpen(false)
                     }}
                     className="h-10 rounded-md border border-[#6d76ff] bg-white px-5 text-sm font-semibold text-[#636eff] transition hover:bg-[#f3f4ff]"
                   >
@@ -847,63 +817,29 @@ function Dashbord({ onSignOut, onBackToDashboard, onOpenUserAccount, onOpenLeadA
                   </button>
                   <button
                     type="button"
-                    onClick={() => setIsChannelFilterOpen(false)}
+                    onClick={() => {}}
                     className="h-10 rounded-md bg-gradient-to-r from-[#777dff] to-[#6b69ec] px-6 text-sm font-semibold text-white transition hover:brightness-110"
                   >
                     Apply
                   </button>
                 </div>
-              </div>
-            )}
+            </div>
           </div>
 
           <div
             ref={managerRef}
-            className="scroll-3d relative z-40 mt-14 rounded-2xl border border-white/65 bg-white/80 p-5 shadow-xl shadow-[#2f3fa9]/10 backdrop-blur-xl [transform-style:preserve-3d]"
+            className="scroll-3d relative z-30 mt-14 rounded-2xl border border-white/65 bg-white/80 p-5 shadow-xl shadow-[#2f3fa9]/10 backdrop-blur-xl pointer-events-auto [transform-style:preserve-3d]"
           >
             <div className="flex flex-wrap items-center justify-between gap-3">
               <h4 className="text-base font-black text-[#1b3e72]">Channel Partner Manager Performance</h4>
-              <button
-                ref={managerFilterRef}
-                type="button"
-                onMouseDown={(event) => {
-                  event.preventDefault()
-                  event.stopPropagation()
-                  openManagerFilter()
-                }}
-                onClick={(event) => {
-                  event.preventDefault()
-                  event.stopPropagation()
-                  openManagerFilter()
-                }}
-                aria-label="Open manager filter"
-                className="relative z-50 inline-flex cursor-pointer items-center rounded-xl border border-[#2f3fa9]/25 bg-white p-2 text-[#2f3fa9] shadow-sm transition hover:bg-[#eef3ff] pointer-events-auto touch-manipulation"
-              >
-                <Icon name="filter" className="h-5 w-5" />
-              </button>
             </div>
-          </div>
 
-          {isManagerFilterOpen && (
             <div
-              className="fixed inset-0 z-[320] flex items-center justify-center bg-[#0f2244]/25 px-4 py-6"
-              onClick={() => setIsManagerFilterOpen(false)}
+              ref={managerFilterPanelRef}
+              className="relative z-20 mt-3 overflow-hidden rounded-lg border border-[#d3dbe9] bg-[#f3f5f9] shadow-2xl"
             >
-              <div
-                ref={managerFilterPanelRef}
-                className="w-full max-w-4xl overflow-hidden rounded-lg border border-[#d3dbe9] bg-[#f3f5f9]"
-                onClick={(event) => event.stopPropagation()}
-              >
                 <div className="flex items-center justify-between border-b border-[#d3dbe9] px-4 py-3.5">
                   <h5 className="text-xl font-medium leading-none text-[#2f3e56]">Filter</h5>
-                  <button
-                    type="button"
-                    onClick={() => setIsManagerFilterOpen(false)}
-                    aria-label="Close manager filter"
-                    className="rounded-md p-1 text-[#3d516d] transition hover:bg-[#e8edf6]"
-                  >
-                    <span className="text-2xl leading-none">&times;</span>
-                  </button>
                 </div>
 
                 <div className="space-y-6 px-4 py-5">
@@ -951,7 +887,6 @@ function Dashbord({ onSignOut, onBackToDashboard, onOpenUserAccount, onOpenLeadA
                       setManagerFromDate('')
                       setManagerToDate('')
                       setManagerProject('')
-                      setIsManagerFilterOpen(false)
                     }}
                     className="h-10 rounded-md border border-[#6d76ff] bg-white px-5 text-sm font-semibold text-[#636eff] transition hover:bg-[#f3f4ff]"
                   >
@@ -959,15 +894,14 @@ function Dashbord({ onSignOut, onBackToDashboard, onOpenUserAccount, onOpenLeadA
                   </button>
                   <button
                     type="button"
-                    onClick={() => setIsManagerFilterOpen(false)}
+                    onClick={() => {}}
                     className="h-10 rounded-md bg-gradient-to-r from-[#777dff] to-[#6b69ec] px-6 text-sm font-semibold text-white transition hover:brightness-110"
                   >
                     Apply
                   </button>
                 </div>
-              </div>
             </div>
-          )}
+          </div>
 
           <div className="scroll-3d relative z-20 mt-14 rounded-2xl border border-white/65 bg-white/80 p-5 shadow-xl shadow-[#2f3fa9]/10 backdrop-blur-xl [transform-style:preserve-3d]">
             <div className="overflow-hidden rounded-xl border border-[#d6e5fb]">
