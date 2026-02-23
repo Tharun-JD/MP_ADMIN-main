@@ -1,4 +1,9 @@
+import { useEffect, useRef } from 'react'
+import { gsap } from 'gsap'
+import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import Navbar from './Navbar.jsx'
+
+gsap.registerPlugin(ScrollTrigger)
 
 function IconSms() {
   return (
@@ -26,9 +31,129 @@ function SmsPage({
   onSignOut,
 }) {
   const smsRows = []
+  const pageRef = useRef(null)
+  const headerRef = useRef(null)
+  const controlsRef = useRef(null)
+  const tableRef = useRef(null)
+  const glowRefs = useRef([])
+  const beamRef = useRef(null)
+
+  useEffect(() => {
+    if (!pageRef.current) {
+      return
+    }
+
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    const cleanups = []
+    const ctx = gsap.context(() => {
+      const intro = gsap.timeline({ defaults: { ease: 'power2.out' } })
+      intro
+        .fromTo(pageRef.current, { opacity: 0 }, { opacity: 1, duration: 0.3 })
+        .fromTo(headerRef.current, { y: -18, opacity: 0 }, { y: 0, opacity: 1, duration: 0.42 }, '-=0.1')
+        .fromTo('.sms-control', { y: 12, opacity: 0 }, { y: 0, opacity: 1, stagger: 0.06, duration: 0.28 }, '-=0.24')
+        .fromTo(tableRef.current, { y: 16, opacity: 0 }, { y: 0, opacity: 1, duration: 0.4 }, '-=0.16')
+      cleanups.push(() => intro.kill())
+
+      if (!prefersReducedMotion) {
+        glowRefs.current.filter(Boolean).forEach((node, index) => {
+          const drift = gsap.to(node, {
+            x: index % 2 ? -18 : 20,
+            y: index % 2 ? 12 : -12,
+            duration: 6 + index * 1.1,
+            repeat: -1,
+            yoyo: true,
+            ease: 'sine.inOut',
+          })
+          cleanups.push(() => drift.kill())
+        })
+
+        if (beamRef.current) {
+          const beamSweep = gsap.fromTo(
+            beamRef.current,
+            { xPercent: -55, opacity: 0.16 },
+            { xPercent: 55, opacity: 0.32, duration: 6.8, repeat: -1, yoyo: true, ease: 'none' },
+          )
+          cleanups.push(() => beamSweep.kill())
+        }
+
+        if (tableRef.current) {
+          const reveal = gsap.fromTo(
+            tableRef.current,
+            { y: 18, autoAlpha: 0.92 },
+            {
+              y: 0,
+              autoAlpha: 1,
+              duration: 0.42,
+              ease: 'power2.out',
+              scrollTrigger: {
+                trigger: tableRef.current,
+                start: 'top 84%',
+                once: true,
+              },
+            },
+          )
+          cleanups.push(() => {
+            reveal.scrollTrigger?.kill()
+            reveal.kill()
+          })
+        }
+      }
+
+      const controls = gsap.utils.toArray('.sms-control')
+      controls.forEach((button) => {
+        const onEnter = () => {
+          gsap.to(button, {
+            y: -2,
+            scale: 1.01,
+            boxShadow: '0 12px 22px rgba(127,111,222,0.24)',
+            duration: 0.2,
+            ease: 'power2.out',
+          })
+        }
+        const onLeave = () => {
+          gsap.to(button, {
+            y: 0,
+            scale: 1,
+            boxShadow: '0 0 0 rgba(0,0,0,0)',
+            duration: 0.2,
+            ease: 'power2.out',
+          })
+        }
+        button.addEventListener('mouseenter', onEnter)
+        button.addEventListener('mouseleave', onLeave)
+        cleanups.push(() => button.removeEventListener('mouseenter', onEnter))
+        cleanups.push(() => button.removeEventListener('mouseleave', onLeave))
+      })
+
+      const clickable = gsap.utils.toArray('.sms-clickable')
+      clickable.forEach((button) => {
+        const onClick = () => {
+          gsap.fromTo(
+            button,
+            { boxShadow: '0 0 0 0 rgba(127,111,222,0.22)' },
+            { boxShadow: '0 0 0 8px rgba(127,111,222,0)', duration: 0.28, ease: 'power2.out' },
+          )
+          gsap.fromTo(button, { scale: 1 }, { scale: 0.986, duration: 0.08, yoyo: true, repeat: 1, ease: 'power1.out' })
+        }
+        button.addEventListener('click', onClick)
+        cleanups.push(() => button.removeEventListener('click', onClick))
+      })
+    }, pageRef)
+
+    return () => {
+      cleanups.forEach((cleanup) => cleanup())
+      ctx.revert()
+    }
+  }, [])
 
   return (
-    <main className="min-h-screen bg-[#f4f7fd] text-[#19324f]">
+    <main ref={pageRef} className="relative min-h-screen bg-[#f4f7fd] text-[#19324f]">
+      <div className="pointer-events-none absolute inset-0">
+        <div ref={(node) => (glowRefs.current[0] = node)} className="absolute -left-16 top-16 h-64 w-64 rounded-full bg-[#7f6fde]/14 blur-3xl" />
+        <div ref={(node) => (glowRefs.current[1] = node)} className="absolute right-0 top-20 h-72 w-72 rounded-full bg-[#5e90db]/14 blur-3xl" />
+        <div ref={beamRef} className="absolute left-6 top-20 h-44 w-[34rem] rotate-[-8deg] bg-gradient-to-r from-transparent via-[#7f6fde]/35 to-transparent blur-2xl" />
+      </div>
+
       <Navbar
         activePage="sms"
         onBackToDashboard={onBackToDashboard}
@@ -40,23 +165,23 @@ function SmsPage({
         onSignOut={onSignOut}
       />
 
-      <section className="mx-auto w-full max-w-7xl px-4 py-8 lg:px-6">
-        <div className="mb-5 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-[#cfdcf3] bg-white px-4 py-3 shadow-[0_12px_26px_rgba(33,74,131,0.08)]">
+      <section className="relative z-10 mx-auto w-full max-w-7xl px-4 py-8 lg:px-6">
+        <div ref={headerRef} className="mb-5 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-[#cfdcf3] bg-white px-4 py-3 shadow-[0_12px_26px_rgba(33,74,131,0.08)]">
           <h1 className="flex items-center gap-2 text-3xl font-semibold text-[#1f3550]">
             <span className="text-[#2c4f8f]"><IconSms /></span>
             SMSs
           </h1>
-          <div className="flex items-center gap-3">
-            <button type="button" className="rounded-lg border border-[#7b9ef0] bg-white px-8 py-2 text-3xl font-semibold text-[#6a62db]">
+          <div ref={controlsRef} className="flex items-center gap-3">
+            <button type="button" className="sms-control sms-clickable rounded-lg border border-[#7b9ef0] bg-white px-8 py-2 text-3xl font-semibold text-[#6a62db]">
               Total : {smsRows.length}
             </button>
-            <button type="button" className="rounded-lg border border-[#7b9ef0] bg-white p-2.5 text-[#6a62db]">
+            <button type="button" className="sms-control sms-clickable rounded-lg border border-[#7b9ef0] bg-white p-2.5 text-[#6a62db]">
               <IconFilter />
             </button>
           </div>
         </div>
 
-        <div className="overflow-hidden rounded-2xl border border-[#cad6f1] bg-white shadow-[0_18px_34px_rgba(28,61,112,0.08)]">
+        <div ref={tableRef} className="overflow-hidden rounded-2xl border border-[#cad6f1] bg-white shadow-[0_18px_34px_rgba(28,61,112,0.08)]">
           <div className="grid min-w-[980px] grid-cols-[1.1fr_2fr_0.9fr_1fr_0.8fr] bg-[linear-gradient(90deg,#5e90db_0%,#7f6fde_50%,#a86ddb_100%)] text-sm font-semibold tracking-wide text-white lg:text-base">
             <div className="px-5 py-4">To</div>
             <div className="px-5 py-4">Content</div>
@@ -66,7 +191,7 @@ function SmsPage({
           </div>
 
           {smsRows.length === 0 ? (
-            <div className="grid min-w-[980px] grid-cols-[1.1fr_2fr_0.9fr_1fr_0.8fr] border-t border-[#e4ecfb]">
+            <div className="sms-row grid min-w-[980px] grid-cols-[1.1fr_2fr_0.9fr_1fr_0.8fr] border-t border-[#e4ecfb]">
               <div className="px-5 py-4 text-sm text-[#6b7f9a]">No SMS records available.</div>
               <div className="px-5 py-4 text-sm text-[#6b7f9a]">-</div>
               <div className="px-5 py-4 text-sm text-[#6b7f9a]">-</div>
@@ -75,7 +200,7 @@ function SmsPage({
             </div>
           ) : (
             smsRows.map((row) => (
-              <div key={row.id} className="grid min-w-[980px] grid-cols-[1.1fr_2fr_0.9fr_1fr_0.8fr] border-t border-[#e4ecfb]">
+              <div key={row.id} className="sms-row grid min-w-[980px] grid-cols-[1.1fr_2fr_0.9fr_1fr_0.8fr] border-t border-[#e4ecfb]">
                 <div className="px-5 py-4 text-sm text-[#314b6d]">{row.to}</div>
                 <div className="px-5 py-4 text-sm text-[#314b6d]">{row.content}</div>
                 <div className="px-5 py-4 text-sm text-[#314b6d]">{row.status}</div>

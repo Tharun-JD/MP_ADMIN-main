@@ -1,5 +1,9 @@
 import { useEffect, useRef, useState } from 'react'
+import { gsap } from 'gsap'
+import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import Navbar from './Navbar.jsx'
+
+gsap.registerPlugin(ScrollTrigger)
 
 function IconUsers() {
   return (
@@ -86,6 +90,11 @@ function Moreoption({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, on
   const addFormRef = useRef(null)
   const detailsPanelRef = useRef(null)
   const actionMenuRef = useRef(null)
+  const pageRef = useRef(null)
+  const headerRef = useRef(null)
+  const controlsRef = useRef(null)
+  const tableRef = useRef(null)
+  const bgGlowRefs = useRef([])
   const [openActionIndex, setOpenActionIndex] = useState(null)
 
   useEffect(() => {
@@ -116,11 +125,10 @@ function Moreoption({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, on
   }, [])
 
   useEffect(() => {
-    if (!window.gsap || !isFilterOpen || !filterPanelRef.current) {
+    if (!isFilterOpen || !filterPanelRef.current) {
       return
     }
 
-    const gsap = window.gsap
     const panel = filterPanelRef.current
     const fields = panel.querySelectorAll('.cp-filter-field')
     const actions = panel.querySelectorAll('.cp-filter-action')
@@ -136,11 +144,10 @@ function Moreoption({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, on
   }, [isFilterOpen])
 
   useEffect(() => {
-    if (!window.gsap || !isAddFormOpen || !addFormRef.current) {
+    if (!isAddFormOpen || !addFormRef.current) {
       return
     }
 
-    const gsap = window.gsap
     const panel = addFormRef.current
     const fields = panel.querySelectorAll('.cp-add-field')
     const footerBtns = panel.querySelectorAll('.cp-add-action')
@@ -154,6 +161,157 @@ function Moreoption({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, on
 
     return () => tl.kill()
   }, [isAddFormOpen])
+
+  useEffect(() => {
+    if (!isDetailsOpen || !detailsPanelRef.current) {
+      return
+    }
+
+    const panel = detailsPanelRef.current
+    const blocks = panel.querySelectorAll('.cp-detail-block')
+    const tl = gsap.timeline({ defaults: { ease: 'power3.out' } })
+    tl
+      .fromTo(panel, { y: 22, opacity: 0, scale: 0.985 }, { y: 0, opacity: 1, scale: 1, duration: 0.3 })
+      .fromTo(blocks, { y: 10, opacity: 0 }, { y: 0, opacity: 1, duration: 0.2, stagger: 0.04 }, '-=0.16')
+
+    return () => tl.kill()
+  }, [isDetailsOpen])
+
+  useEffect(() => {
+    if (!pageRef.current) {
+      return
+    }
+
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    const cleanups = []
+    const ctx = gsap.context(() => {
+      const intro = gsap.timeline({ defaults: { ease: 'power2.out' } })
+      intro
+        .fromTo(pageRef.current, { opacity: 0 }, { opacity: 1, duration: 0.28 })
+        .fromTo(headerRef.current, { y: -16, opacity: 0 }, { y: 0, opacity: 1, duration: 0.4 }, '-=0.1')
+        .fromTo('.cp-control', { y: 12, opacity: 0 }, { y: 0, opacity: 1, stagger: 0.05, duration: 0.26 }, '-=0.25')
+        .fromTo(tableRef.current, { y: 16, opacity: 0 }, { y: 0, opacity: 1, duration: 0.35 }, '-=0.14')
+      cleanups.push(() => intro.kill())
+
+      if (!prefersReducedMotion) {
+        bgGlowRefs.current.filter(Boolean).forEach((node, index) => {
+          const anim = gsap.to(node, {
+            x: index % 2 ? -16 : 16,
+            y: index % 2 ? 12 : -12,
+            duration: 6 + index * 0.8,
+            repeat: -1,
+            yoyo: true,
+            ease: 'sine.inOut',
+          })
+          cleanups.push(() => anim.kill())
+        })
+
+        if (tableRef.current) {
+          const reveal = gsap.fromTo(
+            tableRef.current,
+            { y: 14, autoAlpha: 0.94 },
+            {
+              y: 0,
+              autoAlpha: 1,
+              duration: 0.38,
+              ease: 'power2.out',
+              scrollTrigger: {
+                trigger: tableRef.current,
+                start: 'top 84%',
+                once: true,
+              },
+            },
+          )
+          cleanups.push(() => {
+            reveal.scrollTrigger?.kill()
+            reveal.kill()
+          })
+        }
+      }
+
+      const controls = gsap.utils.toArray('.cp-control')
+      controls.forEach((button) => {
+        const onEnter = () => {
+          gsap.to(button, {
+            y: -2,
+            scale: 1.01,
+            boxShadow: '0 10px 18px rgba(106,102,255,0.2)',
+            duration: 0.2,
+            ease: 'power2.out',
+          })
+        }
+        const onLeave = () => {
+          gsap.to(button, {
+            y: 0,
+            scale: 1,
+            boxShadow: '0 0 0 rgba(0,0,0,0)',
+            duration: 0.2,
+            ease: 'power2.out',
+          })
+        }
+        button.addEventListener('mouseenter', onEnter)
+        button.addEventListener('mouseleave', onLeave)
+        cleanups.push(() => button.removeEventListener('mouseenter', onEnter))
+        cleanups.push(() => button.removeEventListener('mouseleave', onLeave))
+      })
+
+      const clickButtons = gsap.utils.toArray('.cp-clickable')
+      clickButtons.forEach((button) => {
+        const onClick = () => {
+          gsap.fromTo(
+            button,
+            { boxShadow: '0 0 0 0 rgba(106,102,255,0.2)' },
+            { boxShadow: '0 0 0 8px rgba(106,102,255,0)', duration: 0.26, ease: 'power2.out' },
+          )
+          gsap.fromTo(button, { scale: 1 }, { scale: 0.986, duration: 0.08, yoyo: true, repeat: 1, ease: 'power1.out' })
+        }
+        button.addEventListener('click', onClick)
+        cleanups.push(() => button.removeEventListener('click', onClick))
+      })
+
+      const tableRows = gsap.utils.toArray('.cp-table-row')
+      tableRows.forEach((row, index) => {
+        const onEnter = () => {
+          gsap.to(row, {
+            y: -3,
+            scale: 1.003,
+            boxShadow: '0 14px 24px rgba(106,102,255,0.18)',
+            duration: 0.24,
+            ease: 'power2.out',
+          })
+        }
+        const onLeave = () => {
+          gsap.to(row, {
+            y: 0,
+            scale: 1,
+            boxShadow: '0 0 0 rgba(0,0,0,0)',
+            duration: 0.2,
+            ease: 'power2.out',
+          })
+        }
+        const onMove = (event) => {
+          const rect = row.getBoundingClientRect()
+          const x = (event.clientX - rect.left) / rect.width - 0.5
+          gsap.to(row, {
+            x: x * 6 * (index % 2 ? -1 : 1),
+            duration: 0.2,
+            ease: 'power1.out',
+          })
+        }
+        row.addEventListener('mouseenter', onEnter)
+        row.addEventListener('mouseleave', onLeave)
+        row.addEventListener('mousemove', onMove)
+        cleanups.push(() => row.removeEventListener('mouseenter', onEnter))
+        cleanups.push(() => row.removeEventListener('mouseleave', onLeave))
+        cleanups.push(() => row.removeEventListener('mousemove', onMove))
+      })
+    }, pageRef)
+
+    return () => {
+      cleanups.forEach((fn) => fn())
+      ctx.revert()
+    }
+  }, [])
 
   const setFilterField = (field, value) => {
     setFilterValues((prev) => ({ ...prev, [field]: value }))
@@ -242,7 +400,11 @@ function Moreoption({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, on
       : []
 
   return (
-    <main className="min-h-screen bg-[#f4f6fb] text-[#1f2f45]">
+    <main ref={pageRef} className="relative min-h-screen bg-[#f4f6fb] text-[#1f2f45]">
+      <div className="pointer-events-none absolute inset-0">
+        <div ref={(n) => (bgGlowRefs.current[0] = n)} className="absolute -left-16 top-10 h-64 w-64 rounded-full bg-[#6f73ff]/14 blur-3xl" />
+        <div ref={(n) => (bgGlowRefs.current[1] = n)} className="absolute right-0 top-20 h-72 w-72 rounded-full bg-[#44a5dc]/12 blur-3xl" />
+      </div>
       <Navbar
         activePage="channel-partners"
         onBackToDashboard={onBackToDashboard}
@@ -254,7 +416,7 @@ function Moreoption({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, on
         onSignOut={onSignOut}
       />
 
-      <section className="mx-auto w-full max-w-7xl px-4 py-8 lg:px-6">
+      <section className="relative z-10 mx-auto w-full max-w-7xl px-4 py-8 lg:px-6">
         <div className="mb-4">
           {/* <button
             type="button"
@@ -265,14 +427,14 @@ function Moreoption({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, on
           </button> */}
         </div>
 
-        <div className="flex flex-wrap items-center justify-between gap-4">
+        <div ref={headerRef} className="flex flex-wrap items-center justify-between gap-4">
           <h1 className="flex items-center gap-3 text-2xl font-semibold text-[#1f2f45] lg:text-3xl">
             <span className="text-[#1f2f45]"><IconUsers /></span>
             Channel Partners
           </h1>
 
-          <div className="flex flex-wrap items-center gap-3">
-            <button type="button" className="rounded-md border border-[#8a86ff] bg-white px-5 py-2 text-base font-semibold text-[#6b66ff]">
+          <div ref={controlsRef} className="flex flex-wrap items-center gap-3">
+            <button type="button" className="cp-control cp-clickable rounded-md border border-[#8a86ff] bg-white px-5 py-2 text-base font-semibold text-[#6b66ff]">
               Total : {channelPartners.length}
             </button>
             <button
@@ -284,7 +446,7 @@ function Moreoption({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, on
                 setFormValues(initialFormValues)
                 setIsAddFormOpen(true)
               }}
-              className="rounded-md border border-[#8a86ff] bg-white px-6 py-2 text-base font-semibold text-[#6b66ff]"
+              className="cp-control cp-clickable rounded-md border border-[#8a86ff] bg-white px-6 py-2 text-base font-semibold text-[#6b66ff]"
             >
               Add New
             </button>
@@ -292,7 +454,7 @@ function Moreoption({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, on
               <button
                 type="button"
                 onClick={() => setIsExportOpen((prev) => !prev)}
-                className="flex items-center gap-1 rounded-md border border-[#8a86ff] bg-white px-5 py-2 text-base font-semibold text-[#6b66ff]"
+                className="cp-control cp-clickable flex items-center gap-1 rounded-md border border-[#8a86ff] bg-white px-5 py-2 text-base font-semibold text-[#6b66ff]"
               >
                 Exports <IconChevron />
               </button>
@@ -303,7 +465,7 @@ function Moreoption({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, on
                       key={option}
                       type="button"
                       onClick={() => setIsExportOpen(false)}
-                      className="block w-full rounded-lg px-3 py-2 text-left text-sm font-medium text-[#2f3e57] transition hover:bg-[#e8f1ff] hover:text-[#124785]"
+                      className="cp-clickable block w-full rounded-lg px-3 py-2 text-left text-sm font-medium text-[#2f3e57] transition hover:bg-[#e8f1ff] hover:text-[#124785]"
                     >
                       {option}
                     </button>
@@ -317,7 +479,7 @@ function Moreoption({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, on
                 setIsExportOpen(false)
                 setIsFilterOpen(true)
               }}
-              className="rounded-md border border-[#8a86ff] bg-white p-2.5 text-[#6b66ff]"
+              className="cp-control cp-clickable rounded-md border border-[#8a86ff] bg-white p-2.5 text-[#6b66ff]"
             >
               <IconFilter />
             </button>
@@ -363,7 +525,7 @@ function Moreoption({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, on
                     <button
                       type="button"
                       onClick={() => setIsStatusOpen((prev) => !prev)}
-                      className="flex w-full items-center justify-between rounded-md border border-[#b8c4e3] bg-white px-4 py-2.5 text-left text-base text-[#1f2f45] transition hover:border-[#9fb0cc]"
+                      className="cp-clickable flex w-full items-center justify-between rounded-md border border-[#b8c4e3] bg-white px-4 py-2.5 text-left text-base text-[#1f2f45] transition hover:border-[#9fb0cc]"
                     >
                       <span className={filterValues.status === 'Select' ? 'text-[#6c7890]' : ''}>{filterValues.status}</span>
                       <span className={`transition ${isStatusOpen ? 'rotate-180' : ''}`}>
@@ -380,7 +542,7 @@ function Moreoption({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, on
                               setFilterField('status', option)
                               setIsStatusOpen(false)
                             }}
-                            className="block w-full px-4 py-2 text-left text-base text-[#1f2f45] hover:bg-[#e7edf5]"
+                            className="cp-clickable block w-full px-4 py-2 text-left text-base text-[#1f2f45] hover:bg-[#e7edf5]"
                           >
                             {option}
                           </button>
@@ -395,7 +557,7 @@ function Moreoption({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, on
                 <button
                   type="button"
                   onClick={resetFilter}
-                  className="cp-filter-action rounded-lg border border-[#6f73ff] bg-white px-6 py-2 text-xl font-semibold text-[#6f73ff] transition hover:bg-[#eef0ff]"
+                  className="cp-clickable cp-filter-action rounded-lg border border-[#6f73ff] bg-white px-6 py-2 text-xl font-semibold text-[#6f73ff] transition hover:bg-[#eef0ff]"
                 >
                   Cancel
                 </button>
@@ -405,7 +567,7 @@ function Moreoption({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, on
                     setIsStatusOpen(false)
                     setIsFilterOpen(false)
                   }}
-                  className="cp-filter-action rounded-lg bg-gradient-to-r from-[#6f73ff] to-[#6a6eea] px-7 py-2 text-xl font-semibold text-white transition hover:brightness-105"
+                  className="cp-clickable cp-filter-action rounded-lg bg-gradient-to-r from-[#6f73ff] to-[#6a6eea] px-7 py-2 text-xl font-semibold text-white transition hover:brightness-105"
                 >
                   Apply
                 </button>
@@ -778,14 +940,14 @@ function Moreoption({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, on
                     setFormValues(initialFormValues)
                     setIsAddFormOpen(false)
                   }}
-                  className="cp-add-action rounded-xl border border-[#0f69c9] bg-white px-6 py-2 text-sm font-semibold text-[#0f69c9] transition hover:bg-[#ecf5ff]"
+                  className="cp-clickable cp-add-action rounded-xl border border-[#0f69c9] bg-white px-6 py-2 text-sm font-semibold text-[#0f69c9] transition hover:bg-[#ecf5ff]"
                 >
                   Cancel
                 </button>
                 <button
                   type="button"
                   onClick={handleSavePartner}
-                  className="cp-add-action rounded-xl bg-[linear-gradient(90deg,#0f69c9_0%,#1cb0c5_100%)] px-7 py-2 text-sm font-semibold text-white transition hover:brightness-110"
+                  className="cp-clickable cp-add-action rounded-xl bg-[linear-gradient(90deg,#0f69c9_0%,#1cb0c5_100%)] px-7 py-2 text-sm font-semibold text-white transition hover:brightness-110"
                 >
                   {editingPartnerIndex !== null ? 'Update' : 'Save'}
                 </button>
@@ -802,7 +964,7 @@ function Moreoption({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, on
               </div>
 
               <div className="space-y-5 px-6 py-6">
-                <div className="grid gap-4 md:grid-cols-2">
+                <div className="cp-detail-block grid gap-4 md:grid-cols-2">
                   <DetailField label="Name" value={selectedPartner.name} />
                   <DetailField label="CP Company Name / CP Name" value={selectedPartner.companyName} />
                   <DetailField label="Phone" value={selectedPartner.phone} />
@@ -817,7 +979,7 @@ function Moreoption({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, on
                   <DetailField label="GST Number" value={selectedPartner.gstNumber} />
                 </div>
 
-                <div className="rounded-xl border border-[#cfe5ff] bg-[#eff7ff] p-4">
+                <div className="cp-detail-block rounded-xl border border-[#cfe5ff] bg-[#eff7ff] p-4">
                   <h3 className="mb-3 text-lg font-semibold text-[#124172]">Bank Details</h3>
                   <div className="grid gap-4 md:grid-cols-2">
                     <DetailField label="Bank Name" value={selectedPartner.bankName} />
@@ -829,7 +991,7 @@ function Moreoption({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, on
                   </div>
                 </div>
 
-                <div className="rounded-xl border border-[#cfe5ff] bg-[#eff7ff] p-4">
+                <div className="cp-detail-block rounded-xl border border-[#cfe5ff] bg-[#eff7ff] p-4">
                   <h3 className="mb-3 text-lg font-semibold text-[#124172]">Upload Docs</h3>
                   {selectedPartnerDocs.length === 0 ? (
                     <p className="rounded-lg border border-[#d8e6f8] bg-white px-4 py-3 text-sm text-[#4c6484]">No uploaded documents.</p>
@@ -846,7 +1008,7 @@ function Moreoption({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, on
                               }
                             }}
                             disabled={!doc.url}
-                            className="rounded-md border border-[#9fc1e9] bg-[#eef6ff] px-3 py-1.5 text-xs font-semibold text-[#1b5ea5] hover:bg-[#e2f0ff] disabled:cursor-not-allowed disabled:opacity-50"
+                            className="cp-clickable rounded-md border border-[#9fc1e9] bg-[#eef6ff] px-3 py-1.5 text-xs font-semibold text-[#1b5ea5] hover:bg-[#e2f0ff] disabled:cursor-not-allowed disabled:opacity-50"
                           >
                             View
                           </button>
@@ -856,7 +1018,7 @@ function Moreoption({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, on
                   )}
                 </div>
 
-                <div className="rounded-xl border border-[#cfe5ff] bg-[#eff7ff] p-4">
+                <div className="cp-detail-block rounded-xl border border-[#cfe5ff] bg-[#eff7ff] p-4">
                   <h3 className="mb-3 text-lg font-semibold text-[#124172]">Address</h3>
                   <div className="grid gap-4 md:grid-cols-2">
                     <DetailField label="House/Flat/Company" value={selectedPartner.house} />
@@ -876,7 +1038,7 @@ function Moreoption({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, on
                     setViewingPartnerIndex(null)
                     setIsDetailsOpen(false)
                   }}
-                  className="rounded-xl border border-[#0f69c9] bg-white px-6 py-2 text-sm font-semibold text-[#0f69c9] transition hover:bg-[#ecf5ff]"
+                  className="cp-clickable rounded-xl border border-[#0f69c9] bg-white px-6 py-2 text-sm font-semibold text-[#0f69c9] transition hover:bg-[#ecf5ff]"
                 >
                   Close
                 </button>
@@ -885,7 +1047,7 @@ function Moreoption({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, on
           </div>
         )}
 
-        <div className="relative z-10 mt-6 overflow-visible rounded-sm border border-[#877ef4]/30 bg-white">
+        <div ref={tableRef} className="relative z-10 mt-6 overflow-visible rounded-sm border border-[#877ef4]/30 bg-white">
           <div className="grid min-w-[980px] grid-cols-[1.6fr_1.3fr_1.1fr_0.8fr_1.4fr_0.8fr] bg-[linear-gradient(90deg,#6878f5_0%,#a265dc_100%)] text-sm font-semibold tracking-wide text-white lg:text-base">
             <div className="px-5 py-4">Name</div>
             <div className="px-5 py-4">Details</div>
@@ -895,7 +1057,7 @@ function Moreoption({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, on
             <div className="px-5 py-4">Actions</div>
           </div>
           {channelPartners.length === 0 ? (
-            <div className="grid min-w-[980px] grid-cols-[1.6fr_1.3fr_1.1fr_0.8fr_1.4fr_0.8fr] items-center border-t border-[#eef2ff] px-1 py-2">
+            <div className="cp-table-row grid min-w-[980px] grid-cols-[1.6fr_1.3fr_1.1fr_0.8fr_1.4fr_0.8fr] items-center border-t border-[#eef2ff] px-1 py-2">
               <div className="px-4 py-3 text-sm text-[#6b7280]">No data available.</div>
               <div className="px-4 py-3 text-sm text-[#6b7280]">-</div>
               <div className="px-4 py-3 text-sm text-[#6b7280]">-</div>
@@ -907,7 +1069,7 @@ function Moreoption({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, on
             channelPartners.map((partner, index) => (
               <div
                 key={`${partner.createdAt}-${index}`}
-                className="grid min-w-[980px] grid-cols-[1.6fr_1.3fr_1.1fr_0.8fr_1.4fr_0.8fr] items-center border-t border-[#eef2ff] px-1 py-2"
+                className="cp-table-row grid min-w-[980px] grid-cols-[1.6fr_1.3fr_1.1fr_0.8fr_1.4fr_0.8fr] items-center border-t border-[#eef2ff] px-1 py-2"
               >
                 <div className="px-4 py-3 text-sm font-semibold text-[#263a57]">{partner.companyName || partner.name}</div>
                 <div className="px-4 py-3 text-sm text-[#425774]">
@@ -922,7 +1084,7 @@ function Moreoption({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, on
                   <button
                     type="button"
                     onClick={() => setOpenActionIndex((prev) => (prev === index ? null : index))}
-                    className="rounded-md border border-[#cfd9ff] bg-white px-3 py-1.5 text-lg font-bold leading-none text-[#6576c9] hover:bg-[#f4f7ff]"
+                    className="cp-clickable rounded-md border border-[#cfd9ff] bg-white px-3 py-1.5 text-lg font-bold leading-none text-[#6576c9] hover:bg-[#f4f7ff]"
                   >
                     ...
                   </button>
@@ -947,7 +1109,7 @@ function Moreoption({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, on
                               setIsDetailsOpen(true)
                             }
                           }}
-                          className="block w-full rounded-md px-3 py-2 text-left text-sm font-medium text-[#304769] hover:bg-[#eef3ff]"
+                          className="cp-clickable block w-full rounded-md px-3 py-2 text-left text-sm font-medium text-[#304769] hover:bg-[#eef3ff]"
                         >
                           {option}
                         </button>

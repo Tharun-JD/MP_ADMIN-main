@@ -1,4 +1,8 @@
 import { useEffect, useRef, useState } from 'react'
+import { gsap } from 'gsap'
+import { ScrollTrigger } from 'gsap/ScrollTrigger'
+
+gsap.registerPlugin(ScrollTrigger)
 
 function Icon({ name, className = 'h-4 w-4' }) {
   const icons = {
@@ -93,8 +97,14 @@ function Dashbord({ onSignOut, onBackToDashboard, onOpenUserAccount, onOpenLeadA
   const [managerFromDate, setManagerFromDate] = useState('')
   const [managerToDate, setManagerToDate] = useState('')
   const [managerProject, setManagerProject] = useState('')
+  const [toast, setToast] = useState(null)
 
   const canvasRef = useRef(null)
+  const sceneRef = useRef(null)
+  const heroRef = useRef(null)
+  const heroGlowRef = useRef(null)
+  const toastRef = useRef(null)
+  const toastTimerRef = useRef(null)
   const filterRef = useRef(null)
   const filterPanelRef = useRef(null)
   const incentiveRef = useRef(null)
@@ -118,28 +128,34 @@ function Dashbord({ onSignOut, onBackToDashboard, onOpenUserAccount, onOpenLeadA
     { title: 'Approved Invoices', icon: 'approved', tone: 'from-[#eb7a26] to-[#f29f59]' },
   ]
 
+  const showToast = (message, tone = 'info') => {
+    if (toastTimerRef.current) {
+      clearTimeout(toastTimerRef.current)
+      toastTimerRef.current = null
+    }
+    setToast({ id: Date.now(), message, tone })
+  }
+
   const toggleMainFilter = () => {
-    setIsFilterOpen((current) => {
-      const next = !current
-      if (next) {
-        setIsIncentiveFilterOpen(false)
-        setIsChannelFilterOpen(false)
-        setIsManagerFilterOpen(false)
-      }
-      return next
-    })
+    const next = !isFilterOpen
+    setIsFilterOpen(next)
+    if (next) {
+      setIsIncentiveFilterOpen(false)
+      setIsChannelFilterOpen(false)
+      setIsManagerFilterOpen(false)
+    }
+    showToast(next ? 'Main filter opened' : 'Main filter closed')
   }
 
   const toggleIncentiveFilter = () => {
-    setIsIncentiveFilterOpen((current) => {
-      const next = !current
-      if (next) {
-        setIsFilterOpen(false)
-        setIsChannelFilterOpen(false)
-        setIsManagerFilterOpen(false)
-      }
-      return next
-    })
+    const next = !isIncentiveFilterOpen
+    setIsIncentiveFilterOpen(next)
+    if (next) {
+      setIsFilterOpen(false)
+      setIsChannelFilterOpen(false)
+      setIsManagerFilterOpen(false)
+    }
+    showToast(next ? 'Incentive filter opened' : 'Incentive filter closed')
   }
 
   const toggleChannelFilter = () => {
@@ -151,91 +167,48 @@ function Dashbord({ onSignOut, onBackToDashboard, onOpenUserAccount, onOpenLeadA
   }
 
   useEffect(() => {
-    if (!window.gsap) {
+    if (!sceneRef.current || !canvasRef.current) {
       return
     }
 
-    const gsap = window.gsap
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
     const cleanups = []
+    const ctx = gsap.context(() => {
+      const intro = gsap.timeline({ defaults: { ease: 'power2.out' } })
+      const metricCardsEls = gsap.utils.toArray('.metric-card')
+      const heroKpiEls = gsap.utils.toArray('.hero-kpi')
+      const revealPanels = gsap.utils.toArray('.reveal-panel')
+      const scrollFloats = gsap.utils.toArray('.scroll-float')
+      const navButtons = gsap.utils.toArray('.nav-btn')
 
-    const intro = gsap.timeline({ defaults: { ease: 'power3.out' } })
-    const metricCardsEls = gsap.utils.toArray('.metric-card')
-    intro
-      .fromTo('.dash-nav', { y: -24, opacity: 0 }, { y: 0, opacity: 1, duration: 0.55 })
-      .fromTo(filterRef.current, { y: 18, opacity: 0, rotateX: -20 }, { y: 0, opacity: 1, rotateX: 0, duration: 0.45 }, '-=0.2')
-      .fromTo(
-        metricCardsEls,
-        { y: 44, opacity: 0, rotateX: -35, z: -120 },
-        { y: 0, opacity: 1, rotateX: 0, z: 0, duration: 0.75, stagger: 0.1 },
-        '-=0.15',
-      )
-      .fromTo(canvasRef.current, { scale: 0.98, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.6 }, '-=0.55')
-      .fromTo(incentiveRef.current, { y: 24, opacity: 0, rotateX: -12 }, { y: 0, opacity: 1, rotateX: 0, duration: 0.5 }, '-=0.25')
-      .fromTo(channelRef.current, { y: 24, opacity: 0, rotateX: -12 }, { y: 0, opacity: 1, rotateX: 0, duration: 0.5 }, '-=0.28')
-      .fromTo(managerRef.current, { y: 24, opacity: 0, rotateX: -12 }, { y: 0, opacity: 1, rotateX: 0, duration: 0.5 }, '-=0.3')
+      intro
+        .fromTo('.dash-nav', { y: -14, opacity: 0 }, { y: 0, opacity: 1, duration: 0.42 })
+        .fromTo('.hero-title', { y: 18, opacity: 0 }, { y: 0, opacity: 1, duration: 0.5 }, '-=0.1')
+        .fromTo('.hero-copy', { y: 12, opacity: 0 }, { y: 0, opacity: 1, duration: 0.34 }, '-=0.34')
+        .fromTo(heroKpiEls, { y: 14, opacity: 0 }, { y: 0, opacity: 1, duration: 0.36, stagger: 0.08 }, '-=0.28')
+        .fromTo(filterRef.current, { y: 10, opacity: 0 }, { y: 0, opacity: 1, duration: 0.28 }, '-=0.12')
+        .fromTo(metricCardsEls, { y: 18, opacity: 0 }, { y: 0, opacity: 1, duration: 0.42, stagger: 0.06 }, '-=0.1')
+      cleanups.push(() => intro.kill())
 
-    cleanups.push(() => intro.kill())
-
-    navBeamRefs.current.filter(Boolean).forEach((beam, index) => {
-      const flow = gsap.fromTo(
-        beam,
-        { xPercent: -45, opacity: 0.14 + index * 0.04 },
-        {
-          xPercent: 45,
-          opacity: 0.26 + index * 0.03,
-          duration: 6 + index,
-          repeat: -1,
+      if (!prefersReducedMotion && heroGlowRef.current) {
+        const glowPulse = gsap.to(heroGlowRef.current, {
+          opacity: 0.8,
+          scale: 1.03,
+          duration: 3.8,
           yoyo: true,
+          repeat: -1,
           ease: 'sine.inOut',
-        },
-      )
-      cleanups.push(() => flow.kill())
-    })
-
-    pageAuraRefs.current.filter(Boolean).forEach((aura, index) => {
-      const drift = gsap.to(aura, {
-        x: index % 2 ? -30 : 32,
-        y: index % 2 ? 20 : -24,
-        scale: index % 2 ? 1.12 : 0.9,
-        duration: 6 + index * 1.2,
-        repeat: -1,
-        yoyo: true,
-        ease: 'sine.inOut',
-      })
-      cleanups.push(() => drift.kill())
-    })
-
-    ringRefs.current.filter(Boolean).forEach((ring, index) => {
-      const orbitSpin = gsap.to(ring, {
-        rotate: 360,
-        transformOrigin: 'center center',
-        duration: 24 + index * 6,
-        repeat: -1,
-        ease: 'none',
-      })
-      cleanups.push(() => orbitSpin.kill())
-    })
-
-    const navButtons = gsap.utils.toArray('.nav-btn')
-    if (navButtons.length > 0) {
-      const idleFloat = gsap.to(navButtons, {
-        y: -2,
-        duration: 1.9,
-        yoyo: true,
-        repeat: -1,
-        stagger: 0.1,
-        ease: 'sine.inOut',
-      })
-      cleanups.push(() => idleFloat.kill())
+        })
+        cleanups.push(() => glowPulse.kill())
+      }
 
       navButtons.forEach((button) => {
         const handleEnter = () => {
           gsap.to(button, {
-            y: -4,
-            scale: 1.04,
-            rotateX: -6,
-            duration: 0.28,
-            boxShadow: '0 10px 24px rgba(47,63,169,0.2)',
+            y: -1,
+            scale: 1.01,
+            duration: 0.18,
+            boxShadow: '0 8px 18px rgba(47,63,169,0.14)',
             ease: 'power2.out',
           })
         }
@@ -243,166 +216,130 @@ function Dashbord({ onSignOut, onBackToDashboard, onOpenUserAccount, onOpenLeadA
           gsap.to(button, {
             y: 0,
             scale: 1,
-            rotateX: 0,
-            duration: 0.3,
+            duration: 0.18,
             boxShadow: '0 0 0 rgba(47,63,169,0)',
             ease: 'power2.out',
           })
         }
         const handleDown = () => {
-          gsap.to(button, { scale: 0.97, duration: 0.12, ease: 'power1.out' })
+          gsap.to(button, { scale: 0.98, duration: 0.1, ease: 'power1.out' })
         }
         const handleUp = () => {
-          gsap.to(button, { scale: 1.02, duration: 0.12, ease: 'power1.out' })
+          gsap.to(button, { scale: 1.01, duration: 0.1, ease: 'power1.out' })
         }
 
         button.addEventListener('mouseenter', handleEnter)
         button.addEventListener('mouseleave', handleLeave)
         button.addEventListener('mousedown', handleDown)
         button.addEventListener('mouseup', handleUp)
-
         cleanups.push(() => button.removeEventListener('mouseenter', handleEnter))
         cleanups.push(() => button.removeEventListener('mouseleave', handleLeave))
         cleanups.push(() => button.removeEventListener('mousedown', handleDown))
         cleanups.push(() => button.removeEventListener('mouseup', handleUp))
       })
-    }
 
-    metricCardsEls.forEach((card, index) => {
-      const hoverIn = () => {
-        gsap.to(card, {
-          y: -6,
-          rotateX: -6,
-          rotateY: index % 2 ? -6 : 6,
-          scale: 1.02,
-          duration: 0.35,
-          boxShadow: '0 18px 35px rgba(47,63,169,0.25)',
-          ease: 'power2.out',
-        })
-      }
-      const hoverOut = () => {
-        gsap.to(card, {
-          y: 0,
-          rotateX: 0,
-          rotateY: 0,
-          scale: 1,
-          duration: 0.35,
-          boxShadow: '0 0 0 rgba(47,63,169,0)',
-          ease: 'power2.out',
-        })
-      }
-      const handleMove = (event) => {
-        const rect = card.getBoundingClientRect()
-        const x = (event.clientX - rect.left) / rect.width - 0.5
-        const y = (event.clientY - rect.top) / rect.height - 0.5
-        gsap.to(card, {
-          rotateY: x * 18,
-          rotateX: -y * 14,
-          transformPerspective: 1200,
-          duration: 0.18,
-          ease: 'power1.out',
-        })
-      }
-
-      card.addEventListener('mouseenter', hoverIn)
-      card.addEventListener('mouseleave', hoverOut)
-      card.addEventListener('mousemove', handleMove)
-      cleanups.push(() => card.removeEventListener('mouseenter', hoverIn))
-      cleanups.push(() => card.removeEventListener('mouseleave', hoverOut))
-      cleanups.push(() => card.removeEventListener('mousemove', handleMove))
-    })
-
-    const cardFloat = gsap.to(metricCardsEls, {
-      y: -3,
-      duration: 2.2,
-      stagger: 0.14,
-      yoyo: true,
-      repeat: -1,
-      ease: 'sine.inOut',
-    })
-    cleanups.push(() => cardFloat.kill())
-
-    const filterPulse = gsap.to(filterRef.current, {
-      boxShadow: '0 16px 32px rgba(26,121,209,0.26)',
-      duration: 1.8,
-      yoyo: true,
-      repeat: -1,
-      ease: 'sine.inOut',
-    })
-    cleanups.push(() => filterPulse.kill())
-
-    const incentiveFilterPulse = gsap.to(incentiveFilterRef.current, {
-      boxShadow: '0 14px 28px rgba(47,63,169,0.22)',
-      duration: 1.9,
-      yoyo: true,
-      repeat: -1,
-      ease: 'sine.inOut',
-    })
-    cleanups.push(() => incentiveFilterPulse.kill())
-
-    const channelFilterPulse = gsap.to(channelFilterRef.current, {
-      boxShadow: '0 14px 28px rgba(26,121,209,0.24)',
-      duration: 2,
-      yoyo: true,
-      repeat: -1,
-      ease: 'sine.inOut',
-    })
-    cleanups.push(() => channelFilterPulse.kill())
-
-    const managerFilterPulse = gsap.to(managerFilterRef.current, {
-      boxShadow: '0 14px 28px rgba(47,63,169,0.22)',
-      duration: 2.1,
-      yoyo: true,
-      repeat: -1,
-      ease: 'sine.inOut',
-    })
-    cleanups.push(() => managerFilterPulse.kill())
-
-    orbRefs.current.filter(Boolean).forEach((orb, index) => {
-      const float = gsap.to(orb, {
-        y: index % 2 ? -24 : 24,
-        x: index % 2 ? 16 : -18,
-        rotateY: index % 2 ? -18 : 18,
-        rotateX: index % 2 ? 12 : -12,
-        duration: 5 + index * 1.4,
-        repeat: -1,
-        yoyo: true,
-        ease: 'sine.inOut',
+      metricCardsEls.forEach((card) => {
+        const hoverIn = () => {
+          gsap.to(card, {
+            y: -3,
+            scale: 1.01,
+            duration: 0.22,
+            boxShadow: '0 12px 24px rgba(47,63,169,0.15)',
+            ease: 'power2.out',
+          })
+        }
+        const hoverOut = () => {
+          gsap.to(card, {
+            y: 0,
+            scale: 1,
+            duration: 0.2,
+            boxShadow: '0 0 0 rgba(47,63,169,0)',
+            ease: 'power2.out',
+          })
+        }
+        card.addEventListener('mouseenter', hoverIn)
+        card.addEventListener('mouseleave', hoverOut)
+        cleanups.push(() => card.removeEventListener('mouseenter', hoverIn))
+        cleanups.push(() => card.removeEventListener('mouseleave', hoverOut))
       })
-      cleanups.push(() => float.kill())
-    })
 
-    const scrollPanels = gsap.utils.toArray('.scroll-3d')
-    const handleScroll3D = () => {
-      const viewportMid = window.innerHeight / 2
-      scrollPanels.forEach((panel, index) => {
-        const rect = panel.getBoundingClientRect()
-        const delta = (rect.top + rect.height / 2 - viewportMid) / viewportMid
-        const intensity = Math.min(Math.abs(delta), 1)
-        gsap.to(panel, {
-          rotateX: delta * -5,
-          rotateY: index % 2 ? delta * 4 : delta * -4,
-          y: delta * -12,
-          scale: 1 - intensity * 0.03,
-          opacity: 1 - intensity * 0.18,
-          duration: 0.35,
-          ease: 'power2.out',
+      if (!prefersReducedMotion) {
+        if (heroRef.current) {
+          const heroScrollTween = gsap.to(heroRef.current, {
+            y: -12,
+            scale: 0.994,
+            ease: 'none',
+            scrollTrigger: {
+              trigger: heroRef.current,
+              start: 'top top+=80',
+              end: 'bottom top+=40',
+              scrub: 1.2,
+            },
+          })
+          cleanups.push(() => {
+            heroScrollTween.scrollTrigger?.kill()
+            heroScrollTween.kill()
+          })
+        }
+
+        scrollFloats.forEach((panel, index) => {
+          const distance = index % 2 === 0 ? -6 : -4
+          const floatTween = gsap.fromTo(
+            panel,
+            { y: 3 },
+            {
+              y: distance,
+              ease: 'none',
+              scrollTrigger: {
+                trigger: panel,
+                start: 'top 92%',
+                end: 'bottom 12%',
+                scrub: 1.4,
+              },
+            },
+          )
+          cleanups.push(() => {
+            floatTween.scrollTrigger?.kill()
+            floatTween.kill()
+          })
         })
-      })
-    }
-    window.addEventListener('scroll', handleScroll3D, { passive: true })
-    handleScroll3D()
-    cleanups.push(() => window.removeEventListener('scroll', handleScroll3D))
 
-    return () => cleanups.forEach((cleanup) => cleanup())
+        revealPanels.forEach((panel, index) => {
+          const tween = gsap.fromTo(
+            panel,
+            { y: 20, autoAlpha: 0 },
+            {
+              y: 0,
+              autoAlpha: 1,
+              duration: 0.45,
+              delay: index === 0 ? 0.05 : 0,
+              ease: 'power2.out',
+              scrollTrigger: {
+                trigger: panel,
+                start: 'top 84%',
+                once: true,
+              },
+            },
+          )
+          cleanups.push(() => {
+            tween.scrollTrigger?.kill()
+            tween.kill()
+          })
+        })
+      }
+    }, sceneRef)
+
+    return () => {
+      cleanups.forEach((cleanup) => cleanup())
+      ctx.revert()
+    }
   }, [])
 
   useEffect(() => {
-    if (!window.gsap || !filterPanelRef.current) {
+    if (!filterPanelRef.current) {
       return
     }
 
-    const gsap = window.gsap
     if (isFilterOpen) {
       gsap.fromTo(
         filterPanelRef.current,
@@ -413,11 +350,10 @@ function Dashbord({ onSignOut, onBackToDashboard, onOpenUserAccount, onOpenLeadA
   }, [isFilterOpen])
 
   useEffect(() => {
-    if (!window.gsap || !incentiveFilterPanelRef.current) {
+    if (!incentiveFilterPanelRef.current) {
       return
     }
 
-    const gsap = window.gsap
     if (isIncentiveFilterOpen) {
       gsap.fromTo(
         incentiveFilterPanelRef.current,
@@ -428,11 +364,10 @@ function Dashbord({ onSignOut, onBackToDashboard, onOpenUserAccount, onOpenLeadA
   }, [isIncentiveFilterOpen])
 
   useEffect(() => {
-    if (!window.gsap || !channelFilterPanelRef.current) {
+    if (!channelFilterPanelRef.current) {
       return
     }
 
-    const gsap = window.gsap
     if (isChannelFilterOpen) {
       gsap.fromTo(
         channelFilterPanelRef.current,
@@ -443,11 +378,10 @@ function Dashbord({ onSignOut, onBackToDashboard, onOpenUserAccount, onOpenLeadA
   }, [isChannelFilterOpen])
 
   useEffect(() => {
-    if (!window.gsap || !managerFilterPanelRef.current) {
+    if (!managerFilterPanelRef.current) {
       return
     }
 
-    const gsap = window.gsap
     if (isManagerFilterOpen) {
       gsap.fromTo(
         managerFilterPanelRef.current,
@@ -457,8 +391,51 @@ function Dashbord({ onSignOut, onBackToDashboard, onOpenUserAccount, onOpenLeadA
     }
   }, [isManagerFilterOpen])
 
+  useEffect(() => {
+    return () => {
+      if (toastTimerRef.current) {
+        clearTimeout(toastTimerRef.current)
+      }
+    }
+  }, [])
+
+  useEffect(() => {
+    if (!toast || !toastRef.current) {
+      return
+    }
+
+    gsap.fromTo(
+      toastRef.current,
+      { autoAlpha: 0, y: -16, scale: 0.98 },
+      { autoAlpha: 1, y: 0, scale: 1, duration: 0.24, ease: 'power2.out' },
+    )
+
+    toastTimerRef.current = setTimeout(() => {
+      if (!toastRef.current) {
+        setToast(null)
+        return
+      }
+      gsap.to(toastRef.current, {
+        autoAlpha: 0,
+        y: -12,
+        duration: 0.2,
+        ease: 'power2.in',
+        onComplete: () => setToast(null),
+      })
+    }, 2200)
+
+    return () => {
+      if (toastTimerRef.current) {
+        clearTimeout(toastTimerRef.current)
+      }
+    }
+  }, [toast])
+
   return (
-    <main className="relative min-h-screen overflow-hidden bg-[radial-gradient(circle_at_12%_14%,#eaf2ff_0%,#f6faff_45%,#ffffff_100%)] text-[#112f59] [perspective:1400px]">
+    <main
+      ref={sceneRef}
+      className="relative min-h-screen overflow-hidden bg-[radial-gradient(circle_at_12%_14%,#d9e8ff_0%,#edf4ff_40%,#f8fbff_100%)] text-[#112f59] [perspective:1400px] [transform-style:preserve-3d]"
+    >
       <div className="pointer-events-none absolute inset-0">
         <div className="absolute inset-0 bg-[linear-gradient(transparent_29px,rgba(17,47,89,0.06)_30px),linear-gradient(90deg,transparent_29px,rgba(17,47,89,0.06)_30px)] bg-[size:30px_30px]" />
         <div
@@ -492,6 +469,26 @@ function Dashbord({ onSignOut, onBackToDashboard, onOpenUserAccount, onOpenLeadA
           className="absolute left-1/2 top-1/2 h-[24rem] w-[24rem] -translate-x-1/2 -translate-y-1/2 rounded-full border border-[#1a79d1]/12"
         />
       </div>
+
+      {toast && (
+        <div className="pointer-events-none fixed right-4 top-4 z-[90] sm:right-8">
+          <div
+            ref={toastRef}
+            className={`flex min-w-64 items-center gap-3 rounded-xl border px-4 py-3 text-sm font-medium shadow-xl ${
+              toast.tone === 'success'
+                ? 'border-[#1a79d1]/25 bg-[#f2f8ff] text-[#1b3e72]'
+                : toast.tone === 'warning'
+                  ? 'border-[#eb7a26]/35 bg-[#fff6ef] text-[#7a4313]'
+                  : 'border-[#2f3fa9]/18 bg-white text-[#2b4469]'
+            }`}
+          >
+            <span className="inline-flex h-7 w-7 items-center justify-center rounded-full bg-white/90">
+              <Icon name={toast.tone === 'success' ? 'approved' : toast.tone === 'warning' ? 'approval' : 'updates'} className="h-4 w-4" />
+            </span>
+            <span>{toast.message}</span>
+          </div>
+        </div>
+      )}
 
       <header className="dash-nav relative z-20 border-b border-[#2f3fa9]/10 bg-white/80 backdrop-blur">
         <div className="pointer-events-none absolute inset-0 overflow-hidden">
@@ -528,6 +525,7 @@ function Dashbord({ onSignOut, onBackToDashboard, onOpenUserAccount, onOpenLeadA
                       setOpenMenu((current) => (current === item.label ? null : item.label))
                     } else {
                       setOpenMenu(null)
+                      showToast(`Opened ${item.label}`, 'success')
                       if (item.label === 'Dashbord') onBackToDashboard?.()
                       if (item.label === 'UserAccount') onOpenUserAccount?.()
                       if (item.label === 'Lead Activity') onOpenLeadActive?.()
@@ -548,6 +546,7 @@ function Dashbord({ onSignOut, onBackToDashboard, onOpenUserAccount, onOpenLeadA
                         type="button"
                         onClick={() => {
                           setOpenMenu(null)
+                          showToast(`Opening ${option.label}`, 'success')
                           if (option.label === 'Channel Partner Application') {
                             onOpenChannelPartners?.()
                           }
@@ -576,6 +575,7 @@ function Dashbord({ onSignOut, onBackToDashboard, onOpenUserAccount, onOpenLeadA
               onClick={() => {
                 setOpenMenu(null)
                 setOpenWelcome((current) => !current)
+                showToast('Profile menu updated')
               }}
               className="nav-btn flex items-center gap-1.5 rounded-xl bg-gradient-to-r from-[#1a79d1] to-[#2f3fa9] px-4 py-2 text-sm font-bold text-white shadow-lg shadow-[#2f3fa9]/20"
             >
@@ -596,7 +596,10 @@ function Dashbord({ onSignOut, onBackToDashboard, onOpenUserAccount, onOpenLeadA
                 </button>
                 <button
                   type="button"
-                  onClick={onSignOut}
+                  onClick={() => {
+                    showToast('Signing out', 'warning')
+                    setTimeout(() => onSignOut?.(), 250)
+                  }}
                   className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-sm font-semibold text-[#c43d2f] hover:bg-[#fff1ef]"
                 >
                   <Icon name="signout" className="h-4 w-4" />
@@ -610,6 +613,39 @@ function Dashbord({ onSignOut, onBackToDashboard, onOpenUserAccount, onOpenLeadA
 
       <section className="relative z-10 mx-auto flex min-h-[calc(100vh-88px)] w-full max-w-7xl items-center justify-center px-4 py-8 lg:px-8">
         <div ref={canvasRef} className="relative w-full max-w-6xl [transform-style:preserve-3d]">
+          <div
+            ref={heroRef}
+            className="relative mb-6 overflow-hidden rounded-[1.5rem] border border-[#d9e6fa] bg-gradient-to-r from-[#f7fbff] via-white to-[#f2f7ff] p-6 text-[#17385f] shadow-lg shadow-[#224e85]/10 [transform-style:preserve-3d] sm:p-8"
+          >
+            <div
+              ref={heroGlowRef}
+              className="pointer-events-none absolute -left-10 -top-10 h-44 w-44 rounded-full bg-[#cfe5ff]/70 blur-3xl"
+            />
+
+            <p className="hero-copy text-xs font-semibold uppercase tracking-[0.16em] text-[#3f628d]">Dashboard Overview</p>
+            <h1 className="hero-title mt-2 max-w-2xl text-2xl font-black leading-tight sm:text-4xl">
+              Channel Partner Performance Console
+            </h1>
+            <p className="hero-copy mt-3 max-w-2xl text-sm text-[#456288] sm:text-base">
+              Focused operational metrics with clear actions, polished motion, and predictable interactions.
+            </p>
+
+            <div className="mt-5 grid grid-cols-1 gap-3 sm:grid-cols-3">
+              <div className="hero-kpi rounded-xl border border-[#d6e4f7] bg-white p-3">
+                <p className="text-xs uppercase tracking-[0.15em] text-[#6784a9]">New Leads</p>
+                <p className="mt-1 text-xl font-black">-</p>
+              </div>
+              <div className="hero-kpi rounded-xl border border-[#d6e4f7] bg-white p-3">
+                <p className="text-xs uppercase tracking-[0.15em] text-[#6784a9]">Active Partners</p>
+                <p className="mt-1 text-xl font-black">-</p>
+              </div>
+              <div className="hero-kpi rounded-xl border border-[#d6e4f7] bg-white p-3">
+                <p className="text-xs uppercase tracking-[0.15em] text-[#6784a9]">This Month Bookings</p>
+                <p className="mt-1 text-xl font-black">-</p>
+              </div>
+            </div>
+          </div>
+
           <div className="relative z-50 mb-5">
             <div className="flex justify-start">
               <button
@@ -656,6 +692,7 @@ function Dashbord({ onSignOut, onBackToDashboard, onOpenUserAccount, onOpenLeadA
                     setFilterToDate('')
                     setFilterProject('')
                     setIsFilterOpen(false)
+                    showToast('Main filter cleared')
                   }}
                   className="rounded-xl border border-[#d4deef] bg-white px-4 py-2 text-sm font-semibold text-[#435d84] transition hover:bg-[#f4f8ff]"
                 >
@@ -663,16 +700,20 @@ function Dashbord({ onSignOut, onBackToDashboard, onOpenUserAccount, onOpenLeadA
                 </button>
                 <button
                   type="button"
-                  onClick={() => setIsFilterOpen(false)}
-                  className="rounded-xl bg-gradient-to-r from-[#1a79d1] to-[#2f3fa9] px-4 py-2 text-sm font-semibold text-white transition hover:brightness-110"
+                  onClick={() => {
+                    setIsFilterOpen(false)
+                    showToast('Main filter applied', 'success')
+                  }}
+                  className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-[#1a79d1] to-[#2f3fa9] px-4 py-2 text-sm font-semibold text-white transition hover:brightness-110"
                 >
+                  <Icon name="approved" className="h-4 w-4" />
                   Apply
                 </button>
               </div>
             )}
           </div>
 
-          <div className="scroll-3d relative z-10 mb-8 grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4 [transform-style:preserve-3d]">
+          <div className="scroll-3d scroll-float reveal-panel relative z-10 mb-8 grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4 [transform-style:preserve-3d]">
             {metricCards.map((card) => (
               <article
                 key={card.title}
@@ -691,7 +732,7 @@ function Dashbord({ onSignOut, onBackToDashboard, onOpenUserAccount, onOpenLeadA
 
           <div
             ref={incentiveRef}
-            className="scroll-3d relative z-20 mt-14 rounded-2xl border border-white/65 bg-white/75 p-5 shadow-xl shadow-[#2f3fa9]/12 backdrop-blur-xl [transform-style:preserve-3d]"
+            className="scroll-3d scroll-float reveal-panel relative z-20 mt-14 rounded-2xl border border-white/65 bg-white/75 p-5 shadow-xl shadow-[#2f3fa9]/12 backdrop-blur-xl [transform-style:preserve-3d]"
           >
             <div className="flex flex-wrap items-center justify-between gap-3">
               <h3 className="text-lg font-black text-[#1b3e72]">Incentive Scheme Performance</h3>
@@ -723,6 +764,7 @@ function Dashbord({ onSignOut, onBackToDashboard, onOpenUserAccount, onOpenLeadA
                   onClick={() => {
                     setIncentiveProjectEntry('')
                     setIsIncentiveFilterOpen(false)
+                    showToast('Incentive filter cleared')
                   }}
                   className="rounded-xl border border-[#d4deef] bg-white px-4 py-2 text-sm font-semibold text-[#435d84] transition hover:bg-[#eef5ff]"
                 >
@@ -730,16 +772,20 @@ function Dashbord({ onSignOut, onBackToDashboard, onOpenUserAccount, onOpenLeadA
                 </button>
                 <button
                   type="button"
-                  onClick={() => setIsIncentiveFilterOpen(false)}
-                  className="rounded-xl bg-gradient-to-r from-[#2f3fa9] to-[#1a79d1] px-4 py-2 text-sm font-semibold text-white transition hover:brightness-110"
+                  onClick={() => {
+                    setIsIncentiveFilterOpen(false)
+                    showToast('Incentive filter applied', 'success')
+                  }}
+                  className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-[#2f3fa9] to-[#1a79d1] px-4 py-2 text-sm font-semibold text-white transition hover:brightness-110"
                 >
+                  <Icon name="approved" className="h-4 w-4" />
                   Apply
                 </button>
               </div>
             )}
           </div>
 
-          <div className="scroll-3d relative z-20 mt-14 rounded-2xl border border-white/65 bg-white/80 p-5 shadow-xl shadow-[#2f3fa9]/10 backdrop-blur-xl [transform-style:preserve-3d]">
+          <div className="scroll-3d scroll-float reveal-panel relative z-20 mt-14 rounded-2xl border border-white/65 bg-white/80 p-5 shadow-xl shadow-[#2f3fa9]/10 backdrop-blur-xl [transform-style:preserve-3d]">
             <h4 className="text-base font-black text-[#1b3e72]">Incentive Scheme Summary</h4>
             <div className="mt-4 overflow-hidden rounded-xl border border-[#d6e5fb]">
               <div className="grid grid-cols-2 bg-[#eef5ff] text-sm font-bold text-[#1f365d]">
@@ -751,7 +797,7 @@ function Dashbord({ onSignOut, onBackToDashboard, onOpenUserAccount, onOpenLeadA
 
           <div
             ref={channelRef}
-            className="scroll-3d relative z-30 mt-14 rounded-2xl border border-white/65 bg-white/80 p-5 shadow-xl shadow-[#2f3fa9]/10 backdrop-blur-xl [transform-style:preserve-3d]"
+            className="scroll-3d scroll-float reveal-panel relative z-30 mt-14 rounded-2xl border border-white/65 bg-white/80 p-5 shadow-xl shadow-[#2f3fa9]/10 backdrop-blur-xl [transform-style:preserve-3d]"
           >
             <div className="flex flex-wrap items-center justify-between gap-3">
               <h4 className="text-base font-black text-[#1b3e72]">Channel Partner Performance</h4>
@@ -810,6 +856,7 @@ function Dashbord({ onSignOut, onBackToDashboard, onOpenUserAccount, onOpenLeadA
                       setChannelFromDate('')
                       setChannelToDate('')
                       setChannelProject('')
+                      showToast('Channel partner filter cleared')
                     }}
                     className="h-10 rounded-md border border-[#6d76ff] bg-white px-5 text-sm font-semibold text-[#636eff] transition hover:bg-[#f3f4ff]"
                   >
@@ -817,9 +864,12 @@ function Dashbord({ onSignOut, onBackToDashboard, onOpenUserAccount, onOpenLeadA
                   </button>
                   <button
                     type="button"
-                    onClick={() => {}}
-                    className="h-10 rounded-md bg-gradient-to-r from-[#777dff] to-[#6b69ec] px-6 text-sm font-semibold text-white transition hover:brightness-110"
+                    onClick={() => {
+                      showToast('Channel partner filter applied', 'success')
+                    }}
+                    className="inline-flex h-10 items-center gap-2 rounded-md bg-gradient-to-r from-[#777dff] to-[#6b69ec] px-6 text-sm font-semibold text-white transition hover:brightness-110"
                   >
+                    <Icon name="approved" className="h-4 w-4" />
                     Apply
                   </button>
                 </div>
@@ -828,7 +878,7 @@ function Dashbord({ onSignOut, onBackToDashboard, onOpenUserAccount, onOpenLeadA
 
           <div
             ref={managerRef}
-            className="scroll-3d relative z-30 mt-14 rounded-2xl border border-white/65 bg-white/80 p-5 shadow-xl shadow-[#2f3fa9]/10 backdrop-blur-xl pointer-events-auto [transform-style:preserve-3d]"
+            className="scroll-3d scroll-float reveal-panel relative z-30 mt-14 rounded-2xl border border-white/65 bg-white/80 p-5 shadow-xl shadow-[#2f3fa9]/10 backdrop-blur-xl pointer-events-auto [transform-style:preserve-3d]"
           >
             <div className="flex flex-wrap items-center justify-between gap-3">
               <h4 className="text-base font-black text-[#1b3e72]">Channel Partner Manager Performance</h4>
@@ -887,6 +937,7 @@ function Dashbord({ onSignOut, onBackToDashboard, onOpenUserAccount, onOpenLeadA
                       setManagerFromDate('')
                       setManagerToDate('')
                       setManagerProject('')
+                      showToast('Manager filter cleared')
                     }}
                     className="h-10 rounded-md border border-[#6d76ff] bg-white px-5 text-sm font-semibold text-[#636eff] transition hover:bg-[#f3f4ff]"
                   >
@@ -894,16 +945,19 @@ function Dashbord({ onSignOut, onBackToDashboard, onOpenUserAccount, onOpenLeadA
                   </button>
                   <button
                     type="button"
-                    onClick={() => {}}
-                    className="h-10 rounded-md bg-gradient-to-r from-[#777dff] to-[#6b69ec] px-6 text-sm font-semibold text-white transition hover:brightness-110"
+                    onClick={() => {
+                      showToast('Manager filter applied', 'success')
+                    }}
+                    className="inline-flex h-10 items-center gap-2 rounded-md bg-gradient-to-r from-[#777dff] to-[#6b69ec] px-6 text-sm font-semibold text-white transition hover:brightness-110"
                   >
+                    <Icon name="approved" className="h-4 w-4" />
                     Apply
                   </button>
                 </div>
             </div>
           </div>
 
-          <div className="scroll-3d relative z-20 mt-14 rounded-2xl border border-white/65 bg-white/80 p-5 shadow-xl shadow-[#2f3fa9]/10 backdrop-blur-xl [transform-style:preserve-3d]">
+          <div className="scroll-3d scroll-float reveal-panel relative z-20 mt-14 rounded-2xl border border-white/65 bg-white/80 p-5 shadow-xl shadow-[#2f3fa9]/10 backdrop-blur-xl [transform-style:preserve-3d]">
             <div className="overflow-hidden rounded-xl border border-[#d6e5fb]">
               <div className="grid grid-cols-4 bg-[#eef5ff] text-sm font-bold text-[#1f365d]">
                 <div className="border-r border-[#d6e5fb] px-4 py-3">Channel Partner Head Name</div>

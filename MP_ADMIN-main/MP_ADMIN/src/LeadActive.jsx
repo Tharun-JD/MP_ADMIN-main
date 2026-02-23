@@ -1,5 +1,9 @@
 import { useEffect, useRef, useState } from 'react'
+import { gsap } from 'gsap'
+import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import Navbar from './Navbar.jsx'
+
+gsap.registerPlugin(ScrollTrigger)
 
 const exportOptions = ['All Export', 'Active Filter Export']
 const countStatusOptions = ['Pending', 'Count Given', 'No Count']
@@ -76,43 +80,119 @@ function LeadActive({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, on
   }, [])
 
   useEffect(() => {
-    if (!window.gsap) {
+    if (!pageRef.current) {
       return
     }
 
-    const gsap = window.gsap
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
     const cleanups = []
+    const ctx = gsap.context(() => {
+      const intro = gsap.timeline({ defaults: { ease: 'power2.out' } })
+      intro
+        .fromTo(pageRef.current, { opacity: 0 }, { opacity: 1, duration: 0.24 })
+        .fromTo(headerRef.current, { y: -16, opacity: 0 }, { y: 0, opacity: 1, duration: 0.36 }, '-=0.08')
+        .fromTo('.la-control', { y: 10, opacity: 0 }, { y: 0, opacity: 1, stagger: 0.06, duration: 0.24 }, '-=0.18')
+        .fromTo(tableRef.current, { y: 14, opacity: 0 }, { y: 0, opacity: 1, duration: 0.34 }, '-=0.12')
+      cleanups.push(() => intro.kill())
 
-    const intro = gsap.timeline({ defaults: { ease: 'power3.out' } })
-    intro
-      .fromTo(pageRef.current, { opacity: 0 }, { opacity: 1, duration: 0.25 })
-      .fromTo(headerRef.current, { y: -18, opacity: 0 }, { y: 0, opacity: 1, duration: 0.4 }, '-=0.08')
-      .fromTo('.la-control', { y: 12, opacity: 0 }, { y: 0, opacity: 1, stagger: 0.07, duration: 0.28 }, '-=0.22')
-      .fromTo(tableRef.current, { y: 20, opacity: 0 }, { y: 0, opacity: 1, duration: 0.38 }, '-=0.16')
+      if (!prefersReducedMotion) {
+        bgGlowRefs.current.filter(Boolean).forEach((node, index) => {
+          const drift = gsap.to(node, {
+            x: index % 2 ? -14 : 14,
+            y: index % 2 ? 10 : -10,
+            duration: 6 + index * 0.8,
+            repeat: -1,
+            yoyo: true,
+            ease: 'sine.inOut',
+          })
+          cleanups.push(() => drift.kill())
+        })
 
-    cleanups.push(() => intro.kill())
+        if (tableRef.current) {
+          const reveal = gsap.fromTo(
+            tableRef.current,
+            { y: 16, autoAlpha: 0.92 },
+            {
+              y: 0,
+              autoAlpha: 1,
+              duration: 0.4,
+              ease: 'power2.out',
+              scrollTrigger: {
+                trigger: tableRef.current,
+                start: 'top 84%',
+                once: true,
+              },
+            },
+          )
+          cleanups.push(() => {
+            reveal.scrollTrigger?.kill()
+            reveal.kill()
+          })
+        }
+      }
 
-    bgGlowRefs.current.filter(Boolean).forEach((node, index) => {
-      const drift = gsap.to(node, {
-        x: index % 2 ? -18 : 18,
-        y: index % 2 ? 14 : -14,
-        duration: 4 + index,
-        repeat: -1,
-        yoyo: true,
-        ease: 'sine.inOut',
+      const controlButtons = gsap.utils.toArray('.la-control')
+      controlButtons.forEach((button) => {
+        const onEnter = () => {
+          gsap.to(button, {
+            y: -2,
+            scale: 1.01,
+            boxShadow: '0 10px 20px rgba(101,111,240,0.2)',
+            duration: 0.2,
+            ease: 'power2.out',
+          })
+        }
+        const onLeave = () => {
+          gsap.to(button, {
+            y: 0,
+            scale: 1,
+            boxShadow: '0 0 0 rgba(0,0,0,0)',
+            duration: 0.2,
+            ease: 'power2.out',
+          })
+        }
+        const onDown = () => {
+          gsap.to(button, { scale: 0.98, duration: 0.1, ease: 'power1.out' })
+        }
+        const onUp = () => {
+          gsap.to(button, { scale: 1.01, duration: 0.1, ease: 'power1.out' })
+        }
+        button.addEventListener('mouseenter', onEnter)
+        button.addEventListener('mouseleave', onLeave)
+        button.addEventListener('mousedown', onDown)
+        button.addEventListener('mouseup', onUp)
+        cleanups.push(() => button.removeEventListener('mouseenter', onEnter))
+        cleanups.push(() => button.removeEventListener('mouseleave', onLeave))
+        cleanups.push(() => button.removeEventListener('mousedown', onDown))
+        cleanups.push(() => button.removeEventListener('mouseup', onUp))
       })
-      cleanups.push(() => drift.kill())
-    })
 
-    return () => cleanups.forEach((fn) => fn())
+      const clickButtons = gsap.utils.toArray('.la-clickable')
+      clickButtons.forEach((button) => {
+        const onClick = () => {
+          gsap.fromTo(
+            button,
+            { boxShadow: '0 0 0 0 rgba(111,99,255,0.18)' },
+            { boxShadow: '0 0 0 8px rgba(111,99,255,0)', duration: 0.26, ease: 'power2.out' },
+          )
+          gsap.fromTo(button, { scale: 1 }, { scale: 0.986, duration: 0.08, yoyo: true, repeat: 1, ease: 'power1.out' })
+        }
+        button.addEventListener('click', onClick)
+        cleanups.push(() => button.removeEventListener('click', onClick))
+      })
+    }, pageRef)
+
+    return () => {
+      cleanups.forEach((fn) => fn())
+      ctx.revert()
+    }
   }, [])
 
   useEffect(() => {
-    if (!window.gsap || !isFilterOpen || !filterPanelRef.current) {
+    if (!isFilterOpen || !filterPanelRef.current) {
       return
     }
 
-    const gsap = window.gsap
     const panel = filterPanelRef.current
     const fields = panel.querySelectorAll('.la-filter-field')
     const actions = panel.querySelectorAll('.la-filter-action')
@@ -173,14 +253,14 @@ function LeadActive({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, on
           </h1>
 
           <div ref={controlsRef} className="flex items-center gap-3">
-            <button type="button" className="la-control rounded-md border border-[#7f85ff]/55 bg-[#f9fbff] px-5 py-2.5 text-xl font-semibold leading-none text-[#6f63ff]">
+            <button type="button" className="la-control la-clickable rounded-md border border-[#7f85ff]/55 bg-[#f9fbff] px-5 py-2.5 text-xl font-semibold leading-none text-[#6f63ff]">
               Total : 0
             </button>
             <div ref={exportMenuRef} className="relative z-40">
               <button
                 type="button"
                 onClick={() => setIsExportOpen((prev) => !prev)}
-                className="la-control flex items-center gap-1 rounded-md border border-[#7f85ff]/55 bg-[#f9fbff] px-5 py-2.5 text-xl font-semibold leading-none text-[#6f63ff]"
+                className="la-control la-clickable flex items-center gap-1 rounded-md border border-[#7f85ff]/55 bg-[#f9fbff] px-5 py-2.5 text-xl font-semibold leading-none text-[#6f63ff]"
               >
                 Exports <IconChevron />
               </button>
@@ -191,7 +271,7 @@ function LeadActive({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, on
                       key={option}
                       type="button"
                       onClick={() => setIsExportOpen(false)}
-                      className="block w-full rounded-md px-3 py-2 text-left text-sm font-semibold text-[#324765] hover:bg-[#eef2ff]"
+                      className="la-clickable block w-full rounded-md px-3 py-2 text-left text-sm font-semibold text-[#324765] hover:bg-[#eef2ff]"
                     >
                       {option}
                     </button>
@@ -205,7 +285,7 @@ function LeadActive({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, on
                 setIsExportOpen(false)
                 setIsFilterOpen(true)
               }}
-              className="la-control rounded-md border border-[#7f85ff]/55 bg-[#f9fbff] p-2.5 text-[#6f63ff]"
+              className="la-control la-clickable rounded-md border border-[#7f85ff]/55 bg-[#f9fbff] p-2.5 text-[#6f63ff]"
             >
               <IconFilter />
             </button>
@@ -312,7 +392,7 @@ function LeadActive({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, on
                     <button
                       type="button"
                       onClick={() => setIsCountStatusOpen((prev) => !prev)}
-                      className="flex w-full items-center justify-between rounded-md border border-[#b8c4e3] bg-white px-4 py-2.5 text-left text-base text-[#1f2f45] transition hover:border-[#9fb0cc]"
+                      className="la-clickable flex w-full items-center justify-between rounded-md border border-[#b8c4e3] bg-white px-4 py-2.5 text-left text-base text-[#1f2f45] transition hover:border-[#9fb0cc]"
                     >
                       <span className={filterValues.countStatus === 'Select' ? 'text-[#6c7890]' : ''}>{filterValues.countStatus}</span>
                       <span className={`transition ${isCountStatusOpen ? 'rotate-180' : ''}`}>
@@ -330,7 +410,7 @@ function LeadActive({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, on
                               setFilterField('countStatus', option)
                               setIsCountStatusOpen(false)
                             }}
-                            className="block w-full px-4 py-2 text-left text-base text-[#1f2f45] hover:bg-[#e7edf5]"
+                            className="la-clickable block w-full px-4 py-2 text-left text-base text-[#1f2f45] hover:bg-[#e7edf5]"
                           >
                             {option}
                           </button>
@@ -356,7 +436,7 @@ function LeadActive({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, on
                 <button
                   type="button"
                   onClick={resetFilter}
-                  className="la-filter-action rounded-lg border border-[#6f73ff] bg-white px-6 py-2 text-xl font-semibold text-[#6f73ff] transition hover:bg-[#eef0ff]"
+                  className="la-clickable la-filter-action rounded-lg border border-[#6f73ff] bg-white px-6 py-2 text-xl font-semibold text-[#6f73ff] transition hover:bg-[#eef0ff]"
                 >
                   Cancel
                 </button>
@@ -366,7 +446,7 @@ function LeadActive({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, on
                     setIsCountStatusOpen(false)
                     setIsFilterOpen(false)
                   }}
-                  className="la-filter-action rounded-lg bg-gradient-to-r from-[#6f73ff] to-[#6a6eea] px-7 py-2 text-xl font-semibold text-white transition hover:brightness-105"
+                  className="la-clickable la-filter-action rounded-lg bg-gradient-to-r from-[#6f73ff] to-[#6a6eea] px-7 py-2 text-xl font-semibold text-white transition hover:brightness-105"
                 >
                   Apply
                 </button>

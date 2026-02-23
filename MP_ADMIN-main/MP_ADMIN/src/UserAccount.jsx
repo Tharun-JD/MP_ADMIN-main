@@ -1,5 +1,9 @@
 import { useEffect, useRef, useState } from 'react'
+import { gsap } from 'gsap'
+import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import Navbar from './Navbar.jsx'
+
+gsap.registerPlugin(ScrollTrigger)
 
 const addUserOptions = [
   'Add Superadmin',
@@ -169,11 +173,11 @@ function UserAccount({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, o
   }, [])
 
   useEffect(() => {
-    if (!window.gsap || !isAddUserOpen) {
+    if (!isAddUserOpen) {
       return
     }
 
-    window.gsap.fromTo(
+    gsap.fromTo(
       '.ua-add-user-menu',
       { y: -8, opacity: 0, scale: 0.98 },
       { y: 0, opacity: 1, scale: 1, duration: 0.22, ease: 'power2.out' },
@@ -181,11 +185,10 @@ function UserAccount({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, o
   }, [isAddUserOpen])
 
   useEffect(() => {
-    if (!window.gsap || !isAddUserFormOpen || !addUserFormRef.current) {
+    if (!isAddUserFormOpen || !addUserFormRef.current) {
       return
     }
 
-    const gsap = window.gsap
     const panel = addUserFormRef.current
     const fields = panel.querySelectorAll('.ua-add-user-field')
     const actions = panel.querySelectorAll('.ua-add-user-action')
@@ -206,11 +209,10 @@ function UserAccount({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, o
   }, [isAddUserFormOpen])
 
   useEffect(() => {
-    if (!window.gsap || !isFilterOpen || !filterPanelRef.current) {
+    if (!isFilterOpen || !filterPanelRef.current) {
       return
     }
 
-    const gsap = window.gsap
     const panel = filterPanelRef.current
     const fields = panel.querySelectorAll('.ua-filter-field')
     const actions = panel.querySelectorAll('.ua-filter-action')
@@ -309,146 +311,180 @@ function UserAccount({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, o
   }
 
   useEffect(() => {
-    if (!window.gsap) {
+    if (!pageRef.current) {
       return
     }
 
-    const gsap = window.gsap
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
     const cleanups = []
+    const ctx = gsap.context(() => {
+      const intro = gsap.timeline({ defaults: { ease: 'power2.out' } })
+      intro
+        .fromTo(pageRef.current, { opacity: 0 }, { opacity: 1, duration: 0.28 })
+        .fromTo(headerRef.current, { y: -18, opacity: 0 }, { y: 0, opacity: 1, duration: 0.42 }, '-=0.08')
+        .fromTo('.ua-title-char', { y: 12, opacity: 0 }, { y: 0, opacity: 1, stagger: 0.02, duration: 0.2 }, '-=0.34')
+        .fromTo('.ua-control', { y: 12, opacity: 0 }, { y: 0, opacity: 1, stagger: 0.05, duration: 0.28 }, '-=0.24')
+        .fromTo(tableRef.current, { y: 14, opacity: 0 }, { y: 0, opacity: 1, duration: 0.4 }, '-=0.14')
+        .fromTo('.ua-row', { y: 12, opacity: 0 }, { y: 0, opacity: 1, stagger: 0.05, duration: 0.28 }, '-=0.2')
+      cleanups.push(() => intro.kill())
 
-    const intro = gsap.timeline({ defaults: { ease: 'power3.out' } })
-    intro
-      .fromTo(pageRef.current, { opacity: 0 }, { opacity: 1, duration: 0.35 })
-      .fromTo(headerRef.current, { y: -22, opacity: 0 }, { y: 0, opacity: 1, duration: 0.55 }, '-=0.15')
-      .fromTo('.ua-title-char', { y: 14, opacity: 0 }, { y: 0, opacity: 1, stagger: 0.03, duration: 0.26 }, '-=0.4')
-      .fromTo('.ua-control', { x: 24, opacity: 0 }, { x: 0, opacity: 1, stagger: 0.07, duration: 0.35 }, '-=0.32')
-      .fromTo(tableRef.current, { y: 18, opacity: 0 }, { y: 0, opacity: 1, duration: 0.5 }, '-=0.2')
-      .fromTo('.ua-row', { y: 20, opacity: 0, rotateX: -10 }, { y: 0, opacity: 1, rotateX: 0, stagger: 0.1, duration: 0.45 }, '-=0.25')
+      if (!prefersReducedMotion) {
+        glowRefs.current.filter(Boolean).forEach((node, index) => {
+          const anim = gsap.to(node, {
+            x: index % 2 ? -18 : 20,
+            y: index % 2 ? 14 : -14,
+            scale: index % 2 ? 1.1 : 0.95,
+            duration: 6 + index * 0.8,
+            repeat: -1,
+            yoyo: true,
+            ease: 'sine.inOut',
+          })
+          cleanups.push(() => anim.kill())
+        })
 
-    cleanups.push(() => intro.kill())
+        if (tableRef.current) {
+          const reveal = gsap.fromTo(
+            tableRef.current,
+            { y: 18, autoAlpha: 0.92 },
+            {
+              y: 0,
+              autoAlpha: 1,
+              duration: 0.45,
+              ease: 'power2.out',
+              scrollTrigger: {
+                trigger: tableRef.current,
+                start: 'top 84%',
+                once: true,
+              },
+            },
+          )
+          cleanups.push(() => {
+            reveal.scrollTrigger?.kill()
+            reveal.kill()
+          })
+        }
+      }
 
-    glowRefs.current.filter(Boolean).forEach((node, index) => {
-      const anim = gsap.to(node, {
-        x: index % 2 ? -24 : 28,
-        y: index % 2 ? 18 : -18,
-        scale: index % 2 ? 1.2 : 0.9,
-        duration: 4 + index,
-        repeat: -1,
-        yoyo: true,
-        ease: 'sine.inOut',
+      if (beamRef.current) {
+        const sweep = gsap.fromTo(
+          beamRef.current,
+          { xPercent: -50, opacity: 0.12 },
+          { xPercent: 50, opacity: 0.2, duration: 7.2, repeat: -1, yoyo: true, ease: 'none' },
+        )
+        cleanups.push(() => sweep.kill())
+      }
+
+      rowRefs.current.filter(Boolean).forEach((row, index) => {
+        const onEnter = () => {
+          gsap.to(row, {
+            y: -3,
+            scale: 1.004,
+            boxShadow: '0 14px 24px rgba(30,120,200,0.14)',
+            duration: 0.24,
+            ease: 'power2.out',
+          })
+        }
+
+        const onLeave = () => {
+          gsap.to(row, {
+            y: 0,
+            scale: 1,
+            boxShadow: '0 0 0 rgba(0,0,0,0)',
+            duration: 0.22,
+            ease: 'power2.out',
+          })
+        }
+
+        const onDown = () => {
+          gsap.to(row, { scale: 0.995, duration: 0.1, ease: 'power1.out' })
+        }
+
+        const onUp = () => {
+          gsap.to(row, { scale: 1.004, duration: 0.1, ease: 'power1.out' })
+        }
+
+        row.addEventListener('mouseenter', onEnter)
+        row.addEventListener('mouseleave', onLeave)
+        row.addEventListener('mousedown', onDown)
+        row.addEventListener('mouseup', onUp)
+        cleanups.push(() => row.removeEventListener('mouseenter', onEnter))
+        cleanups.push(() => row.removeEventListener('mouseleave', onLeave))
+        cleanups.push(() => row.removeEventListener('mousedown', onDown))
+        cleanups.push(() => row.removeEventListener('mouseup', onUp))
       })
-      cleanups.push(() => anim.kill())
-    })
 
-    if (beamRef.current) {
-      const sweep = gsap.fromTo(
-        beamRef.current,
-        { xPercent: -65, opacity: 0.12 },
-        { xPercent: 65, opacity: 0.26, duration: 5.4, repeat: -1, yoyo: true, ease: 'none' },
-      )
-      cleanups.push(() => sweep.kill())
+      const controlButtons = gsap.utils.toArray('.ua-control')
+      controlButtons.forEach((button) => {
+        const onEnter = () => {
+          gsap.to(button, {
+            y: -2,
+            scale: 1.01,
+            boxShadow: '0 12px 22px rgba(32,120,220,0.24)',
+            duration: 0.2,
+            ease: 'power2.out',
+          })
+        }
+
+        const onLeave = () => {
+          gsap.to(button, {
+            y: 0,
+            scale: 1,
+            boxShadow: '0 0 0 rgba(0,0,0,0)',
+            duration: 0.2,
+            ease: 'power2.out',
+          })
+        }
+
+        const onDown = () => {
+          gsap.to(button, { scale: 0.98, duration: 0.1, ease: 'power1.out' })
+        }
+
+        const onUp = () => {
+          gsap.to(button, { scale: 1.01, duration: 0.1, ease: 'power1.out' })
+        }
+
+        button.addEventListener('mouseenter', onEnter)
+        button.addEventListener('mouseleave', onLeave)
+        button.addEventListener('mousedown', onDown)
+        button.addEventListener('mouseup', onUp)
+        cleanups.push(() => button.removeEventListener('mouseenter', onEnter))
+        cleanups.push(() => button.removeEventListener('mouseleave', onLeave))
+        cleanups.push(() => button.removeEventListener('mousedown', onDown))
+        cleanups.push(() => button.removeEventListener('mouseup', onUp))
+      })
+
+      const clickButtons = gsap.utils.toArray('.ua-clickable')
+      clickButtons.forEach((button) => {
+        const onClick = () => {
+          gsap.fromTo(
+            button,
+            { boxShadow: '0 0 0 0 rgba(30,120,200,0.18)' },
+            { boxShadow: '0 0 0 8px rgba(30,120,200,0)', duration: 0.28, ease: 'power2.out' },
+          )
+          gsap.fromTo(button, { scale: 1 }, { scale: 0.985, duration: 0.08, yoyo: true, repeat: 1, ease: 'power1.out' })
+        }
+        button.addEventListener('click', onClick)
+        cleanups.push(() => button.removeEventListener('click', onClick))
+      })
+    }, pageRef)
+
+    return () => {
+      cleanups.forEach((fn) => fn())
+      ctx.revert()
+    }
+  }, [])
+
+  useEffect(() => {
+    if (!accounts.length || !rowRefs.current[0]) {
+      return
     }
 
-    rowRefs.current.filter(Boolean).forEach((row, index) => {
-      const onEnter = () => {
-        gsap.to(row, {
-          y: -6,
-          rotateX: -5,
-          rotateY: index % 2 ? -5 : 5,
-          scale: 1.01,
-          boxShadow: '0 18px 34px rgba(235,122,38,0.22)',
-          duration: 0.35,
-          ease: 'power2.out',
-        })
-      }
-
-      const onMove = (event) => {
-        const rect = row.getBoundingClientRect()
-        const x = (event.clientX - rect.left) / rect.width - 0.5
-        const y = (event.clientY - rect.top) / rect.height - 0.5
-        gsap.to(row, {
-          rotateY: x * 16,
-          rotateX: -y * 12,
-          transformPerspective: 1200,
-          duration: 0.2,
-          ease: 'power1.out',
-        })
-      }
-
-      const onLeave = () => {
-        gsap.to(row, {
-          rotateY: 0,
-          rotateX: 0,
-          y: 0,
-          scale: 1,
-          boxShadow: '0 0 0 rgba(0,0,0,0)',
-          duration: 0.35,
-          ease: 'power2.out',
-        })
-      }
-
-      const onDown = () => {
-        gsap.to(row, { scale: 0.995, duration: 0.12, ease: 'power1.out' })
-      }
-
-      const onUp = () => {
-        gsap.to(row, { scale: 1.01, duration: 0.12, ease: 'power1.out' })
-      }
-
-      row.addEventListener('mouseenter', onEnter)
-      row.addEventListener('mousemove', onMove)
-      row.addEventListener('mouseleave', onLeave)
-      row.addEventListener('mousedown', onDown)
-      row.addEventListener('mouseup', onUp)
-      cleanups.push(() => row.removeEventListener('mouseenter', onEnter))
-      cleanups.push(() => row.removeEventListener('mousemove', onMove))
-      cleanups.push(() => row.removeEventListener('mouseleave', onLeave))
-      cleanups.push(() => row.removeEventListener('mousedown', onDown))
-      cleanups.push(() => row.removeEventListener('mouseup', onUp))
-    })
-
-    const controlButtons = gsap.utils.toArray('.ua-control')
-    controlButtons.forEach((button) => {
-      const onEnter = () => {
-        gsap.to(button, {
-          y: -2,
-          scale: 1.02,
-          boxShadow: '0 12px 22px rgba(32,120,220,0.3)',
-          duration: 0.24,
-          ease: 'power2.out',
-        })
-      }
-
-      const onLeave = () => {
-        gsap.to(button, {
-          y: 0,
-          scale: 1,
-          boxShadow: '0 0 0 rgba(0,0,0,0)',
-          duration: 0.24,
-          ease: 'power2.out',
-        })
-      }
-
-      const onDown = () => {
-        gsap.to(button, { scale: 0.97, duration: 0.12, ease: 'power1.out' })
-      }
-
-      const onUp = () => {
-        gsap.to(button, { scale: 1.02, duration: 0.12, ease: 'power1.out' })
-      }
-
-      button.addEventListener('mouseenter', onEnter)
-      button.addEventListener('mouseleave', onLeave)
-      button.addEventListener('mousedown', onDown)
-      button.addEventListener('mouseup', onUp)
-      cleanups.push(() => button.removeEventListener('mouseenter', onEnter))
-      cleanups.push(() => button.removeEventListener('mouseleave', onLeave))
-      cleanups.push(() => button.removeEventListener('mousedown', onDown))
-      cleanups.push(() => button.removeEventListener('mouseup', onUp))
-    })
-
-    return () => cleanups.forEach((fn) => fn())
-  }, [])
+    gsap.fromTo(
+      rowRefs.current[0],
+      { y: 16, autoAlpha: 0 },
+      { y: 0, autoAlpha: 1, duration: 0.3, ease: 'power2.out' },
+    )
+  }, [accounts.length])
 
   return (
     <main ref={pageRef} className="relative min-h-screen overflow-hidden bg-[#f4f7ff] text-[#1f365d] [perspective:1300px]">
@@ -482,14 +518,14 @@ function UserAccount({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, o
           </h1>
 
           <div ref={controlsRef} className="flex flex-wrap items-center gap-3">
-            <button type="button" className="ua-control rounded-lg border border-[#1e78c8]/45 bg-gradient-to-r from-[#124785] to-[#1e78c8] px-5 py-2 text-base font-semibold text-white lg:text-lg">
+            <button type="button" className="ua-control ua-clickable rounded-lg border border-[#1e78c8]/45 bg-gradient-to-r from-[#124785] to-[#1e78c8] px-5 py-2 text-base font-semibold text-white lg:text-lg">
               Total : 0
             </button>
             <div ref={addUserMenuRef} className="relative">
               <button
                 type="button"
                 onClick={() => setIsAddUserOpen((prev) => !prev)}
-                className="ua-control flex items-center gap-1 rounded-lg border border-[#1e78c8]/45 bg-gradient-to-r from-[#124785] to-[#1e78c8] px-5 py-2 text-base font-semibold text-white lg:text-lg"
+                className="ua-control ua-clickable flex items-center gap-1 rounded-lg border border-[#1e78c8]/45 bg-gradient-to-r from-[#124785] to-[#1e78c8] px-5 py-2 text-base font-semibold text-white lg:text-lg"
               >
                 Add User <IconChevron />
               </button>
@@ -505,7 +541,7 @@ function UserAccount({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, o
                         resetAddUserForm()
                         setIsAddUserFormOpen(true)
                       }}
-                      className="block w-full rounded-lg px-3 py-2 text-left text-sm font-medium text-[#2f3e57] transition hover:bg-[#e8f1ff] hover:text-[#124785]"
+                      className="ua-clickable block w-full rounded-lg px-3 py-2 text-left text-sm font-medium text-[#2f3e57] transition hover:bg-[#e8f1ff] hover:text-[#124785]"
                     >
                       {option}
                     </button>
@@ -517,7 +553,7 @@ function UserAccount({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, o
               <button
                 type="button"
                 onClick={() => setIsExportOpen((prev) => !prev)}
-                className="ua-control flex items-center gap-1 rounded-lg border border-[#1e78c8]/45 bg-gradient-to-r from-[#124785] to-[#1e78c8] px-5 py-2 text-base font-semibold text-white lg:text-lg"
+                className="ua-control ua-clickable flex items-center gap-1 rounded-lg border border-[#1e78c8]/45 bg-gradient-to-r from-[#124785] to-[#1e78c8] px-5 py-2 text-base font-semibold text-white lg:text-lg"
               >
                 Exports <IconChevron />
               </button>
@@ -528,7 +564,7 @@ function UserAccount({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, o
                       key={option}
                       type="button"
                       onClick={() => setIsExportOpen(false)}
-                      className="block w-full rounded-lg px-3 py-2 text-left text-sm font-medium text-[#2f3e57] transition hover:bg-[#e8f1ff] hover:text-[#124785]"
+                      className="ua-clickable block w-full rounded-lg px-3 py-2 text-left text-sm font-medium text-[#2f3e57] transition hover:bg-[#e8f1ff] hover:text-[#124785]"
                     >
                       {option}
                     </button>
@@ -543,7 +579,7 @@ function UserAccount({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, o
                 setIsExportOpen(false)
                 setIsFilterOpen(true)
               }}
-              className="ua-control rounded-lg border border-[#1e78c8]/45 bg-gradient-to-r from-[#124785] to-[#1e78c8] p-2.5 text-white"
+              className="ua-control ua-clickable rounded-lg border border-[#1e78c8]/45 bg-gradient-to-r from-[#124785] to-[#1e78c8] p-2.5 text-white"
             >
               <IconFilter />
             </button>
@@ -603,7 +639,7 @@ function UserAccount({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, o
                       ref={confirmationButtonRef}
                       type="button"
                       onClick={() => setIsConfirmationOpen((prev) => !prev)}
-                      className="flex w-full items-center justify-between rounded-md border border-[#b8c4d8] bg-white px-4 py-2.5 text-left text-base text-[#1f2f45] transition hover:border-[#9fb0cc] focus:border-[#7f8cff]"
+                      className="ua-clickable flex w-full items-center justify-between rounded-md border border-[#b8c4d8] bg-white px-4 py-2.5 text-left text-base text-[#1f2f45] transition hover:border-[#9fb0cc] focus:border-[#7f8cff]"
                     >
                       <span className={filterValues.confirmation === 'Select' ? 'text-[#5f6d82]' : ''}>{filterValues.confirmation}</span>
                       <span className={`transition ${isConfirmationOpen ? 'rotate-180' : ''}`}>
@@ -629,7 +665,7 @@ function UserAccount({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, o
                 <button
                   type="button"
                   onClick={resetFilter}
-                  className="ua-filter-action rounded-lg border border-[#6f73ff] bg-white px-6 py-2 text-xl font-semibold text-[#6f73ff] transition hover:bg-[#eef0ff]"
+                  className="ua-clickable ua-filter-action rounded-lg border border-[#6f73ff] bg-white px-6 py-2 text-xl font-semibold text-[#6f73ff] transition hover:bg-[#eef0ff]"
                 >
                   Cancel
                 </button>
@@ -639,7 +675,7 @@ function UserAccount({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, o
                     setIsConfirmationOpen(false)
                     setIsFilterOpen(false)
                   }}
-                  className="ua-filter-action rounded-lg bg-gradient-to-r from-[#6f73ff] to-[#6a6eea] px-7 py-2 text-xl font-semibold text-white transition hover:brightness-105"
+                  className="ua-clickable ua-filter-action rounded-lg bg-gradient-to-r from-[#6f73ff] to-[#6a6eea] px-7 py-2 text-xl font-semibold text-white transition hover:brightness-105"
                 >
                   Apply
                 </button>
@@ -662,7 +698,7 @@ function UserAccount({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, o
                   setFilterField('confirmation', option)
                   setIsConfirmationOpen(false)
                 }}
-                className="block w-full px-4 py-2 text-left text-base text-[#1f2f45] hover:bg-[#e7edf5]"
+                className="ua-clickable block w-full px-4 py-2 text-left text-base text-[#1f2f45] hover:bg-[#e7edf5]"
               >
                 {option}
               </button>
@@ -678,7 +714,7 @@ function UserAccount({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, o
                 <button
                   type="button"
                   onClick={() => setIsAddUserFormOpen(false)}
-                  className="ua-add-user-field text-4xl font-bold leading-none text-white/80 transition hover:text-white"
+                  className="ua-clickable ua-add-user-field text-4xl font-bold leading-none text-white/80 transition hover:text-white"
                 >
                   X
                 </button>
@@ -756,7 +792,7 @@ function UserAccount({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, o
                 <button
                   type="button"
                   onClick={handleSaveUser}
-                  className="ua-add-user-action rounded-md bg-[#1d73ce] px-5 py-2 text-lg font-semibold text-white transition hover:brightness-110"
+                  className="ua-clickable ua-add-user-action rounded-md bg-[#1d73ce] px-5 py-2 text-lg font-semibold text-white transition hover:brightness-110"
                 >
                   Save
                 </button>
