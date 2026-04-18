@@ -150,6 +150,20 @@ function UserAccount({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, o
   const [openActionIndex, setOpenActionIndex] = useState(null)
   const actionMenuRef = useRef(null)
 
+  // -- Follow-up Form State --
+  const [isFollowUpFormOpen, setIsFollowUpFormOpen] = useState(false)
+  const [followUpFormValues, setFollowUpFormValues] = useState({
+    name: '',
+    email: '',
+    phone: '',
+    sellDoLeadId: '',
+    project: '',
+    channelPartner: '',
+    leadStage: 'Visit Done',
+    leadStatus: 'Active',
+    countStatus: 'Pending',
+  })
+
   useEffect(() => {
     localStorage.setItem('mp_user_accounts', JSON.stringify(accounts))
   }, [accounts])
@@ -178,6 +192,7 @@ function UserAccount({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, o
   const confirmationMenuRef = useRef(null)
   const confirmationButtonRef = useRef(null)
   const confirmationDropdownRef = useRef(null)
+  const followUpFormRef = useRef(null)
 
   useEffect(() => {
     const onPointerDown = (event) => {
@@ -200,6 +215,9 @@ function UserAccount({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, o
       }
       if (actionMenuRef.current && !actionMenuRef.current.contains(event.target)) {
         setOpenActionIndex(null)
+      }
+      if (followUpFormRef.current && !followUpFormRef.current.contains(event.target)) {
+        // Only close if not clicking outside modal
       }
     }
 
@@ -242,6 +260,30 @@ function UserAccount({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, o
 
     return () => tl.kill()
   }, [isAddUserFormOpen])
+
+  useEffect(() => {
+    if (!isFollowUpFormOpen || !followUpFormRef.current) {
+      return
+    }
+
+    const panel = followUpFormRef.current
+    const fields = panel.querySelectorAll('.ua-followup-field')
+    const actions = panel.querySelectorAll('.ua-followup-action')
+
+    const tl = gsap.timeline({ defaults: { ease: 'power3.out' } })
+    tl
+      .fromTo('.ua-followup-overlay', { opacity: 0 }, { opacity: 1, duration: 0.22 })
+      .fromTo(
+        panel,
+        { y: 26, opacity: 0, scale: 1.05, rotateX: -6, transformOrigin: '50% 0%' },
+        { y: 0, opacity: 1, scale: 1, rotateX: 0, duration: 0.4 },
+        '-=0.05',
+      )
+      .fromTo(fields, { y: 10, opacity: 0 }, { y: 0, opacity: 1, stagger: 0.04, duration: 0.2 }, '-=0.2')
+      .fromTo(actions, { y: 8, opacity: 0 }, { y: 0, opacity: 1, stagger: 0.06, duration: 0.2 }, '-=0.12')
+
+    return () => tl.kill()
+  }, [isFollowUpFormOpen])
 
   useEffect(() => {
     if (!isFilterOpen || !filterPanelRef.current) {
@@ -343,6 +385,38 @@ function UserAccount({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, o
     setIsAddUserFormOpen(false)
     setIsAddUserOpen(false)
     resetAddUserForm()
+  }
+
+  const handleOpenFollowUp = (account) => {
+    setFollowUpFormValues({
+      name: account.name,
+      email: account.email,
+      phone: account.phone,
+      sellDoLeadId: account.sellDoLeadId === '-' ? '' : account.sellDoLeadId,
+      project: '',
+      channelPartner: '',
+      leadStage: 'Visit Done',
+      leadStatus: 'Active',
+      countStatus: 'Pending',
+    })
+    setIsFollowUpFormOpen(true)
+  }
+
+  const handleSaveFollowUp = () => {
+    const newLead = {
+      id: Date.now(),
+      ...followUpFormValues,
+      registeredAt: new Date().toISOString().split('T')[0],
+      validityPeriod: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+    }
+
+    const currentLeads = JSON.parse(localStorage.getItem('mp_leads') || '[]')
+    const updatedLeads = [newLead, ...currentLeads]
+    localStorage.setItem('mp_leads', JSON.stringify(updatedLeads))
+
+    setIsFollowUpFormOpen(false)
+    // Automatically navigate to Lead Activities page
+    onOpenLeadActive()
   }
 
   useEffect(() => {
@@ -891,7 +965,7 @@ function UserAccount({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, o
                                 setViewingAccountIndex(index)
                                 setIsDetailsOpen(true)
                               } else {
-                                alert('Add Follow feature coming soon!')
+                                handleOpenFollowUp(row)
                               }
                             }}
                             className="ua-clickable block w-full rounded-md px-3 py-2 text-left text-sm font-medium text-[#304769] hover:bg-[#eef3ff]"
@@ -946,6 +1020,100 @@ function UserAccount({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, o
                   className="ua-clickable rounded-lg bg-[#1d73ce] px-6 py-2 font-bold text-white shadow-lg transition hover:brightness-110"
                 >
                   Close
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {isFollowUpFormOpen && (
+          <div className="ua-followup-overlay fixed inset-0 z-[290] flex items-center justify-center bg-[#0f2244]/30 px-4 py-6 backdrop-blur-[2px]">
+            <div ref={followUpFormRef} className="max-h-[92vh] w-full max-w-4xl overflow-hidden rounded-xl border border-[#1e78c8]/40 bg-[#f4f6fb] shadow-2xl shadow-[#1a1f5f]/35">
+              <div className="flex items-center justify-between bg-gradient-to-r from-[#124785] to-[#1e78c8] px-5 py-4">
+                <h2 className="ua-followup-field text-2xl font-semibold text-white">Add Follow Up</h2>
+                <button
+                  type="button"
+                  onClick={() => setIsFollowUpFormOpen(false)}
+                  className="ua-clickable ua-followup-field text-4xl font-bold leading-none text-white/80 transition hover:text-white"
+                >
+                  &times;
+                </button>
+              </div>
+
+              <div className="grid gap-5 p-5 md:grid-cols-2">
+                <div className="ua-followup-field space-y-2">
+                  <label className="text-sm font-semibold text-[#1f3557]">Name</label>
+                  <input
+                    type="text"
+                    disabled
+                    value={followUpFormValues.name}
+                    className="w-full rounded-md border border-[#c6d4ea] bg-[#e1e8f5] px-4 py-2 text-base text-[#566579] outline-none"
+                  />
+                </div>
+
+                <div className="ua-followup-field space-y-2">
+                  <label className="text-sm font-semibold text-[#1f3557]">Email</label>
+                  <input
+                    type="text"
+                    disabled
+                    value={followUpFormValues.email}
+                    className="w-full rounded-md border border-[#c6d4ea] bg-[#e1e8f5] px-4 py-2 text-base text-[#566579] outline-none"
+                  />
+                </div>
+
+                <div className="ua-followup-field space-y-2">
+                  <label className="text-sm font-semibold text-[#1f3557]">Phone</label>
+                  <input
+                    type="text"
+                    disabled
+                    value={followUpFormValues.phone}
+                    className="w-full rounded-md border border-[#c6d4ea] bg-[#e1e8f5] px-4 py-2 text-base text-[#566579] outline-none"
+                  />
+                </div>
+
+                <div className="ua-followup-field space-y-2">
+                  <label className="text-sm font-semibold text-[#1f3557]">Sell.Do Lead ID</label>
+                  <input
+                    type="text"
+                    value={followUpFormValues.sellDoLeadId}
+                    onChange={(e) => setFollowUpFormValues({...followUpFormValues, sellDoLeadId: e.target.value})}
+                    className="w-full rounded-md border border-[#c6d4ea] bg-white px-4 py-2 text-base text-[#2d4568] outline-none focus:border-[#7d88ff]"
+                  />
+                </div>
+
+                <div className="ua-followup-field space-y-2">
+                  <label className="text-sm font-semibold text-[#1f3557]">Project</label>
+                  <input
+                    type="text"
+                    value={followUpFormValues.project}
+                    onChange={(e) => setFollowUpFormValues({...followUpFormValues, project: e.target.value})}
+                    placeholder="e.g. Mountain View Estates"
+                    className="w-full rounded-md border border-[#c6d4ea] bg-white px-4 py-2 text-base text-[#2d4568] outline-none focus:border-[#7d88ff]"
+                  />
+                </div>
+
+                <div className="ua-followup-field space-y-2">
+                  <label className="text-sm font-semibold text-[#1f3557]">Lead Stage</label>
+                  <select
+                    value={followUpFormValues.leadStage}
+                    onChange={(e) => setFollowUpFormValues({...followUpFormValues, leadStage: e.target.value})}
+                    className="w-full rounded-md border border-[#c6d4ea] bg-white px-4 py-2 text-base text-[#2d4568] outline-none focus:border-[#7d88ff]"
+                  >
+                    <option>Enquiry Received</option>
+                    <option>Visit Done</option>
+                    <option>Interested</option>
+                    <option>Not Interested</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="flex justify-end border-t border-[#d2dbee] bg-white/75 px-5 py-4">
+                <button
+                  type="button"
+                  onClick={handleSaveFollowUp}
+                  className="ua-clickable ua-followup-action rounded-md bg-[#1d73ce] px-6 py-2 text-lg font-semibold text-white transition hover:brightness-110"
+                >
+                  Save to Leads
                 </button>
               </div>
             </div>
