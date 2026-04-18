@@ -7,6 +7,24 @@ gsap.registerPlugin(ScrollTrigger)
 
 const exportOptions = ['All Export', 'Active Filter Export']
 const countStatusOptions = ['Pending', 'Count Given', 'No Count']
+const actionOptions = ['Show', 'Add Follow']
+
+const initialLeads = [
+  {
+    id: 1,
+    name: 'John Doe',
+    email: 'john@example.com',
+    phone: '+91 9876543210',
+    sellDoLeadId: 'SDL-100234',
+    project: 'Mountain View Estates',
+    channelPartner: 'Skyline Realty',
+    leadStage: 'Visit Done',
+    leadStatus: 'Active',
+    countStatus: 'Count Given',
+    registeredAt: '2026-04-10',
+    validityPeriod: '2026-05-10',
+  },
+]
 
 function IconKey() {
   return (
@@ -42,16 +60,25 @@ function LeadActive({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, on
   const [isExportOpen, setIsExportOpen] = useState(false)
   const [isFilterOpen, setIsFilterOpen] = useState(false)
   const [isCountStatusOpen, setIsCountStatusOpen] = useState(false)
-  const [filterValues, setFilterValues] = useState({
-    lead: '',
-    sellDoLeadId: '',
-    leadStage: '',
-    channelPartner: '',
-    expiryDate: '',
-    project: '',
-    countStatus: 'Select',
-    registeredAt: '',
+  const [leads, setLeads] = useState(() => {
+    const saved = localStorage.getItem('mp_leads')
+    if (saved) {
+      try {
+        return JSON.parse(saved)
+      } catch (e) {
+        console.error('Error loading leads', e)
+      }
+    }
+    return initialLeads
   })
+  const [viewingLeadIndex, setViewingLeadIndex] = useState(null)
+  const [isDetailsOpen, setIsDetailsOpen] = useState(false)
+  const [openActionIndex, setOpenActionIndex] = useState(null)
+  const actionMenuRef = useRef(null)
+
+  useEffect(() => {
+    localStorage.setItem('mp_leads', JSON.stringify(leads))
+  }, [leads])
   const pageRef = useRef(null)
   const headerRef = useRef(null)
   const controlsRef = useRef(null)
@@ -72,6 +99,9 @@ function LeadActive({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, on
       if (filterPanelRef.current && !filterPanelRef.current.contains(event.target)) {
         setIsFilterOpen(false)
         setIsCountStatusOpen(false)
+      }
+      if (actionMenuRef.current && !actionMenuRef.current.contains(event.target)) {
+        setOpenActionIndex(null)
       }
     }
 
@@ -468,8 +498,120 @@ function LeadActive({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, on
             <div className="px-4 py-3">Lead validity period</div>
             <div className="px-4 py-3">Actions</div>
           </div>
-          <div className="px-4 py-6 text-sm text-[#7384a3]">No data available.</div>
+          {leads.length === 0 ? (
+            <div className="px-4 py-6 text-sm text-[#7384a3]">No data available.</div>
+          ) : (
+            leads.map((lead, index) => (
+              <div
+                key={lead.id || index}
+                className="la-row hover:bg-[#f8faff] grid min-w-[1320px] grid-cols-[1.9fr_1.5fr_0.9fr_1.35fr_1.2fr_1.3fr_1.1fr_1.4fr_1.5fr_0.8fr] border-t border-[#e8ecf8] transition-colors"
+              >
+                <div className="px-4 py-4 text-sm font-medium text-[#2d4568]">
+                  <div className="font-bold">{lead.name}</div>
+                  <div className="text-xs text-[#7a879a]">{lead.email}</div>
+                  <div className="text-xs text-[#7a879a]">{lead.phone}</div>
+                </div>
+                <div className="px-4 py-4 text-sm text-[#2d4568]">{lead.sellDoLeadId}</div>
+                <div className="px-4 py-4 text-sm text-[#2d4568]">{lead.project}</div>
+                <div className="px-4 py-4 text-sm text-[#2d4568]">{lead.channelPartner}</div>
+                <div className="px-4 py-4 text-sm text-[#2d4568]">{lead.leadStage}</div>
+                <div className="px-4 py-4">
+                  <span className="rounded-full bg-[#e8f5e9] px-2 py-1 text-xs font-bold text-[#2e7d32]">
+                    {lead.leadStatus}
+                  </span>
+                </div>
+                <div className="px-4 py-4 text-sm text-[#2d4568]">{lead.countStatus}</div>
+                <div className="px-4 py-4 text-sm text-[#2d4568]">{lead.registeredAt}</div>
+                <div className="px-4 py-4 text-sm text-[#2d4568]">{lead.validityPeriod}</div>
+                <div className="relative px-4 py-4">
+                  <button
+                    type="button"
+                    onClick={() => setOpenActionIndex(openActionIndex === index ? null : index)}
+                    className="la-clickable rounded-md border border-[#cfd9ff] bg-white px-3 py-1 text-lg font-bold leading-none text-[#6576c9] hover:bg-[#f4f7ff]"
+                  >
+                    ...
+                  </button>
+                  {openActionIndex === index && (
+                    <div
+                      ref={actionMenuRef}
+                      className="absolute bottom-[calc(100%+0.25rem)] right-3 z-[100] w-48 rounded-lg border border-[#d6def5] bg-white p-1.5 shadow-xl"
+                    >
+                      {actionOptions.map((option) => (
+                        <button
+                          key={option}
+                          type="button"
+                          onClick={() => {
+                            setOpenActionIndex(null)
+                            if (option === 'Show') {
+                              setViewingLeadIndex(index)
+                              setIsDetailsOpen(true)
+                            } else {
+                              // Add Follow behavior
+                              alert('Add Follow feature coming soon!')
+                            }
+                          }}
+                          className="la-clickable block w-full rounded-md px-3 py-2 text-left text-sm font-medium text-[#304769] hover:bg-[#eef3ff]"
+                        >
+                          {option}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
+            ))
+          )}
         </div>
+
+        {isDetailsOpen && viewingLeadIndex !== null && (
+          <div className="fixed inset-0 z-[500] flex items-center justify-center bg-[#0f172a]/40 p-4 backdrop-blur-sm">
+            <div className="w-full max-w-4xl overflow-hidden rounded-2xl border border-[#c9d3f8] bg-white shadow-2xl">
+              <div className="flex items-center justify-between bg-gradient-to-r from-[#656ff0] to-[#a165d6] px-6 py-4">
+                <h2 className="text-2xl font-bold text-white">Lead Activity Details</h2>
+                <button
+                  type="button"
+                  onClick={() => setIsDetailsOpen(false)}
+                  className="la-clickable text-3xl font-bold text-white/80 hover:text-white"
+                >
+                  &times;
+                </button>
+              </div>
+              <div className="max-h-[75vh] overflow-y-auto p-6">
+                <div className="grid gap-6 md:grid-cols-2">
+                  {[
+                    { label: 'Name', value: leads[viewingLeadIndex].name },
+                    { label: 'Email', value: leads[viewingLeadIndex].email },
+                    { label: 'Phone', value: leads[viewingLeadIndex].phone },
+                    { label: 'Sell Do Lead ID', value: leads[viewingLeadIndex].sellDoLeadId },
+                    { label: 'Project', value: leads[viewingLeadIndex].project },
+                    { label: 'Channel Partner', value: leads[viewingLeadIndex].channelPartner },
+                    { label: 'Lead Stage', value: leads[viewingLeadIndex].leadStage },
+                    { label: 'Status', value: leads[viewingLeadIndex].leadStatus },
+                    { label: 'Count Status', value: leads[viewingLeadIndex].countStatus },
+                    { label: 'Registered At', value: leads[viewingLeadIndex].registeredAt },
+                    { label: 'Validity Period', value: leads[viewingLeadIndex].validityPeriod },
+                  ].map((item) => (
+                    <div key={item.label} className="border-b border-[#f1f4ff] pb-2">
+                      <div className="text-xs font-semibold uppercase tracking-wider text-[#7a879a]">
+                        {item.label}
+                      </div>
+                      <div className="mt-1 text-lg font-medium text-[#2d4568]">{item.value}</div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <div className="border-t border-[#e4e9f7] bg-[#f8faff] px-6 py-4 text-right">
+                <button
+                  type="button"
+                  onClick={() => setIsDetailsOpen(false)}
+                  className="la-clickable rounded-lg bg-[#656ff0] px-6 py-2 font-bold text-white shadow-lg transition-transform hover:scale-[1.02]"
+                >
+                  Close
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </section>
     </main>
   )

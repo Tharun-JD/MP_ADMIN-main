@@ -70,7 +70,17 @@ function Moreoption({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, on
   const [isFilterOpen, setIsFilterOpen] = useState(false)
   const [isStatusOpen, setIsStatusOpen] = useState(false)
   const [isAddFormOpen, setIsAddFormOpen] = useState(false)
-  const [channelPartners, setChannelPartners] = useState([])
+  const [channelPartners, setChannelPartners] = useState(() => {
+    const saved = localStorage.getItem('mp_channel_partners')
+    if (saved) {
+      try {
+        return JSON.parse(saved)
+      } catch (e) {
+        console.error('Error loading partners from localStorage', e)
+      }
+    }
+    return []
+  })
   const [editingPartnerIndex, setEditingPartnerIndex] = useState(null)
   const [viewingPartnerIndex, setViewingPartnerIndex] = useState(null)
   const [isDetailsOpen, setIsDetailsOpen] = useState(false)
@@ -79,11 +89,21 @@ function Moreoption({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, on
     reraRegistrationNumber: '',
     status: 'Select',
   })
-  const [formValues, setFormValues] = useState(initialFormValues)
+  const [formValues, setFormValues] = useState(() => {
+    const saved = localStorage.getItem('mp_cp_form_draft')
+    if (saved) {
+      try {
+        return JSON.parse(saved)
+      } catch (e) {
+        console.error('Error loading form draft from localStorage', e)
+      }
+    }
+    return initialFormValues
+  })
   const exportOptions = ['All Export', 'Active Filter Export']
   const statusOptions = ['Active', 'Inactive', 'Pending', 'Rejected']
   const accountTypeOptions = ['Please select', 'Savings', 'Current']
-  const actionOptions = ['Edit Channel Partner', 'View partner Details']
+  const actionOptions = ['Show', 'Add Follow']
   const exportMenuRef = useRef(null)
   const filterPanelRef = useRef(null)
   const statusMenuRef = useRef(null)
@@ -96,6 +116,15 @@ function Moreoption({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, on
   const tableRef = useRef(null)
   const bgGlowRefs = useRef([])
   const [openActionIndex, setOpenActionIndex] = useState(null)
+
+  // Persistent storage for channel partners and form drafts
+  useEffect(() => {
+    localStorage.setItem('mp_channel_partners', JSON.stringify(channelPartners))
+  }, [channelPartners])
+
+  useEffect(() => {
+    localStorage.setItem('mp_cp_form_draft', JSON.stringify(formValues))
+  }, [formValues])
 
   useEffect(() => {
     const onPointerDown = (event) => {
@@ -1096,7 +1125,7 @@ function Moreoption({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, on
                           type="button"
                           onClick={() => {
                             setOpenActionIndex(null)
-                            if (option === 'Edit Channel Partner') {
+                            if (option === 'Add Follow') {
                               setFormValues({
                                 ...initialFormValues,
                                 ...partner,
@@ -1104,7 +1133,7 @@ function Moreoption({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, on
                               })
                               setEditingPartnerIndex(index)
                               setIsAddFormOpen(true)
-                            } else if (option === 'View partner Details') {
+                            } else if (option === 'Show') {
                               setViewingPartnerIndex(index)
                               setIsDetailsOpen(true)
                             }

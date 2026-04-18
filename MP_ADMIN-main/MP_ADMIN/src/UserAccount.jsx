@@ -109,7 +109,17 @@ function IconFilter() {
 }
 
 function UserAccount({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, onOpenChannelPartners, onOpenEmails, onOpenSms, onSignOut }) {
-  const [accounts, setAccounts] = useState([])
+  const [accounts, setAccounts] = useState(() => {
+    const saved = localStorage.getItem('mp_user_accounts')
+    if (saved) {
+      try {
+        return JSON.parse(saved)
+      } catch (e) {
+        console.error('Error loading accounts', e)
+      }
+    }
+    return []
+  })
   const [isAddUserOpen, setIsAddUserOpen] = useState(false)
   const [isAddUserFormOpen, setIsAddUserFormOpen] = useState(false)
   const [selectedAddUserRole, setSelectedAddUserRole] = useState('Add Superadmin')
@@ -117,14 +127,36 @@ function UserAccount({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, o
   const [isFilterOpen, setIsFilterOpen] = useState(false)
   const [isConfirmationOpen, setIsConfirmationOpen] = useState(false)
   const [confirmationDropdownPos, setConfirmationDropdownPos] = useState({ top: 0, left: 0, width: 0 })
-  const [addUserFormValues, setAddUserFormValues] = useState({
-    firstName: '',
-    lastName: '',
-    email: '',
-    phone: '',
-    countryCode: '+91',
-    timeZone: '(GMT+05:30) Mumbai',
+  const [addUserFormValues, setAddUserFormValues] = useState(() => {
+    const saved = localStorage.getItem('mp_ua_form_draft')
+    if (saved) {
+      try {
+        return JSON.parse(saved)
+      } catch (e) {
+        console.error('Error loading form draft', e)
+      }
+    }
+    return {
+      firstName: '',
+      lastName: '',
+      email: '',
+      phone: '',
+      countryCode: '+91',
+      timeZone: '(GMT+05:30) Mumbai',
+    }
   })
+  const [viewingAccountIndex, setViewingAccountIndex] = useState(null)
+  const [isDetailsOpen, setIsDetailsOpen] = useState(false)
+  const [openActionIndex, setOpenActionIndex] = useState(null)
+  const actionMenuRef = useRef(null)
+
+  useEffect(() => {
+    localStorage.setItem('mp_user_accounts', JSON.stringify(accounts))
+  }, [accounts])
+
+  useEffect(() => {
+    localStorage.setItem('mp_ua_form_draft', JSON.stringify(addUserFormValues))
+  }, [addUserFormValues])
   const [filterValues, setFilterValues] = useState({
     nameEmailPhone: '',
     sellDoLeadId: '',
@@ -165,6 +197,9 @@ function UserAccount({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, o
       }
       if (filterPanelRef.current && !filterPanelRef.current.contains(event.target)) {
         setIsFilterOpen(false)
+      }
+      if (actionMenuRef.current && !actionMenuRef.current.contains(event.target)) {
+        setOpenActionIndex(null)
       }
     }
 
@@ -833,12 +868,89 @@ function UserAccount({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, o
                   <div className="px-4 py-3 text-sm font-semibold text-[#344f7f]">{row.payment}</div>
                   <div className="px-4 py-3 text-sm font-semibold text-[#344f7f]">{row.role}</div>
                   <div className="px-4 py-3 text-sm font-semibold text-[#344f7f]">{row.status}</div>
-                  <div className="px-4 py-3 text-center text-base font-semibold text-[#344f7f]">{row.action}</div>
+                  <div className="relative px-4 py-3 text-center">
+                    <button
+                      type="button"
+                      onClick={() => setOpenActionIndex(openActionIndex === index ? null : index)}
+                      className="ua-clickable rounded-md border border-[#cfd9ff] bg-white px-3 py-1 text-lg font-bold leading-none text-[#6576c9] hover:bg-[#f4f7ff]"
+                    >
+                      ...
+                    </button>
+                    {openActionIndex === index && (
+                      <div
+                        ref={actionMenuRef}
+                        className="absolute bottom-[calc(100%+0.25rem)] right-3 z-[100] w-48 rounded-lg border border-[#d6def5] bg-white p-1.5 shadow-xl"
+                      >
+                        {['Show', 'Add Follow'].map((option) => (
+                          <button
+                            key={option}
+                            type="button"
+                            onClick={() => {
+                              setOpenActionIndex(null)
+                              if (option === 'Show') {
+                                setViewingAccountIndex(index)
+                                setIsDetailsOpen(true)
+                              } else {
+                                alert('Add Follow feature coming soon!')
+                              }
+                            }}
+                            className="ua-clickable block w-full rounded-md px-3 py-2 text-left text-sm font-medium text-[#304769] hover:bg-[#eef3ff]"
+                          >
+                            {option}
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                  </div>
                 </div>
               ))
             )}
           </div>
         </div>
+
+        {isDetailsOpen && viewingAccountIndex !== null && (
+          <div className="fixed inset-0 z-[500] flex items-center justify-center bg-[#0a1222]/45 p-4 backdrop-blur-sm">
+            <div className="w-full max-w-4xl overflow-hidden rounded-2xl border border-[#c9d3f8] bg-[#f4f6fb] shadow-2xl shadow-[#1a1f5f]/35">
+              <div className="flex items-center justify-between bg-gradient-to-r from-[#124785] to-[#1e78c8] px-6 py-4">
+                <h2 className="text-2xl font-bold text-white">User Account Details</h2>
+                <button
+                  type="button"
+                  onClick={() => setIsDetailsOpen(false)}
+                  className="ua-clickable text-3xl font-bold text-white/80 transition hover:text-white"
+                >
+                  &times;
+                </button>
+              </div>
+              <div className="max-h-[75vh] overflow-y-auto p-6">
+                <div className="grid gap-6 md:grid-cols-2">
+                  {[
+                    { label: 'Name', value: accounts[viewingAccountIndex].name },
+                    { label: 'Email', value: accounts[viewingAccountIndex].email },
+                    { label: 'Phone', value: `${accounts[viewingAccountIndex].countryCode || ''} ${accounts[viewingAccountIndex].phone}`.trim() },
+                    { label: 'Sell.Do Lead ID', value: accounts[viewingAccountIndex].sellDoLeadId },
+                    { label: 'Role', value: accounts[viewingAccountIndex].role },
+                    { label: 'Payment Status', value: accounts[viewingAccountIndex].payment },
+                    { label: 'Status', value: accounts[viewingAccountIndex].status },
+                  ].map((item) => (
+                    <div key={item.label} className="border-b border-[#dbe4f7] pb-2">
+                        <div className="text-xs font-semibold uppercase tracking-wider text-[#6e83a6]">{item.label}</div>
+                        <div className="mt-1 text-lg font-semibold text-[#213a64]">{item.value}</div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <div className="border-t border-[#d2dbee] bg-white/75 px-6 py-4 text-right">
+                <button
+                  type="button"
+                  onClick={() => setIsDetailsOpen(false)}
+                  className="ua-clickable rounded-lg bg-[#1d73ce] px-6 py-2 font-bold text-white shadow-lg transition hover:brightness-110"
+                >
+                  Close
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </section>
     </main>
   )
