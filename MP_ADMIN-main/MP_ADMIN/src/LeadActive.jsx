@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import { createPortal } from 'react-dom'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import Navbar from './Navbar.jsx'
@@ -74,6 +75,7 @@ function LeadActive({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, on
   const [viewingLeadIndex, setViewingLeadIndex] = useState(null)
   const [isDetailsOpen, setIsDetailsOpen] = useState(false)
   const [openActionIndex, setOpenActionIndex] = useState(null)
+  const [menuAnchorRect, setMenuAnchorRect] = useState(null)
   const actionMenuRef = useRef(null)
 
   useEffect(() => {
@@ -257,7 +259,7 @@ function LeadActive({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, on
   }
 
   return (
-    <main ref={pageRef} className="relative min-h-screen overflow-x-hidden bg-[#f2f4f9] text-[#1f365d]">
+    <main ref={pageRef} className="relative min-h-screen overflow-x-hidden bg-[#f8fafc] text-[#0f172a]">
       <div className="pointer-events-none absolute inset-0">
         <div className="absolute inset-0 bg-[linear-gradient(transparent_36px,rgba(129,144,177,0.08)_37px),linear-gradient(90deg,transparent_36px,rgba(129,144,177,0.08)_37px)] bg-[size:37px_37px]" />
         <div ref={(n) => (bgGlowRefs.current[0] = n)} className="absolute -left-14 top-12 h-56 w-56 rounded-full bg-[#6e70ff]/15 blur-3xl" />
@@ -277,20 +279,20 @@ function LeadActive({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, on
 
       <section className="relative z-10 mx-auto w-full max-w-[94rem] overflow-visible px-4 py-7 lg:px-6">
         <div ref={headerRef} className="relative z-30 flex flex-wrap items-center justify-between gap-4">
-          <h1 className="flex items-center gap-3 font-['Trebuchet_MS','Segoe_UI',sans-serif] text-2xl font-semibold tracking-[0.02em] text-[#1b2d49] lg:text-[2.1rem]">
-            <span className="text-[#1b2d49]"><IconKey /></span>
+          <h1 className="flex items-center gap-3 font-sans text-2xl font-bold tracking-tight text-[#0f172a] lg:text-3xl">
+            <span className="text-[#6366f1]"><IconKey /></span>
             Lead Activities
           </h1>
 
           <div ref={controlsRef} className="flex items-center gap-3">
-            <button type="button" className="la-control la-clickable rounded-md border border-[#7f85ff]/55 bg-[#f9fbff] px-5 py-2.5 text-xl font-semibold leading-none text-[#6f63ff]">
+            <button type="button" className="la-control la-clickable rounded-lg border border-[#e2e8f0] bg-white px-5 py-2.5 text-base font-bold text-[#475569] shadow-sm">
               Total : 0
             </button>
             <div ref={exportMenuRef} className="relative z-40">
               <button
                 type="button"
                 onClick={() => setIsExportOpen((prev) => !prev)}
-                className="la-control la-clickable flex items-center gap-1 rounded-md border border-[#7f85ff]/55 bg-[#f9fbff] px-5 py-2.5 text-xl font-semibold leading-none text-[#6f63ff]"
+                className="la-control la-clickable flex items-center gap-1 rounded-lg bg-[#6366f1] px-5 py-2.5 text-base font-bold text-white shadow-md shadow-indigo-100 transition hover:bg-[#4f46e5]"
               >
                 Exports <IconChevron />
               </button>
@@ -315,7 +317,7 @@ function LeadActive({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, on
                 setIsExportOpen(false)
                 setIsFilterOpen(true)
               }}
-              className="la-control la-clickable rounded-md border border-[#7f85ff]/55 bg-[#f9fbff] p-2.5 text-[#6f63ff]"
+              className="la-control la-clickable rounded-lg border border-[#e2e8f0] bg-white p-2.5 text-[#475569] shadow-sm"
             >
               <IconFilter />
             </button>
@@ -485,8 +487,8 @@ function LeadActive({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, on
           </div>
         )}
 
-        <div ref={tableRef} className="relative z-10 mt-6 overflow-x-auto rounded-sm border border-[#8f83f4]/35 bg-white shadow-xl shadow-[#5f63de]/10">
-          <div className="grid min-w-[1320px] grid-cols-[1.9fr_1.5fr_0.9fr_1.35fr_1.2fr_1.3fr_1.1fr_1.4fr_1.5fr_0.8fr] bg-[linear-gradient(95deg,#656ff0_0%,#a165d6_100%)] text-lg font-semibold tracking-wide text-white">
+        <div ref={tableRef} className="relative z-10 mt-6 overflow-x-auto overflow-y-visible no-scrollbar rounded-xl border border-[#e2e8f0] bg-white shadow-xl shadow-slate-200/40">
+          <div className="grid min-w-[1320px] grid-cols-[1.9fr_1.5fr_0.9fr_1.35fr_1.2fr_1.3fr_1.1fr_1.4fr_1.5fr_0.8fr] bg-gradient-to-r from-[#f0f9ff] to-[#e0f2fe] border-b border-[#f1f5f9] text-sm font-bold tracking-wider text-[#475569]">
             <div className="px-4 py-3">Name/Email/Phone</div>
             <div className="px-4 py-3">Sell Do Lead ID</div>
             <div className="px-4 py-3">Project</div>
@@ -504,58 +506,122 @@ function LeadActive({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, on
             leads.map((lead, index) => (
               <div
                 key={lead.id || index}
-                className="la-row hover:bg-[#f8faff] grid min-w-[1320px] grid-cols-[1.9fr_1.5fr_0.9fr_1.35fr_1.2fr_1.3fr_1.1fr_1.4fr_1.5fr_0.8fr] border-t border-[#e8ecf8] transition-colors"
+                className="la-row hover:bg-[#f8faff]/50 grid min-w-[1320px] grid-cols-[1.9fr_1.5fr_0.9fr_1.35fr_1.2fr_1.3fr_1.1fr_1.4fr_1.5fr_0.8fr] items-center border-t border-[#f1f5f9] transition-colors"
               >
-                <div className="px-4 py-4 text-sm font-medium text-[#2d4568]">
-                  <div className="font-bold">{lead.name}</div>
-                  <div className="text-xs text-[#7a879a]">{lead.email}</div>
-                  <div className="text-xs text-[#7a879a]">{lead.phone}</div>
+                <div className="flex items-center gap-4 px-4 py-5 text-sm font-medium text-[#2d4568]">
+                  <div className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-full bg-[#eff6ff] text-lg font-bold text-[#3b82f6]">
+                    {lead.name.charAt(0).toLowerCase()}
+                  </div>
+                  <div>
+                    <div className="text-base font-bold text-[#0f172a]">{lead.name}</div>
+                    <div className="text-[11px] text-[#64748b]">
+                      <span className="font-semibold uppercase text-[#94a3b8] mr-1">en:</span>{lead.email}
+                    </div>
+                    <div className="text-[11px] text-[#64748b]">
+                      <span className="font-semibold uppercase text-[#94a3b8] mr-1">ph:</span>{lead.phone}
+                    </div>
+                  </div>
                 </div>
-                <div className="px-4 py-4 text-sm text-[#2d4568]">{lead.sellDoLeadId}</div>
-                <div className="px-4 py-4 text-sm text-[#2d4568]">{lead.project}</div>
-                <div className="px-4 py-4 text-sm text-[#2d4568]">{lead.channelPartner}</div>
-                <div className="px-4 py-4 text-sm text-[#2d4568]">{lead.leadStage}</div>
                 <div className="px-4 py-4">
-                  <span className="rounded-full bg-[#e8f5e9] px-2 py-1 text-xs font-bold text-[#2e7d32]">
+                  <span className="inline-block rounded bg-[#eff6ff] px-2 py-0.5 text-[11px] font-bold text-[#4f46e5] border border-[#e0e7ff]">
+                    {lead.sellDoLeadId}
+                  </span>
+                </div>
+                <div className="px-4 py-4 text-sm font-semibold text-[#475569]">{lead.project}</div>
+                <div className="px-4 py-4 text-sm font-semibold text-[#475569]">{lead.channelPartner}</div>
+                <div className="px-4 py-4">
+                  <span className={`inline-block rounded-full px-3 py-1 text-[11px] font-bold ${
+                    lead.leadStage === 'Fresh' ? 'bg-[#fff7ed] text-[#ea580c]' : 'bg-[#eff6ff] text-[#2563eb]'
+                  }`}>
+                    {lead.leadStage}
+                  </span>
+                </div>
+                <div className="px-4 py-4">
+                  <span className="inline-block rounded bg-[#f1f5f9] px-3 py-1 text-[11px] font-bold text-[#475569] border border-[#e2e8f0]">
                     {lead.leadStatus}
                   </span>
                 </div>
-                <div className="px-4 py-4 text-sm text-[#2d4568]">{lead.countStatus}</div>
-                <div className="px-4 py-4 text-sm text-[#2d4568]">{lead.registeredAt}</div>
-                <div className="px-4 py-4 text-sm text-[#2d4568]">{lead.validityPeriod}</div>
-                <div className="relative px-4 py-4">
+                <div className="flex items-center gap-2 px-4 py-4 text-sm font-bold text-[#0f172a]">
+                  <span className="h-2 w-2 rounded-full bg-[#10b981]"></span>
+                  {lead.countStatus}
+                </div>
+                <div className="px-4 py-4 text-sm font-semibold text-[#64748b]">{lead.registeredAt}</div>
+                <div className="px-4 py-4 text-sm font-semibold text-[#64748b]">{lead.validityPeriod}</div>
+                <div className="relative px-4 py-4 text-center">
                   <button
                     type="button"
-                    onClick={() => setOpenActionIndex(openActionIndex === index ? null : index)}
-                    className="la-clickable rounded-md border border-[#cfd9ff] bg-white px-3 py-1 text-lg font-bold leading-none text-[#6576c9] hover:bg-[#f4f7ff]"
+                    onClick={(e) => {
+                      if (openActionIndex === index) {
+                        setOpenActionIndex(null)
+                        setMenuAnchorRect(null)
+                      } else {
+                        const rect = e.currentTarget.getBoundingClientRect()
+                        setMenuAnchorRect({
+                          top: rect.bottom + window.scrollY,
+                          left: rect.right + window.scrollX
+                        })
+                        setOpenActionIndex(index)
+                      }
+                    }}
+                    className={`la-clickable flex h-10 w-10 items-center justify-center rounded-full transition-all duration-300 ${openActionIndex === index ? 'bg-[#312e81] text-white shadow-lg' : 'bg-[#eff6ff] text-[#312e81] hover:bg-[#312e81] hover:text-white'}`}
                   >
-                    ...
+                    <span className="text-xl font-bold leading-none mb-1">...</span>
                   </button>
-                  {openActionIndex === index && (
+                  {openActionIndex === index && menuAnchorRect && createPortal(
                     <div
-                      ref={actionMenuRef}
-                      className="absolute bottom-[calc(100%+0.25rem)] right-3 z-[100] w-48 rounded-lg border border-[#d6def5] bg-white p-1.5 shadow-xl"
+                      className="fixed z-[999] w-72 overflow-hidden rounded-[2.5rem] border border-white bg-white/90 p-4 shadow-[0_25px_70px_rgba(49,46,129,0.25)] backdrop-blur-3xl animate-elastic-pop"
+                      style={{ 
+                        top: `${menuAnchorRect.top - window.scrollY + 12}px`, 
+                        left: `${menuAnchorRect.left - window.scrollX - 260}px` 
+                      }}
                     >
-                      {actionOptions.map((option) => (
+                      <div className="absolute inset-0 bg-gradient-to-br from-[#312e81]/5 to-transparent opacity-50" />
+                      <div className="relative space-y-1.5">
                         <button
-                          key={option}
                           type="button"
                           onClick={() => {
                             setOpenActionIndex(null)
-                            if (option === 'Show') {
-                              setViewingLeadIndex(index)
-                              setIsDetailsOpen(true)
-                            } else {
-                              // Add Follow behavior
-                              alert('Add Follow feature coming soon!')
-                            }
+                            setMenuAnchorRect(null)
+                            setViewingLeadIndex(index)
+                            setIsDetailsOpen(true)
                           }}
-                          className="la-clickable block w-full rounded-md px-3 py-2 text-left text-sm font-medium text-[#304769] hover:bg-[#eef3ff]"
+                          className="group flex w-full items-center gap-4 rounded-2xl p-3 text-left transition-all duration-300 hover:bg-[#312e81] hover:text-white hover:shadow-lg hover:shadow-indigo-200"
                         >
-                          {option}
+                          <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-[#eff6ff] text-[#312e81] transition-colors group-hover:bg-white/20 group-hover:text-white">
+                            <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                              <circle cx="12" cy="12" r="3" />
+                            </svg>
+                          </div>
+                          <div>
+                            <div className="text-base font-bold">View Details</div>
+                            <div className="text-[10px] opacity-70 font-medium">Full profile & history</div>
+                          </div>
                         </button>
-                      ))}
-                    </div>
+                        
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setOpenActionIndex(null)
+                            setMenuAnchorRect(null)
+                            alert('Add Follow feature coming soon!')
+                          }}
+                          className="group flex w-full items-center gap-4 rounded-2xl p-3 text-left transition-all duration-300 hover:bg-[#ea580c] hover:text-white hover:shadow-lg hover:shadow-orange-200"
+                        >
+                          <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-[#fff7ed] text-[#ea580c] transition-colors group-hover:bg-white/20 group-hover:text-white">
+                            <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                              <line x1="12" y1="5" x2="12" y2="19" />
+                              <line x1="5" y1="12" x2="19" y2="12" />
+                            </svg>
+                          </div>
+                          <div>
+                            <div className="text-base font-bold">Add Follow-up</div>
+                            <div className="text-[10px] opacity-70 font-medium">Schedule next activity</div>
+                          </div>
+                        </button>
+                      </div>
+                    </div>,
+                    document.body
                   )}
                 </div>
               </div>
@@ -564,14 +630,14 @@ function LeadActive({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, on
         </div>
 
         {isDetailsOpen && viewingLeadIndex !== null && (
-          <div className="fixed inset-0 z-[500] flex items-center justify-center bg-[#0f172a]/40 p-4 backdrop-blur-sm">
-            <div className="w-full max-w-4xl overflow-hidden rounded-2xl border border-[#c9d3f8] bg-white shadow-2xl">
-              <div className="flex items-center justify-between bg-gradient-to-r from-[#656ff0] to-[#a165d6] px-6 py-4">
-                <h2 className="text-2xl font-bold text-white">Lead Activity Details</h2>
+          <div className="fixed inset-0 z-[500] flex items-center justify-center bg-[#0f172a]/10 p-4 backdrop-blur-sm">
+            <div className="w-full max-w-4xl overflow-hidden rounded-2xl border border-[#e2e8f0] bg-white shadow-2xl shadow-slate-200/50">
+              <div className="flex items-center justify-between border-b border-[#e2e8f0] bg-gradient-to-r from-[#f0f9ff] to-[#e0f2fe] px-6 py-5">
+                <h2 className="text-2xl font-bold tracking-tight text-[#0f172a]">Lead Activity Details</h2>
                 <button
                   type="button"
                   onClick={() => setIsDetailsOpen(false)}
-                  className="la-clickable text-3xl font-bold text-white/80 hover:text-white"
+                  className="la-clickable text-3xl font-bold leading-none text-[#64748b] transition hover:text-[#0f172a]"
                 >
                   &times;
                 </button>
@@ -600,11 +666,11 @@ function LeadActive({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, on
                   ))}
                 </div>
               </div>
-              <div className="border-t border-[#e4e9f7] bg-[#f8faff] px-6 py-4 text-right">
+              <div className="border-t border-[#e2e8f0] bg-gradient-to-r from-[#f0f9ff] to-[#e0f2fe] px-6 py-5 text-right">
                 <button
                   type="button"
                   onClick={() => setIsDetailsOpen(false)}
-                  className="la-clickable rounded-lg bg-[#656ff0] px-6 py-2 font-bold text-white shadow-lg transition-transform hover:scale-[1.02]"
+                  className="la-clickable rounded-xl bg-[#6366f1] px-8 py-2.5 text-base font-bold text-white shadow-lg shadow-indigo-100 transition hover:bg-[#4f46e5]"
                 >
                   Close
                 </button>

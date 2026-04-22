@@ -171,13 +171,13 @@ function Navbar({
 
   return (
     <>
-      <header className={`${className} sticky top-0 z-[200] border-b border-[#2f3fa9]/10 bg-white/85 backdrop-blur overflow-visible`}>
+      <header className={`${className} sticky top-0 z-[200] border-b border-[#e2e8f0] bg-gradient-to-r from-[#f0f9ff] to-[#e0f2fe] backdrop-blur-md overflow-visible`}>
         <div className="pointer-events-none absolute inset-0 overflow-hidden">
           <div className="absolute -left-16 top-0 h-full w-[26rem] rotate-[4deg] bg-gradient-to-r from-transparent via-[#2f3fa9]/18 to-transparent blur-xl" />
           <div className="absolute right-0 top-0 h-full w-[22rem] rotate-[-3deg] bg-gradient-to-r from-transparent via-[#1a79d1]/14 to-transparent blur-xl" />
         </div>
         <div className="relative mx-auto flex w-full max-w-7xl items-center justify-between gap-4 overflow-visible px-4 py-4 lg:px-6">
-          <div className="text-xl font-black tracking-tight text-[#2f3fa9]">MP Developers</div>
+          <div className="text-xl font-black tracking-tight text-[#6366f1]">MP Developers</div>
 
           <nav className="flex flex-wrap items-center gap-2 lg:gap-3">
             {navItems.map((item) => (
@@ -195,13 +195,13 @@ function Navbar({
                     if (item.label === 'UserAccount') onOpenUserAccount?.()
                     if (item.label === 'Lead Activity') onOpenLeadActive?.()
                   }}
-                  className={`nav-btn flex items-center gap-1.5 rounded-lg border border-[#2f3fa9]/15 bg-white px-3 py-2 text-sm font-semibold transition hover:border-[#1a79d1]/50 hover:text-[#1a79d1] ${
+                  className={`nav-btn flex items-center gap-1.5 rounded-lg border border-[#e2e8f0] bg-white px-3 py-2 text-sm font-semibold transition hover:border-[#6366f1]/50 hover:text-[#6366f1] ${
                     (activePage === 'dashboard' && item.label === 'Dashbord') ||
                     (activePage === 'user-account' && item.label === 'UserAccount') ||
                     (activePage === 'lead-active' && item.label === 'Lead Activity') ||
                     ((activePage === 'channel-partners' || activePage === 'emails' || activePage === 'sms') && item.label === 'More')
-                      ? 'text-[#1a79d1]'
-                      : 'text-[#1a3c6b]'
+                      ? 'text-[#6366f1] border-[#6366f1]/20'
+                      : 'text-[#475569]'
                   }`}
                 >
                   <Icon name={item.icon} className="h-4 w-4" />
@@ -246,7 +246,7 @@ function Navbar({
                 setOpenMenu(null)
                 setOpenWelcome((current) => !current)
               }}
-              className="nav-btn flex items-center gap-1.5 rounded-xl bg-gradient-to-r from-[#1a79d1] to-[#2f3fa9] px-4 py-2 text-sm font-bold text-white shadow-lg shadow-[#2f3fa9]/20"
+              className="nav-btn flex items-center gap-1.5 rounded-xl bg-[#6366f1] px-4 py-2 text-sm font-bold text-white shadow-lg shadow-indigo-100 transition hover:bg-[#4f46e5]"
             >
               <Icon name="user" className="h-4 w-4" />
               Welcome
@@ -292,18 +292,16 @@ function Navbar({
       </header>
 
       {isProfileOpen && (
-        <div className="cmp-overlay fixed inset-0 z-[360] flex items-center justify-center bg-[#0a1222]/45 p-3 backdrop-blur-[2px]">
-          <div ref={profilePanelRef} className="relative max-h-[90vh] w-full max-w-4xl overflow-hidden rounded-xl border border-[#8f7bf6]/40 bg-[#f4f6fb] shadow-2xl shadow-[#1a1f5f]/35">
-            <div className="cmp-accent pointer-events-none absolute -left-6 top-6 h-12 w-12 rounded-full bg-[#89a0ff]/40 blur-md" />
-            <div className="cmp-accent pointer-events-none absolute right-10 top-10 h-14 w-14 rounded-full bg-[#e18dff]/35 blur-md" />
-            <div className="flex items-center justify-between bg-[linear-gradient(90deg,#6f7df3_0%,#9d67df_100%)] px-5 py-3.5">
-              <h2 className="cmp-field text-2xl font-semibold text-white">Edit Channel Partner Manager</h2>
+        <div className="cmp-overlay fixed inset-0 z-[360] flex items-center justify-center bg-[#0f172a]/10 p-3 backdrop-blur-sm">
+          <div ref={profilePanelRef} className="relative max-h-[90vh] w-full max-w-4xl overflow-hidden rounded-2xl border border-[#e2e8f0] bg-white shadow-2xl shadow-slate-200/50">
+            <div className="flex items-center justify-between border-b border-[#e2e8f0] bg-gradient-to-r from-[#f0f9ff] to-[#e0f2fe] px-6 py-5">
+              <h2 className="cmp-field text-2xl font-bold tracking-tight text-[#0f172a]">Edit Channel Partner Manager</h2>
               <button
                 type="button"
                 onClick={() => setIsProfileOpen(false)}
-                className="cmp-field text-3xl font-bold leading-none text-white/80 transition hover:text-white"
+                className="cmp-field text-3xl font-bold leading-none text-[#64748b] transition hover:text-[#0f172a]"
               >
-                X
+                &times;
               </button>
             </div>
 
@@ -367,11 +365,11 @@ function Navbar({
               </div>
             </div>
 
-            <div className="flex justify-end border-t border-[#d2dbee] bg-white/75 px-5 py-4">
+            <div className="flex justify-end border-t border-[#f1f5f9] bg-[#f8fafc] px-6 py-5">
               <button
                 type="button"
                 onClick={() => setIsProfileOpen(false)}
-                className="cmp-field rounded-md bg-[#1d73ce] px-5 py-2 text-lg font-semibold text-white transition hover:brightness-110"
+                className="cmp-field rounded-xl bg-[#6366f1] px-8 py-2.5 text-base font-bold text-white shadow-lg shadow-indigo-100 transition hover:bg-[#4f46e5]"
               >
                 Save
               </button>
@@ -381,18 +379,16 @@ function Navbar({
       )}
 
       {isPasswordOpen && (
-        <div className="cpp-overlay fixed inset-0 z-[365] flex items-center justify-center bg-[#0a1222]/45 p-3 backdrop-blur-[2px]">
-          <div ref={passwordPanelRef} className="relative max-h-[88vh] w-full max-w-4xl overflow-hidden rounded-xl border border-[#8f7bf6]/40 bg-[#f4f6fb] shadow-2xl shadow-[#1a1f5f]/35">
-            <div className="cpp-accent pointer-events-none absolute -left-6 top-6 h-12 w-12 rounded-full bg-[#89a0ff]/40 blur-md" />
-            <div className="cpp-accent pointer-events-none absolute right-10 top-10 h-14 w-14 rounded-full bg-[#e18dff]/35 blur-md" />
-            <div className="flex items-center justify-between bg-[linear-gradient(90deg,#6f7df3_0%,#9d67df_100%)] px-5 py-3.5">
-              <h2 className="cpp-field text-2xl font-semibold text-white">Change Password</h2>
+        <div className="cpp-overlay fixed inset-0 z-[365] flex items-center justify-center bg-[#0f172a]/10 p-3 backdrop-blur-sm">
+          <div ref={passwordPanelRef} className="relative max-h-[88vh] w-full max-w-4xl overflow-hidden rounded-2xl border border-[#e2e8f0] bg-white shadow-2xl shadow-slate-200/50">
+            <div className="flex items-center justify-between border-b border-[#e2e8f0] bg-gradient-to-r from-[#f0f9ff] to-[#e0f2fe] px-6 py-5">
+              <h2 className="cpp-field text-2xl font-bold tracking-tight text-[#0f172a]">Change Password</h2>
               <button
                 type="button"
                 onClick={() => setIsPasswordOpen(false)}
-                className="cpp-field text-3xl font-bold leading-none text-white/80 transition hover:text-white"
+                className="cpp-field text-3xl font-bold leading-none text-[#64748b] transition hover:text-[#0f172a]"
               >
-                X
+                &times;
               </button>
             </div>
 
@@ -418,11 +414,11 @@ function Navbar({
               </div>
             </div>
 
-            <div className="flex justify-end border-t border-[#d2dbee] bg-white/75 px-5 py-4">
+            <div className="flex justify-end border-t border-[#f1f5f9] bg-[#f8fafc] px-6 py-5">
               <button
                 type="button"
                 onClick={handleChangePassword}
-                className="cpp-field rounded-md bg-[#1d73ce] px-5 py-2 text-lg font-semibold text-white transition hover:brightness-110"
+                className="cpp-field rounded-xl bg-[#6366f1] px-8 py-2.5 text-base font-bold text-white shadow-lg shadow-indigo-100 transition hover:bg-[#4f46e5]"
               >
                 Change Password
               </button>

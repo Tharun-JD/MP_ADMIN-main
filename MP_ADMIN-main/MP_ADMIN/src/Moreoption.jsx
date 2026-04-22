@@ -429,10 +429,10 @@ function Moreoption({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, on
       : []
 
   return (
-    <main ref={pageRef} className="relative min-h-screen bg-[#f4f6fb] text-[#1f2f45]">
+    <main ref={pageRef} className="relative min-h-screen bg-[#f8fafc] text-[#0f172a]">
       <div className="pointer-events-none absolute inset-0">
-        <div ref={(n) => (bgGlowRefs.current[0] = n)} className="absolute -left-16 top-10 h-64 w-64 rounded-full bg-[#6f73ff]/14 blur-3xl" />
-        <div ref={(n) => (bgGlowRefs.current[1] = n)} className="absolute right-0 top-20 h-72 w-72 rounded-full bg-[#44a5dc]/12 blur-3xl" />
+        <div ref={(n) => (bgGlowRefs.current[0] = n)} className="absolute -left-16 top-10 h-64 w-64 rounded-full bg-[#6366f1]/05 blur-3xl" />
+        <div ref={(n) => (bgGlowRefs.current[1] = n)} className="absolute right-0 top-20 h-72 w-72 rounded-full bg-[#3b82f6]/05 blur-3xl" />
       </div>
       <Navbar
         activePage="channel-partners"
@@ -457,13 +457,13 @@ function Moreoption({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, on
         </div>
 
         <div ref={headerRef} className="flex flex-wrap items-center justify-between gap-4">
-          <h1 className="flex items-center gap-3 text-2xl font-semibold text-[#1f2f45] lg:text-3xl">
-            <span className="text-[#1f2f45]"><IconUsers /></span>
+          <h1 className="flex items-center gap-3 text-2xl font-bold text-[#0f172a] lg:text-3xl">
+            <span className="text-[#6366f1]"><IconUsers /></span>
             Channel Partners
           </h1>
 
           <div ref={controlsRef} className="flex flex-wrap items-center gap-3">
-            <button type="button" className="cp-control cp-clickable rounded-md border border-[#8a86ff] bg-white px-5 py-2 text-base font-semibold text-[#6b66ff]">
+            <button type="button" className="cp-control cp-clickable rounded-lg border border-[#e2e8f0] bg-white px-5 py-2 text-base font-semibold text-[#475569] shadow-sm">
               Total : {channelPartners.length}
             </button>
             <button
@@ -475,7 +475,7 @@ function Moreoption({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, on
                 setFormValues(initialFormValues)
                 setIsAddFormOpen(true)
               }}
-              className="cp-control cp-clickable rounded-md border border-[#8a86ff] bg-white px-6 py-2 text-base font-semibold text-[#6b66ff]"
+              className="cp-control cp-clickable rounded-lg bg-[#6366f1] px-6 py-2 text-base font-bold text-white shadow-md shadow-indigo-200 transition hover:bg-[#4f46e5]"
             >
               Add New
             </button>
@@ -607,26 +607,24 @@ function Moreoption({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, on
 
         {isAddFormOpen && (
           <div className="cp-add-overlay fixed inset-0 z-[320] bg-white overflow-hidden">
-            <div ref={addFormRef} className="h-full w-full overflow-y-auto bg-[radial-gradient(circle_at_5%_0%,#ffffff_0%,#f6fbff_45%,#eef6ff_100%)]">
-              <div className="sticky top-0 z-10 border-b border-[#7de4ff]/45 bg-[linear-gradient(115deg,#07307c_0%,#0f5ecf_32%,#00a7cf_66%,#4ee9c5_100%)] px-8 py-5 shadow-[0_10px_26px_rgba(7,48,124,0.28)]">
-                <h2 className="text-2xl font-semibold tracking-wide text-white">
+            <div ref={addFormRef} className="h-full w-full overflow-y-auto bg-[#f8fafc]">
+              <div className="sticky top-0 z-10 border-b border-[#e2e8f0] bg-gradient-to-r from-[#f0f9ff] to-[#e0f2fe] px-8 py-6 backdrop-blur-md">
+                <h2 className="text-3xl font-bold tracking-tight text-[#0f172a]">
                   {editingPartnerIndex !== null ? 'Edit Channel Partner' : 'Create Channel Partner'}
                 </h2>
-                <p className="mt-1 text-sm font-medium text-[#d8f8ff]">Capture partner profile and address details</p>
-                <div className="pointer-events-none absolute left-6 top-2 h-7 w-7 rounded-full bg-[#7feaff]/40 blur-md" />
-                <div className="pointer-events-none absolute right-10 bottom-2 h-8 w-8 rounded-full bg-[#53f2ca]/40 blur-md" />
+                <p className="mt-1 text-base font-medium text-[#475569]">Capture partner profile and address details</p>
               </div>
 
               <div className="px-6 py-6">
                 <div className="grid gap-5 rounded-2xl border border-[#d2e6ff] bg-white/70 p-5 backdrop-blur md:grid-cols-2">
                   <div className="cp-add-field space-y-1.5">
-                    <label className="text-xs font-bold uppercase tracking-[0.08em] text-[#1f4772]">Name *</label>
+                    <label className="text-sm font-bold uppercase tracking-wider text-[#475569]">Name *</label>
                     <input
                       type="text"
                       placeholder="Name"
                       value={formValues.name}
                       onChange={(event) => setFormField('name', event.target.value)}
-                      className="w-full rounded-xl border border-[#c5d6ee] bg-white px-4 py-3 text-sm text-[#153256] outline-none placeholder:text-[#6782a6] transition focus:border-[#1799c7] focus:ring-2 focus:ring-[#1799c7]/25"
+                      className="w-full rounded-xl border border-[#e2e8f0] bg-white px-4 py-3.5 text-base text-[#1e293b] outline-none placeholder:text-[#94a3b8] transition focus:border-[#6366f1] focus:ring-4 focus:ring-[#6366f1]/10"
                     />
                   </div>
 
@@ -961,7 +959,7 @@ function Moreoption({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, on
 
               </div>
 
-              <div className="sticky bottom-0 flex items-center justify-end gap-3 border-t border-[#cfe5ff] bg-[#f4f9ff] px-6 py-4">
+              <div className="sticky bottom-0 flex items-center justify-end gap-4 border-t border-[#e2e8f0] bg-gradient-to-r from-[#f0f9ff] to-[#e0f2fe] px-8 py-5 backdrop-blur-md">
                 <button
                   type="button"
                   onClick={() => {
@@ -969,14 +967,14 @@ function Moreoption({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, on
                     setFormValues(initialFormValues)
                     setIsAddFormOpen(false)
                   }}
-                  className="cp-clickable cp-add-action rounded-xl border border-[#0f69c9] bg-white px-6 py-2 text-sm font-semibold text-[#0f69c9] transition hover:bg-[#ecf5ff]"
+                  className="cp-clickable cp-add-action rounded-xl border border-[#e2e8f0] bg-white px-6 py-2.5 text-base font-bold text-[#475569] transition hover:bg-[#f8fafc]"
                 >
                   Cancel
                 </button>
                 <button
                   type="button"
                   onClick={handleSavePartner}
-                  className="cp-clickable cp-add-action rounded-xl bg-[linear-gradient(90deg,#0f69c9_0%,#1cb0c5_100%)] px-7 py-2 text-sm font-semibold text-white transition hover:brightness-110"
+                  className="cp-clickable cp-add-action rounded-xl bg-[#6366f1] px-8 py-2.5 text-base font-bold text-white shadow-lg shadow-indigo-100 transition hover:bg-[#4f46e5]"
                 >
                   {editingPartnerIndex !== null ? 'Update' : 'Save'}
                 </button>
@@ -1076,7 +1074,7 @@ function Moreoption({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, on
           </div>
         )}
 
-        <div ref={tableRef} className="relative z-10 mt-6 overflow-visible rounded-sm border border-[#877ef4]/30 bg-white">
+        <div ref={tableRef} className="relative z-10 mt-6 overflow-x-auto overflow-y-visible no-scrollbar rounded-sm border border-[#877ef4]/30 bg-white">
           <div className="grid min-w-[980px] grid-cols-[1.6fr_1.3fr_1.1fr_0.8fr_1.4fr_0.8fr] bg-[linear-gradient(90deg,#6878f5_0%,#a265dc_100%)] text-sm font-semibold tracking-wide text-white lg:text-base">
             <div className="px-5 py-4">Name</div>
             <div className="px-5 py-4">Details</div>
@@ -1100,49 +1098,78 @@ function Moreoption({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, on
                 key={`${partner.createdAt}-${index}`}
                 className="cp-table-row grid min-w-[980px] grid-cols-[1.6fr_1.3fr_1.1fr_0.8fr_1.4fr_0.8fr] items-center border-t border-[#eef2ff] px-1 py-2"
               >
-                <div className="px-4 py-3 text-sm font-semibold text-[#263a57]">{partner.companyName || partner.name}</div>
-                <div className="px-4 py-3 text-sm text-[#425774]">
-                  {partner.phone}
-                  <br />
-                  {partner.email}
+                <div className="flex items-center gap-4 px-4 py-5 text-sm font-medium text-[#2d4568]">
+                  <div className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-full bg-[#eff6ff] text-lg font-bold text-[#3b82f6]">
+                    {(partner.companyName || partner.name).charAt(0).toLowerCase()}
+                  </div>
+                  <div>
+                    <div className="text-base font-bold text-[#0f172a]">{partner.companyName || partner.name}</div>
+                    <div className="text-[11px] text-[#64748b]">
+                      <span className="font-semibold uppercase text-[#94a3b8] mr-1">ph:</span>{partner.phone}
+                    </div>
+                    <div className="text-[11px] text-[#64748b]">
+                      <span className="font-semibold uppercase text-[#94a3b8] mr-1">en:</span>{partner.email}
+                    </div>
+                  </div>
                 </div>
-                <div className="px-4 py-3 text-sm text-[#425774]">{partner.rera || '-'}</div>
-                <div className="px-4 py-3 text-sm text-[#2d8a56]">{partner.status}</div>
-                <div className="px-4 py-3 text-sm text-[#425774]">{partner.name}</div>
-                <div ref={openActionIndex === index ? actionMenuRef : null} className="relative px-4 py-3">
+                <div className="px-4 py-3 text-sm font-semibold text-[#425774]">{partner.rera || '-'}</div>
+                <div className="px-4 py-4">
+                  <span className="inline-block rounded bg-[#eff6ff] px-2 py-0.5 text-[11px] font-bold text-[#4f46e5] border border-[#e0e7ff]">
+                    {partner.rera || 'No ID'}
+                  </span>
+                </div>
+                <div className="px-4 py-4">
+                  <span className="inline-block rounded bg-[#f1f5f9] px-3 py-1 text-[11px] font-bold text-[#475569] border border-[#e2e8f0]">
+                    {partner.status}
+                  </span>
+                </div>
+                <div className="px-4 py-4 text-sm font-semibold text-[#475569]">{partner.name}</div>
+                <div ref={openActionIndex === index ? actionMenuRef : null} className="relative px-4 py-4 text-center">
                   <button
                     type="button"
                     onClick={() => setOpenActionIndex((prev) => (prev === index ? null : index))}
-                    className="cp-clickable rounded-md border border-[#cfd9ff] bg-white px-3 py-1.5 text-lg font-bold leading-none text-[#6576c9] hover:bg-[#f4f7ff]"
+                    className="cp-clickable flex h-9 w-9 items-center justify-center rounded-full bg-[#312e81] text-white transition hover:bg-[#1e1b4b] shadow-lg shadow-indigo-100"
                   >
-                    ...
+                    <span className="text-xl leading-none mb-1">...</span>
                   </button>
                   {openActionIndex === index && (
-                    <div className="absolute bottom-[calc(100%+0.25rem)] right-3 z-[240] w-56 rounded-lg border border-[#d6def5] bg-white p-1.5 shadow-xl">
-                      {actionOptions.map((option) => (
-                        <button
-                          key={option}
-                          type="button"
-                          onClick={() => {
-                            setOpenActionIndex(null)
-                            if (option === 'Add Follow') {
-                              setFormValues({
-                                ...initialFormValues,
-                                ...partner,
-                                uploadDocuments: Array.isArray(partner.uploadDocuments) ? partner.uploadDocuments : [],
-                              })
-                              setEditingPartnerIndex(index)
-                              setIsAddFormOpen(true)
-                            } else if (option === 'Show') {
-                              setViewingPartnerIndex(index)
-                              setIsDetailsOpen(true)
-                            }
-                          }}
-                          className="cp-clickable block w-full rounded-md px-3 py-2 text-left text-sm font-medium text-[#304769] hover:bg-[#eef3ff]"
-                        >
-                          {option}
-                        </button>
-                      ))}
+                    <div className="absolute top-full right-4 z-[240] mt-3 w-72 rounded-[2rem] border border-[#f1f5f9] bg-white p-4 shadow-[0_20px_50px_rgba(0,0,0,0.1)] backdrop-blur-xl">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setOpenActionIndex(null)
+                          setViewingPartnerIndex(index)
+                          setIsDetailsOpen(true)
+                        }}
+                        className="cp-clickable flex w-full items-center gap-4 rounded-2xl p-3 transition hover:bg-[#f8faff]"
+                      >
+                        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#eff6ff] text-[#4f46e5]">
+                          <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                            <circle cx="12" cy="12" r="3" />
+                          </svg>
+                        </div>
+                        <span className="text-base font-bold text-[#1e293b]">View Details</span>
+                      </button>
+                      
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setOpenActionIndex(null)
+                          setEditingPartnerIndex(index)
+                          setFormValues(partner)
+                          setIsAddFormOpen(true)
+                        }}
+                        className="cp-clickable flex w-full items-center gap-4 rounded-2xl p-3 transition hover:bg-[#fffcf9]"
+                      >
+                        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#fff7ed] text-[#ea580c]">
+                          <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+                            <path d="M18.5 2.5a2.121 2.121 0 1 1 3 3L12 15l-4 1-1-4 9.5-9.5z" />
+                          </svg>
+                        </div>
+                        <span className="text-base font-bold text-[#1e293b]">Edit Partner</span>
+                      </button>
                     </div>
                   )}
                 </div>

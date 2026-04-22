@@ -434,7 +434,7 @@ function Dashbord({ onSignOut, onBackToDashboard, onOpenUserAccount, onOpenLeadA
   return (
     <main
       ref={sceneRef}
-      className="relative min-h-screen overflow-hidden bg-[radial-gradient(circle_at_12%_14%,#d9e8ff_0%,#edf4ff_40%,#f8fbff_100%)] text-[#112f59] [perspective:1400px] [transform-style:preserve-3d]"
+      className="relative min-h-screen overflow-hidden bg-[#f8fafc] text-[#0f172a] [perspective:1400px] [transform-style:preserve-3d]"
     >
       <div className="pointer-events-none absolute inset-0">
         <div className="absolute inset-0 bg-[linear-gradient(transparent_29px,rgba(17,47,89,0.06)_30px),linear-gradient(90deg,transparent_29px,rgba(17,47,89,0.06)_30px)] bg-[size:30px_30px]" />
@@ -490,7 +490,7 @@ function Dashbord({ onSignOut, onBackToDashboard, onOpenUserAccount, onOpenLeadA
         </div>
       )}
 
-      <header className="dash-nav relative z-20 border-b border-[#2f3fa9]/10 bg-white/80 backdrop-blur">
+      <header className="dash-nav relative z-20 border-b border-[#e2e8f0] bg-gradient-to-r from-[#f0f9ff] to-[#e0f2fe] backdrop-blur-md">
         <div className="pointer-events-none absolute inset-0 overflow-hidden">
           <div
             ref={(node) => {
@@ -512,7 +512,7 @@ function Dashbord({ onSignOut, onBackToDashboard, onOpenUserAccount, onOpenLeadA
           />
         </div>
         <div className="mx-auto flex w-full max-w-7xl items-center justify-between gap-4 px-4 py-4 lg:px-8">
-          <div className="text-xl font-black tracking-tight text-[#2f3fa9]">MP Developers</div>
+          <div className="text-xl font-black tracking-tight text-[#6366f1]">MP Developers</div>
 
           <nav className="flex flex-wrap items-center gap-2 lg:gap-3">
             {navItems.map((item) => (
@@ -531,7 +531,9 @@ function Dashbord({ onSignOut, onBackToDashboard, onOpenUserAccount, onOpenLeadA
                       if (item.label === 'Lead Activity') onOpenLeadActive?.()
                     }
                   }}
-                  className="nav-btn flex items-center gap-1.5 rounded-lg border border-[#2f3fa9]/15 bg-white px-3 py-2 text-sm font-semibold text-[#1a3c6b] transition hover:border-[#1a79d1]/50 hover:text-[#1a79d1]"
+                  className={`nav-btn flex items-center gap-1.5 rounded-lg border border-[#e2e8f0] bg-white px-3 py-2 text-sm font-semibold transition hover:border-[#6366f1]/50 hover:text-[#6366f1] ${
+                    item.label === 'Dashbord' ? 'text-[#6366f1] border-[#6366f1]/20' : 'text-[#475569]'
+                  }`}
                 >
                   <Icon name={item.icon} className="h-4 w-4" />
                   {item.label}
@@ -577,7 +579,7 @@ function Dashbord({ onSignOut, onBackToDashboard, onOpenUserAccount, onOpenLeadA
                 setOpenWelcome((current) => !current)
                 showToast('Profile menu updated')
               }}
-              className="nav-btn flex items-center gap-1.5 rounded-xl bg-gradient-to-r from-[#1a79d1] to-[#2f3fa9] px-4 py-2 text-sm font-bold text-white shadow-lg shadow-[#2f3fa9]/20"
+              className="nav-btn flex items-center gap-1.5 rounded-xl bg-[#6366f1] px-4 py-2 text-sm font-bold text-white shadow-lg shadow-indigo-100 transition hover:bg-[#4f46e5]"
             >
               <Icon name="user" className="h-4 w-4" />
               Welcome
@@ -615,14 +617,14 @@ function Dashbord({ onSignOut, onBackToDashboard, onOpenUserAccount, onOpenLeadA
         <div ref={canvasRef} className="relative w-full max-w-6xl [transform-style:preserve-3d]">
           <div
             ref={heroRef}
-            className="relative mb-6 overflow-hidden rounded-[1.5rem] border border-[#d9e6fa] bg-gradient-to-r from-[#f7fbff] via-white to-[#f2f7ff] p-6 text-[#17385f] shadow-lg shadow-[#224e85]/10 [transform-style:preserve-3d] sm:p-8"
+            className="relative mb-6 overflow-hidden rounded-2xl border border-[#e2e8f0] bg-white p-6 text-[#0f172a] shadow-xl shadow-slate-200/40 [transform-style:preserve-3d] sm:p-8"
           >
             <div
               ref={heroGlowRef}
               className="pointer-events-none absolute -left-10 -top-10 h-44 w-44 rounded-full bg-[#cfe5ff]/70 blur-3xl"
             />
 
-            <p className="hero-copy text-xs font-semibold uppercase tracking-[0.16em] text-[#3f628d]">Dashboard Overview</p>
+            <p className="hero-copy text-xs font-bold uppercase tracking-widest text-[#6366f1]">Dashboard Overview</p>
             <h1 className="hero-title mt-2 max-w-2xl text-2xl font-black leading-tight sm:text-4xl">
               Channel Partner Performance Console
             </h1>
@@ -653,7 +655,7 @@ function Dashbord({ onSignOut, onBackToDashboard, onOpenUserAccount, onOpenLeadA
                 type="button"
                 onClick={toggleMainFilter}
                 aria-label="Open main filter"
-                className="flex items-center rounded-xl border border-[#1a79d1]/20 bg-white p-2.5 text-[#1a79d1] shadow-lg shadow-[#1a79d1]/15"
+                className="flex items-center rounded-xl bg-[#6366f1] p-2.5 text-white shadow-lg shadow-indigo-100 transition hover:bg-[#4f46e5]"
               >
                 <Icon name="filter" className="h-5 w-5" />
               </button>

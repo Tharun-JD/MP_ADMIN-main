@@ -147,7 +147,7 @@ function SmsPage({
   }, [])
 
   return (
-    <main ref={pageRef} className="relative min-h-screen bg-[#f4f7fd] text-[#19324f]">
+    <main ref={pageRef} className="relative min-h-screen bg-[#f8fafc] text-[#0f172a]">
       <div className="pointer-events-none absolute inset-0">
         <div ref={(node) => (glowRefs.current[0] = node)} className="absolute -left-16 top-16 h-64 w-64 rounded-full bg-[#7f6fde]/14 blur-3xl" />
         <div ref={(node) => (glowRefs.current[1] = node)} className="absolute right-0 top-20 h-72 w-72 rounded-full bg-[#5e90db]/14 blur-3xl" />
@@ -166,23 +166,23 @@ function SmsPage({
       />
 
       <section className="relative z-10 mx-auto w-full max-w-7xl px-4 py-8 lg:px-6">
-        <div ref={headerRef} className="mb-5 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-[#cfdcf3] bg-white px-4 py-3 shadow-[0_12px_26px_rgba(33,74,131,0.08)]">
-          <h1 className="flex items-center gap-2 text-3xl font-semibold text-[#1f3550]">
-            <span className="text-[#2c4f8f]"><IconSms /></span>
+        <div ref={headerRef} className="mb-6 flex flex-wrap items-center justify-between gap-4">
+          <h1 className="flex items-center gap-3 text-3xl font-bold tracking-tight text-[#0f172a]">
+            <span className="text-[#6366f1]"><IconSms /></span>
             SMSs
           </h1>
           <div ref={controlsRef} className="flex items-center gap-3">
-            <button type="button" className="sms-control sms-clickable rounded-lg border border-[#7b9ef0] bg-white px-8 py-2 text-3xl font-semibold text-[#6a62db]">
+            <button type="button" className="sms-control sms-clickable rounded-lg border border-[#e2e8f0] bg-white px-8 py-2 text-base font-bold text-[#475569] shadow-sm">
               Total : {smsRows.length}
             </button>
-            <button type="button" className="sms-control sms-clickable rounded-lg border border-[#7b9ef0] bg-white p-2.5 text-[#6a62db]">
+            <button type="button" className="sms-control sms-clickable rounded-lg border border-[#e2e8f0] bg-white p-2.5 text-[#475569] shadow-sm">
               <IconFilter />
             </button>
           </div>
         </div>
 
-        <div ref={tableRef} className="overflow-hidden rounded-2xl border border-[#cad6f1] bg-white shadow-[0_18px_34px_rgba(28,61,112,0.08)]">
-          <div className="grid min-w-[980px] grid-cols-[1.1fr_2fr_0.9fr_1fr_0.8fr] bg-[linear-gradient(90deg,#5e90db_0%,#7f6fde_50%,#a86ddb_100%)] text-sm font-semibold tracking-wide text-white lg:text-base">
+        <div ref={tableRef} className="overflow-hidden rounded-2xl border border-[#e2e8f0] bg-white shadow-xl shadow-slate-200/40">
+          <div className="grid min-w-[980px] grid-cols-[1.1fr_2fr_0.9fr_1fr_0.8fr] bg-gradient-to-r from-[#f0f9ff] to-[#e0f2fe] border-b border-[#f1f5f9] text-sm font-bold tracking-wider text-[#475569] lg:text-base">
             <div className="px-5 py-4">To</div>
             <div className="px-5 py-4">Content</div>
             <div className="px-5 py-4">Status</div>

@@ -147,7 +147,7 @@ function EmailPage({
   }, [])
 
   return (
-    <main ref={pageRef} className="relative min-h-screen bg-[linear-gradient(180deg,#f7fbff_0%,#edf4ff_100%)] text-[#19324f]">
+    <main ref={pageRef} className="relative min-h-screen bg-[#f8fafc] text-[#0f172a]">
       <div className="pointer-events-none absolute inset-0">
         <div ref={(node) => (glowRefs.current[0] = node)} className="absolute -left-16 top-16 h-64 w-64 rounded-full bg-[#3ea89f]/14 blur-3xl" />
         <div ref={(node) => (glowRefs.current[1] = node)} className="absolute right-0 top-20 h-72 w-72 rounded-full bg-[#2f7fcb]/14 blur-3xl" />
@@ -166,23 +166,23 @@ function EmailPage({
       />
 
       <section className="relative z-10 mx-auto w-full max-w-7xl px-4 py-8 lg:px-6">
-        <div ref={headerRef} className="mb-5 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-[#cfe0fb] bg-white px-4 py-3 shadow-[0_14px_30px_rgba(24,73,138,0.08)]">
-          <h1 className="flex items-center gap-2 text-3xl font-semibold text-[#1e3655]">
-            <span className="text-[#2f5ea8]"><IconMail /></span>
+        <div ref={headerRef} className="mb-6 flex flex-wrap items-center justify-between gap-4">
+          <h1 className="flex items-center gap-3 text-3xl font-bold tracking-tight text-[#0f172a]">
+            <span className="text-[#6366f1]"><IconMail /></span>
             Email
           </h1>
           <div ref={controlsRef} className="flex items-center gap-3">
-            <button type="button" className="email-control email-clickable rounded-lg border border-[#7ea4e2] bg-white px-8 py-2 text-3xl font-semibold text-[#6a62db]">
+            <button type="button" className="email-control email-clickable rounded-lg border border-[#e2e8f0] bg-white px-8 py-2 text-base font-bold text-[#475569] shadow-sm">
               Total : {emailRows.length}
             </button>
-            <button type="button" className="email-control email-clickable rounded-lg border border-[#7ea4e2] bg-white p-2.5 text-[#6a62db]">
+            <button type="button" className="email-control email-clickable rounded-lg border border-[#e2e8f0] bg-white p-2.5 text-[#475569] shadow-sm">
               <IconFilter />
             </button>
           </div>
         </div>
 
-        <div ref={tableRef} className="overflow-hidden rounded-2xl border border-[#c9d9f2] bg-white shadow-[0_20px_40px_rgba(24,73,138,0.08)]">
-          <div className="grid min-w-[980px] grid-cols-[1.6fr_1.4fr_0.7fr_0.8fr_0.7fr] bg-[linear-gradient(90deg,#2f7fcb_0%,#3ea89f_50%,#e58f45_100%)] text-sm font-semibold tracking-wide text-white lg:text-base">
+        <div ref={tableRef} className="overflow-hidden rounded-2xl border border-[#e2e8f0] bg-white shadow-xl shadow-slate-200/40">
+          <div className="grid min-w-[980px] grid-cols-[1.6fr_1.4fr_0.7fr_0.8fr_0.7fr] bg-gradient-to-r from-[#f0f9ff] to-[#e0f2fe] border-b border-[#f1f5f9] text-sm font-bold tracking-wider text-[#475569] lg:text-base">
             <div className="px-5 py-4">To</div>
             <div className="px-5 py-4">Subject</div>
             <div className="px-5 py-4">Status</div>

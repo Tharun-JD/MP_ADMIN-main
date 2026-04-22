@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import Navbar from './Navbar.jsx'
@@ -148,6 +149,7 @@ function UserAccount({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, o
   const [viewingAccountIndex, setViewingAccountIndex] = useState(null)
   const [isDetailsOpen, setIsDetailsOpen] = useState(false)
   const [openActionIndex, setOpenActionIndex] = useState(null)
+  const [menuAnchorRect, setMenuAnchorRect] = useState(null)
   const actionMenuRef = useRef(null)
 
   // -- Follow-up Form State --
@@ -596,7 +598,7 @@ function UserAccount({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, o
   }, [accounts.length])
 
   return (
-    <main ref={pageRef} className="relative min-h-screen overflow-hidden bg-[#f4f7ff] text-[#1f365d] [perspective:1300px]">
+    <main ref={pageRef} className="relative min-h-screen overflow-hidden bg-[#f8fafc] text-[#0f172a] [perspective:1300px]">
       <div className="pointer-events-none absolute inset-0">
         <div className="absolute inset-0 bg-[linear-gradient(transparent_31px,rgba(47,63,169,0.05)_32px),linear-gradient(90deg,transparent_31px,rgba(47,63,169,0.05)_32px)] bg-[size:32px_32px]" />
         <div ref={(n) => (glowRefs.current[0] = n)} className="absolute -left-16 top-8 h-64 w-64 rounded-full bg-[#2f3fa9]/20 blur-3xl" />
@@ -617,8 +619,8 @@ function UserAccount({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, o
 
       <section className="relative z-10 mx-auto w-full max-w-7xl px-3 py-8 lg:px-6">
         <div ref={headerRef} className="relative z-40 flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-white/70 bg-white/75 px-4 py-4 shadow-xl shadow-[#2f3fa9]/10 backdrop-blur-xl">
-          <h1 className="flex items-center gap-3 text-2xl font-semibold tracking-tight text-[#1f2f45] lg:text-3xl">
-            <span className="text-[#2f3fa9]"><IconUsers /></span>
+          <h1 className="flex items-center gap-3 text-2xl font-bold tracking-tight text-[#0f172a] lg:text-3xl">
+            <span className="text-[#6366f1]"><IconUsers /></span>
             {'Users Accounts'.split('').map((ch, idx) => (
               <span key={`${ch}-${idx}`} className="ua-title-char inline-block">
                 {ch === ' ' ? '\u00A0' : ch}
@@ -627,14 +629,14 @@ function UserAccount({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, o
           </h1>
 
           <div ref={controlsRef} className="flex flex-wrap items-center gap-3">
-            <button type="button" className="ua-control ua-clickable rounded-lg border border-[#1e78c8]/45 bg-gradient-to-r from-[#124785] to-[#1e78c8] px-5 py-2 text-base font-semibold text-white lg:text-lg">
-              Total : 0
+            <button type="button" className="ua-control ua-clickable rounded-lg border border-[#e2e8f0] bg-white px-5 py-2 text-base font-bold text-[#6366f1] shadow-sm lg:text-lg">
+              Total : {accounts.length}
             </button>
             <div ref={addUserMenuRef} className="relative">
               <button
                 type="button"
                 onClick={() => setIsAddUserOpen((prev) => !prev)}
-                className="ua-control ua-clickable flex items-center gap-1 rounded-lg border border-[#1e78c8]/45 bg-gradient-to-r from-[#124785] to-[#1e78c8] px-5 py-2 text-base font-semibold text-white lg:text-lg"
+                className="ua-control ua-clickable flex items-center gap-1 rounded-lg bg-[#6366f1] px-5 py-2.5 text-base font-bold text-white shadow-md shadow-indigo-100 transition hover:bg-[#4f46e5]"
               >
                 Add User <IconChevron />
               </button>
@@ -662,7 +664,7 @@ function UserAccount({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, o
               <button
                 type="button"
                 onClick={() => setIsExportOpen((prev) => !prev)}
-                className="ua-control ua-clickable flex items-center gap-1 rounded-lg border border-[#1e78c8]/45 bg-gradient-to-r from-[#124785] to-[#1e78c8] px-5 py-2 text-base font-semibold text-white lg:text-lg"
+                className="ua-control ua-clickable flex items-center gap-1 rounded-lg border border-[#e2e8f0] bg-white px-5 py-2 text-base font-bold text-[#475569] shadow-sm transition hover:border-[#6366f1]/50 hover:text-[#6366f1] lg:text-lg"
               >
                 Exports <IconChevron />
               </button>
@@ -688,7 +690,7 @@ function UserAccount({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, o
                 setIsExportOpen(false)
                 setIsFilterOpen(true)
               }}
-              className="ua-control ua-clickable rounded-lg border border-[#1e78c8]/45 bg-gradient-to-r from-[#124785] to-[#1e78c8] p-2.5 text-white"
+              className="ua-control ua-clickable rounded-lg border border-[#e2e8f0] bg-white p-2.5 text-[#475569] shadow-sm transition hover:border-[#6366f1]/50 hover:text-[#6366f1]"
             >
               <IconFilter />
             </button>
@@ -697,9 +699,9 @@ function UserAccount({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, o
 
         {isFilterOpen && (
           <div className="ua-filter-overlay fixed inset-0 z-[260] flex items-center justify-center bg-[#0f2244]/22 px-4 py-6 backdrop-blur-[2px]">
-            <div ref={filterPanelRef} className="w-full max-w-4xl overflow-visible rounded-xl border border-[#c9d3e8] bg-[#f7f9fd] shadow-2xl shadow-[#1f365d]/15">
-              <div className="flex items-center justify-between border-b border-[#cdd7ee] px-6 py-4">
-                <h2 className="text-2xl font-semibold text-[#20385f]">Filter</h2>
+            <div ref={filterPanelRef} className="w-full max-w-4xl overflow-visible rounded-2xl border border-[#e2e8f0] bg-white shadow-2xl shadow-slate-200/50">
+              <div className="flex items-center justify-between border-b border-[#e2e8f0] bg-gradient-to-r from-[#f0f9ff] to-[#e0f2fe] px-6 py-5">
+                <h2 className="text-2xl font-bold tracking-tight text-[#0f172a]">Filter</h2>
               </div>
 
               <div className="grid gap-6 px-6 py-6 md:grid-cols-2">
@@ -770,11 +772,11 @@ function UserAccount({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, o
                 </div>
               </div>
 
-              <div className="flex items-center justify-end gap-3 border-t border-[#cdd7ee] px-6 py-4">
+              <div className="flex items-center justify-end gap-4 border-t border-[#e2e8f0] bg-[#f8fafc] px-6 py-5">
                 <button
                   type="button"
-                  onClick={resetFilter}
-                  className="ua-clickable ua-filter-action rounded-lg border border-[#6f73ff] bg-white px-6 py-2 text-xl font-semibold text-[#6f73ff] transition hover:bg-[#eef0ff]"
+                  onClick={() => setIsFilterOpen(false)}
+                  className="rounded-xl border border-[#e2e8f0] bg-white px-6 py-2.5 text-base font-bold text-[#475569] shadow-sm transition hover:bg-[#f1f5f9]"
                 >
                   Cancel
                 </button>
@@ -816,16 +818,16 @@ function UserAccount({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, o
         )}
 
         {isAddUserFormOpen && (
-          <div className="ua-add-user-overlay fixed inset-0 z-[290] flex items-center justify-center bg-[#0f2244]/30 px-4 py-6 backdrop-blur-[2px]">
-            <div ref={addUserFormRef} className="max-h-[92vh] w-full max-w-5xl overflow-hidden rounded-xl border border-[#8f7bf6]/40 bg-[#f4f6fb] shadow-2xl shadow-[#1a1f5f]/35">
-              <div className="flex items-center justify-between bg-[linear-gradient(90deg,#6f7df3_0%,#9d67df_100%)] px-5 py-4">
-                <h2 className="ua-add-user-field text-3xl font-semibold text-white">{selectedAddUserRole}</h2>
+          <div className="ua-add-user-overlay fixed inset-0 z-[290] flex items-center justify-center bg-[#0f172a]/10 px-4 py-6 backdrop-blur-sm">
+            <div ref={addUserFormRef} className="max-h-[92vh] w-full max-w-4xl overflow-hidden rounded-2xl border border-[#e2e8f0] bg-white shadow-2xl shadow-slate-200/50">
+              <div className="flex items-center justify-between border-b border-[#e2e8f0] bg-gradient-to-r from-[#f0f9ff] to-[#e0f2fe] px-6 py-5">
+                <h2 className="text-3xl font-bold tracking-tight text-[#0f172a]">{selectedAddUserRole}</h2>
                 <button
                   type="button"
                   onClick={() => setIsAddUserFormOpen(false)}
-                  className="ua-clickable ua-add-user-field text-4xl font-bold leading-none text-white/80 transition hover:text-white"
+                  className="ua-clickable text-3xl font-bold leading-none text-[#64748b] transition hover:text-[#0f172a]"
                 >
-                  X
+                  &times;
                 </button>
               </div>
 
@@ -897,11 +899,11 @@ function UserAccount({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, o
                 </div>
               </div>
 
-              <div className="flex justify-end border-t border-[#d2dbee] bg-white/75 px-5 py-4">
+              <div className="flex justify-end border-t border-[#e2e8f0] bg-gradient-to-r from-[#f0f9ff] to-[#e0f2fe] px-6 py-5">
                 <button
                   type="button"
                   onClick={handleSaveUser}
-                  className="ua-clickable ua-add-user-action rounded-md bg-[#1d73ce] px-5 py-2 text-lg font-semibold text-white transition hover:brightness-110"
+                  className="ua-clickable rounded-xl bg-[#6366f1] px-8 py-2.5 text-base font-bold text-white shadow-lg shadow-indigo-100 transition hover:bg-[#4f46e5]"
                 >
                   Save
                 </button>
@@ -910,14 +912,14 @@ function UserAccount({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, o
           </div>
         )}
 
-        <div ref={tableRef} className="mt-6 overflow-x-auto overflow-y-hidden rounded-2xl border border-[#6d64f8]/20 bg-white/70 shadow-2xl shadow-[#2f3fa9]/12 backdrop-blur-xl">
-          <div className="grid min-w-[980px] grid-cols-[2fr_1.4fr_1fr_1fr_0.8fr_0.6fr] bg-[linear-gradient(90deg,#124785_0%,#1e78c8_56%,#30a7c2_100%)] text-sm font-bold tracking-wide text-white lg:text-base">
+        <div ref={tableRef} className="mt-6 overflow-x-auto overflow-y-visible no-scrollbar rounded-2xl border border-[#e2e8f0] bg-white shadow-xl shadow-slate-200/40 backdrop-blur-xl">
+          <div className="grid min-w-[980px] grid-cols-[2fr_1.4fr_1fr_1fr_0.8fr_0.6fr] bg-gradient-to-r from-[#f0f9ff] to-[#e0f2fe] border-b border-[#f1f5f9] text-sm font-bold tracking-wider text-[#475569] lg:text-base">
             <div className="px-6 py-5">Name/Email/Phone</div>
             <div className="px-6 py-5">Sell.Do Lead ID</div>
             <div className="px-6 py-5">Payment</div>
             <div className="px-6 py-5">Role</div>
             <div className="px-6 py-5">Status</div>
-            <div className="px-6 py-5">Actions</div>
+            <div className="px-6 py-5 text-center">Actions</div>
           </div>
 
           <div className="divide-y divide-[#dbe4f7] bg-white/90">
@@ -934,45 +936,80 @@ function UserAccount({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, o
                   }}
                   className="ua-row grid min-w-[980px] grid-cols-[2fr_1.4fr_1fr_1fr_0.8fr_0.6fr] items-center px-2 py-2 [transform-style:preserve-3d]"
                 >
-                  <div className="px-4 py-3">
-                    <p className="text-base font-semibold text-[#213a64]">{row.name}</p>
-                    <p className="text-sm text-[#6e83a6]">{`${row.email} | ${row.countryCode || ''} ${row.phone}`.trim()}</p>
+                  <div className="flex items-center gap-4 px-4 py-5 text-sm font-medium text-[#2d4568]">
+                    <div className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-full bg-[#eff6ff] text-lg font-bold text-[#3b82f6]">
+                      {row.name.charAt(0).toLowerCase()}
+                    </div>
+                    <div>
+                      <div className="text-base font-bold text-[#0f172a]">{row.name}</div>
+                      <div className="text-[11px] text-[#64748b]">
+                        <span className="font-semibold uppercase text-[#94a3b8] mr-1">en:</span>{row.email}
+                      </div>
+                      <div className="text-[11px] text-[#64748b]">
+                        <span className="font-semibold uppercase text-[#94a3b8] mr-1">ph:</span>{row.phone}
+                      </div>
+                    </div>
                   </div>
-                  <div className="px-4 py-3 text-sm font-semibold text-[#344f7f]">{row.sellDoLeadId}</div>
-                  <div className="px-4 py-3 text-sm font-semibold text-[#344f7f]">{row.payment}</div>
-                  <div className="px-4 py-3 text-sm font-semibold text-[#344f7f]">{row.role}</div>
-                  <div className="px-4 py-3 text-sm font-semibold text-[#344f7f]">{row.status}</div>
-                  <div className="relative px-4 py-3 text-center">
+                  <div className="px-4 py-4">
+                    <span className="inline-block rounded bg-[#eff6ff] px-2 py-0.5 text-[11px] font-bold text-[#4f46e5] border border-[#e0e7ff]">
+                      {row.sellDoLeadId}
+                    </span>
+                  </div>
+                  <div className="px-4 py-4 text-sm font-semibold text-[#475569]">{row.payment}</div>
+                  <div className="px-4 py-4">
+                    <span className="inline-block rounded-full bg-[#eff6ff] px-3 py-1 text-[11px] font-bold text-[#2563eb]">
+                      {row.role}
+                    </span>
+                  </div>
+                  <div className="px-4 py-4">
+                    <span className="inline-block rounded bg-[#f1f5f9] px-3 py-1 text-[11px] font-bold text-[#475569] border border-[#e2e8f0]">
+                      {row.status}
+                    </span>
+                  </div>
+                  <div className="relative px-4 py-4 text-center">
                     <button
                       type="button"
-                      onClick={() => setOpenActionIndex(openActionIndex === index ? null : index)}
-                      className="ua-clickable rounded-md border border-[#cfd9ff] bg-white px-3 py-1 text-lg font-bold leading-none text-[#6576c9] hover:bg-[#f4f7ff]"
+                      onClick={() => setOpenActionIndex((prev) => (prev === index ? null : index))}
+                      className={`ua-clickable flex h-10 w-10 items-center justify-center rounded-full transition-all duration-300 ${openActionIndex === index ? 'bg-[#312e81] text-white shadow-lg' : 'bg-[#eff6ff] text-[#312e81] hover:bg-[#312e81] hover:text-white'}`}
                     >
-                      ...
+                      <span className="text-xl font-bold leading-none mb-1">...</span>
                     </button>
                     {openActionIndex === index && (
-                      <div
-                        ref={actionMenuRef}
-                        className="absolute bottom-[calc(100%+0.25rem)] right-3 z-[100] w-48 rounded-lg border border-[#d6def5] bg-white p-1.5 shadow-xl"
-                      >
-                        {['Show', 'Add Follow'].map((option) => (
-                          <button
-                            key={option}
-                            type="button"
-                            onClick={() => {
-                              setOpenActionIndex(null)
-                              if (option === 'Show') {
-                                setViewingAccountIndex(index)
-                                setIsDetailsOpen(true)
-                              } else {
-                                handleOpenFollowUp(row)
-                              }
-                            }}
-                            className="ua-clickable block w-full rounded-md px-3 py-2 text-left text-sm font-medium text-[#304769] hover:bg-[#eef3ff]"
-                          >
-                            {option}
-                          </button>
-                        ))}
+                      <div ref={actionMenuRef} className="absolute top-full right-4 z-[240] mt-3 w-72 rounded-[2rem] border border-[#f1f5f9] bg-white p-4 shadow-[0_20px_50px_rgba(0,0,0,0.1)] backdrop-blur-xl">
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setOpenActionIndex(null)
+                            setViewingAccountIndex(index)
+                            setIsDetailsOpen(true)
+                          }}
+                          className="ua-clickable flex w-full items-center gap-4 rounded-2xl p-3 transition hover:bg-[#f8faff]"
+                        >
+                          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#eff6ff] text-[#4f46e5]">
+                            <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                              <circle cx="12" cy="12" r="3" />
+                            </svg>
+                          </div>
+                          <span className="text-base font-bold text-[#1e293b]">View Details</span>
+                        </button>
+                        
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setOpenActionIndex(null)
+                            handleOpenFollowUp(row)
+                          }}
+                          className="ua-clickable flex w-full items-center gap-4 rounded-2xl p-3 transition hover:bg-[#fffcf9]"
+                        >
+                          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#fff7ed] text-[#ea580c]">
+                            <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                              <line x1="12" y1="5" x2="12" y2="19" />
+                              <line x1="5" y1="12" x2="19" y2="12" />
+                            </svg>
+                          </div>
+                          <span className="text-base font-bold text-[#1e293b]">Add Follow-up</span>
+                        </button>
                       </div>
                     )}
                   </div>
@@ -1007,8 +1044,8 @@ function UserAccount({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, o
                     { label: 'Status', value: accounts[viewingAccountIndex].status },
                   ].map((item) => (
                     <div key={item.label} className="border-b border-[#dbe4f7] pb-2">
-                        <div className="text-xs font-semibold uppercase tracking-wider text-[#6e83a6]">{item.label}</div>
-                        <div className="mt-1 text-lg font-semibold text-[#213a64]">{item.value}</div>
+                      <div className="text-xs font-semibold uppercase tracking-wider text-[#6e83a6]">{item.label}</div>
+                      <div className="mt-1 text-lg font-semibold text-[#213a64]">{item.value || '-'}</div>
                     </div>
                   ))}
                 </div>
@@ -1027,20 +1064,20 @@ function UserAccount({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, o
         )}
 
         {isFollowUpFormOpen && (
-          <div className="ua-followup-overlay fixed inset-0 z-[290] flex items-center justify-center bg-[#0f2244]/30 px-4 py-6 backdrop-blur-[2px]">
-            <div ref={followUpFormRef} className="max-h-[92vh] w-full max-w-4xl overflow-hidden rounded-xl border border-[#1e78c8]/40 bg-[#f4f6fb] shadow-2xl shadow-[#1a1f5f]/35">
-              <div className="flex items-center justify-between bg-gradient-to-r from-[#124785] to-[#1e78c8] px-5 py-4">
-                <h2 className="ua-followup-field text-2xl font-semibold text-white">Add Follow Up</h2>
+          <div className="ua-followup-overlay fixed inset-0 z-[295] flex items-center justify-center bg-[#0f172a]/10 px-4 py-6 backdrop-blur-sm">
+            <div ref={followUpFormRef} className="max-h-[92vh] w-full max-w-4xl overflow-hidden rounded-2xl border border-[#e2e8f0] bg-white shadow-2xl shadow-slate-200/50">
+              <div className="flex items-center justify-between border-b border-[#e2e8f0] bg-gradient-to-r from-[#fff7ed] to-[#ffedd5] px-6 py-5">
+                <h2 className="ua-followup-field text-3xl font-bold tracking-tight text-[#c2410c]">Add Follow-up</h2>
                 <button
                   type="button"
                   onClick={() => setIsFollowUpFormOpen(false)}
-                  className="ua-clickable ua-followup-field text-4xl font-bold leading-none text-white/80 transition hover:text-white"
+                  className="ua-clickable ua-followup-field text-3xl font-bold leading-none text-[#9a3412]/60 transition hover:text-[#9a3412]"
                 >
                   &times;
                 </button>
               </div>
 
-              <div className="grid gap-5 p-5 md:grid-cols-2">
+              <div className="space-y-6 p-6">
                 <div className="ua-followup-field space-y-2">
                   <label className="text-sm font-semibold text-[#1f3557]">Name</label>
                   <input
