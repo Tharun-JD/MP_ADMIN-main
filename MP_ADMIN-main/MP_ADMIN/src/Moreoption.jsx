@@ -434,10 +434,10 @@ function Moreoption({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, on
       : []
 
   return (
-    <main ref={pageRef} className="relative min-h-screen bg-[#f1f5f9] text-slate-900 font-sans selection:bg-indigo-100 selection:text-indigo-700">
-      <div className="pointer-events-none fixed inset-0 overflow-hidden">
-        <div ref={(n) => (bgGlowRefs.current[0] = n)} className="absolute -left-[10%] -top-[10%] h-[40%] w-[40%] rounded-full bg-indigo-200/20 blur-[120px]" />
-        <div ref={(n) => (bgGlowRefs.current[1] = n)} className="absolute -right-[5%] top-[20%] h-[35%] w-[35%] rounded-full bg-blue-200/20 blur-[100px]" />
+    <main ref={pageRef} className="relative min-h-screen bg-[#f8fafc] text-[#0f172a]">
+      <div className="pointer-events-none absolute inset-0">
+        <div ref={(n) => (bgGlowRefs.current[0] = n)} className="absolute -left-16 top-10 h-64 w-64 rounded-full bg-[#6366f1]/05 blur-3xl" />
+        <div ref={(n) => (bgGlowRefs.current[1] = n)} className="absolute right-0 top-20 h-72 w-72 rounded-full bg-[#3b82f6]/05 blur-3xl" />
       </div>
       <Navbar
         activePage="channel-partners"
@@ -480,10 +480,9 @@ function Moreoption({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, on
                 setFormValues(initialFormValues)
                 setIsAddFormOpen(true)
               }}
-              className="cp-control cp-clickable flex items-center gap-2 rounded-xl bg-slate-900 px-7 py-3 text-sm font-black uppercase tracking-widest text-white shadow-2xl shadow-slate-900/20 transition-all hover:-translate-y-0.5 hover:bg-slate-800 active:translate-y-0"
+              className="cp-control cp-clickable rounded-lg bg-[#6366f1] px-6 py-2 text-base font-bold text-white shadow-md shadow-indigo-200 transition hover:bg-[#4f46e5]"
             >
-              <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="3"><path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" /></svg>
-              <span>Add Partner</span>
+              Add New
             </button>
             <div className="relative">
               <button
