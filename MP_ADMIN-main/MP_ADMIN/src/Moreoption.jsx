@@ -434,10 +434,10 @@ function Moreoption({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, on
       : []
 
   return (
-    <main ref={pageRef} className="relative min-h-screen bg-[#f8fafc] text-[#0f172a]">
-      <div className="pointer-events-none absolute inset-0">
-        <div ref={(n) => (bgGlowRefs.current[0] = n)} className="absolute -left-16 top-10 h-64 w-64 rounded-full bg-[#6366f1]/05 blur-3xl" />
-        <div ref={(n) => (bgGlowRefs.current[1] = n)} className="absolute right-0 top-20 h-72 w-72 rounded-full bg-[#3b82f6]/05 blur-3xl" />
+    <main ref={pageRef} className="relative min-h-screen bg-[#f1f5f9] text-slate-900 font-sans selection:bg-indigo-100 selection:text-indigo-700">
+      <div className="pointer-events-none fixed inset-0 overflow-hidden">
+        <div ref={(n) => (bgGlowRefs.current[0] = n)} className="absolute -left-[10%] -top-[10%] h-[40%] w-[40%] rounded-full bg-indigo-200/20 blur-[120px]" />
+        <div ref={(n) => (bgGlowRefs.current[1] = n)} className="absolute -right-[5%] top-[20%] h-[35%] w-[35%] rounded-full bg-blue-200/20 blur-[100px]" />
       </div>
       <Navbar
         activePage="channel-partners"
@@ -480,9 +480,10 @@ function Moreoption({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, on
                 setFormValues(initialFormValues)
                 setIsAddFormOpen(true)
               }}
-              className="cp-control cp-clickable rounded-lg bg-[#6366f1] px-6 py-2 text-base font-bold text-white shadow-md shadow-indigo-200 transition hover:bg-[#4f46e5]"
+              className="cp-control cp-clickable flex items-center gap-2 rounded-xl bg-slate-900 px-7 py-3 text-sm font-black uppercase tracking-widest text-white shadow-2xl shadow-slate-900/20 transition-all hover:-translate-y-0.5 hover:bg-slate-800 active:translate-y-0"
             >
-              Add New
+              <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="3"><path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" /></svg>
+              <span>Add Partner</span>
             </button>
             <div className="relative">
               <button
@@ -1024,57 +1025,74 @@ function Moreoption({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, on
           </div>
         )}
 
-        <div ref={tableRef} className="relative z-10 mt-6 overflow-x-auto overflow-y-visible no-scrollbar rounded-sm border border-[#877ef4]/30 bg-white">
-          <div className="grid min-w-[980px] grid-cols-[1.6fr_1.3fr_1.1fr_0.8fr_1.4fr_0.8fr] bg-[linear-gradient(90deg,#6878f5_0%,#a265dc_100%)] text-sm font-semibold tracking-wide text-white lg:text-base">
-            <div className="px-5 py-4">Name</div>
-            <div className="px-5 py-4">Details</div>
-            <div className="px-5 py-4">RERA Registration Number</div>
-            <div className="px-5 py-4">Status</div>
-            <div className="px-5 py-4">Associated User</div>
-            <div className="px-5 py-4">Actions</div>
+        <div ref={tableRef} className="relative z-10 mt-10 overflow-hidden rounded-[2.5rem] border border-[#e2e8f0] bg-white shadow-[0_40px_100px_rgba(15,23,42,0.08)]">
+          <div className="grid min-w-[1000px] grid-cols-[1.8fr_1.2fr_1.3fr_0.9fr_1.3fr_0.7fr] bg-[#0f172a] text-[11px] font-black uppercase tracking-[0.2em] text-white/70">
+            <div className="px-8 py-6">Partner Identity</div>
+            <div className="px-6 py-6 text-center">Reference</div>
+            <div className="px-6 py-6">RERA License</div>
+            <div className="px-6 py-6 text-center">Status</div>
+            <div className="px-6 py-6 text-center">Primary Contact</div>
+            <div className="px-6 py-6 text-right">Actions</div>
           </div>
           {channelPartners.length === 0 ? (
-            <div className="cp-table-row grid min-w-[980px] grid-cols-[1.6fr_1.3fr_1.1fr_0.8fr_1.4fr_0.8fr] items-center border-t border-[#eef2ff] px-1 py-2">
-              <div className="px-4 py-3 text-sm text-[#6b7280]">No data available.</div>
-              <div className="px-4 py-3 text-sm text-[#6b7280]">-</div>
-              <div className="px-4 py-3 text-sm text-[#6b7280]">-</div>
-              <div className="px-4 py-3 text-sm text-[#6b7280]">-</div>
-              <div className="px-4 py-3 text-sm text-[#6b7280]">-</div>
-              <div className="px-4 py-3 text-sm text-[#6b7280]">-</div>
+            <div className="flex min-w-[1000px] flex-col items-center justify-center border-t border-[#f1f5f9] bg-[#f8fafc] py-20 text-center">
+              <div className="mb-4 flex h-20 w-20 items-center justify-center rounded-3xl bg-white shadow-xl shadow-slate-200/50">
+                <svg className="h-10 w-10 text-slate-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" /><circle cx="12" cy="7" r="4" /></svg>
+              </div>
+              <p className="text-base font-bold text-[#475569]">No Channel Partners Registered</p>
+              <p className="mt-1 text-sm text-[#94a3b8]">Click &quot;Add New&quot; to begin building your network.</p>
             </div>
           ) : (
-            channelPartners.map((partner, index) => (
-              <div
-                key={`${partner.createdAt}-${index}`}
-                className="cp-table-row grid min-w-[980px] grid-cols-[1.6fr_1.3fr_1.1fr_0.8fr_1.4fr_0.8fr] items-center border-t border-[#eef2ff] px-1 py-2"
-              >
-                <div className="flex items-center gap-4 px-4 py-5 text-sm font-medium text-[#2d4568]">
-                  <div className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-full bg-[#eff6ff] text-lg font-bold text-[#3b82f6]">
-                    {(partner.companyName || partner.name).charAt(0).toLowerCase()}
-                  </div>
-                  <div>
-                    <div className="text-base font-bold text-[#0f172a]">{partner.companyName || partner.name}</div>
-                    <div className="text-[11px] text-[#64748b]">
-                      <span className="font-semibold uppercase text-[#94a3b8] mr-1">ph:</span>{partner.phone}
+            <div className="no-scrollbar overflow-x-auto">
+              {channelPartners.map((partner, index) => (
+                <div
+                  key={`${partner.createdAt}-${index}`}
+                  className="cp-table-row group grid min-w-[1000px] grid-cols-[1.8fr_1.2fr_1.3fr_0.9fr_1.3fr_0.7fr] items-center border-t border-[#f1f5f9] transition-all duration-300 hover:bg-[#f8fafc] hover:shadow-[inset_0_0_0_2px_#6366f110]"
+                >
+                  <div className="flex items-center gap-5 px-8 py-6">
+                    <div className="relative flex h-14 w-14 flex-shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-[#6366f1] to-[#4f46e5] text-xl font-black uppercase text-white shadow-lg shadow-indigo-100 ring-4 ring-white transition-transform group-hover:scale-110">
+                      {(partner.companyName || partner.name).charAt(0)}
                     </div>
-                    <div className="text-[11px] text-[#64748b]">
-                      <span className="font-semibold uppercase text-[#94a3b8] mr-1">en:</span>{partner.email}
+                    <div>
+                      <div className="text-lg font-black text-[#0f172a]">{partner.companyName || partner.name}</div>
+                      <div className="mt-1.5 flex flex-col gap-1">
+                        <div className="flex items-center gap-2 text-[11px] font-bold text-[#64748b]">
+                          <svg className="h-3.5 w-3.5 text-[#6366f1]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5"><path strokeLinecap="round" strokeLinejoin="round" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" /></svg>
+                          {partner.phone}
+                        </div>
+                        <div className="flex items-center gap-2 text-[11px] font-bold text-[#64748b]">
+                          <svg className="h-3.5 w-3.5 text-[#6366f1]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5"><path strokeLinecap="round" strokeLinejoin="round" d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207" /></svg>
+                          {partner.email}
+                        </div>
+                      </div>
                     </div>
                   </div>
-                </div>
-                <div className="px-4 py-3 text-sm font-semibold text-[#425774]">{partner.rera || '-'}</div>
-                <div className="px-4 py-4">
-                  <span className="inline-block rounded bg-[#eff6ff] px-2 py-0.5 text-[11px] font-bold text-[#4f46e5] border border-[#e0e7ff]">
-                    {partner.rera || 'No ID'}
-                  </span>
-                </div>
-                <div className="px-4 py-4">
-                  <span className="inline-block rounded bg-[#f1f5f9] px-3 py-1 text-[11px] font-bold text-[#475569] border border-[#e2e8f0]">
-                    {partner.status}
-                  </span>
-                </div>
-                <div className="px-4 py-4 text-sm font-semibold text-[#475569]">{partner.name}</div>
-                <div className="relative px-4 py-4 text-center">
+                  <div className="px-6 py-6 text-center">
+                    <span className="inline-flex rounded-xl bg-slate-100 px-3 py-1.5 text-[11px] font-black tracking-wider text-slate-500 ring-1 ring-inset ring-slate-200">
+                      {partner.rera || 'REF-N/A'}
+                    </span>
+                  </div>
+                  <div className="px-6 py-6">
+                    <div className="flex items-center gap-2">
+                      <div className="h-2 w-2 rounded-full bg-[#6366f1] shadow-[0_0_8px_#6366f1]" />
+                      <span className="text-[13px] font-bold text-[#1e293b]">{partner.rera || 'Pending Verification'}</span>
+                    </div>
+                  </div>
+                  <div className="px-6 py-6 text-center">
+                    <span className={`inline-flex items-center gap-1.5 rounded-full px-3.5 py-1 text-[11px] font-black uppercase tracking-widest ring-1 ring-inset ${
+                      partner.status === 'Active' 
+                      ? 'bg-emerald-50 text-emerald-600 ring-emerald-500/20' 
+                      : 'bg-amber-50 text-amber-600 ring-amber-500/20'
+                    }`}>
+                      <span className={`h-1.5 w-1.5 rounded-full ${partner.status === 'Active' ? 'bg-emerald-500' : 'bg-amber-500'}`} />
+                      {partner.status || 'Active'}
+                    </span>
+                  </div>
+                  <div className="px-6 py-6 text-center">
+                    <div className="text-sm font-black text-[#0f172a]">{partner.name}</div>
+                    <div className="mt-1 text-[10px] font-bold uppercase tracking-widest text-[#94a3b8]">Associated User</div>
+                  </div>
+                  <div className="relative px-8 py-6 text-right">
                     <button
                       type="button"
                       onClick={(e) => {
@@ -1155,7 +1173,8 @@ function Moreoption({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, on
                     )}
                 </div>
               </div>
-            ))
+              ))}
+            </div>
           )}
         </div>
       </section>

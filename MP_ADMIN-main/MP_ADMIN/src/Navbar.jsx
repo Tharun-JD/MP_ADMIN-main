@@ -186,13 +186,18 @@ function Navbar({
 
   return (
     <>
-      <header className={`${className} sticky top-0 z-[500] border-b border-[#6366f1]/10 bg-white/80 backdrop-blur-2xl transition-all duration-300`}>
-        <div className="pointer-events-none absolute inset-0 overflow-hidden">
-          <div className="absolute -left-16 top-0 h-full w-[26rem] rotate-[4deg] bg-gradient-to-r from-transparent via-[#2f3fa9]/18 to-transparent blur-xl" />
-          <div className="absolute right-0 top-0 h-full w-[22rem] rotate-[-3deg] bg-gradient-to-r from-transparent via-[#1a79d1]/14 to-transparent blur-xl" />
+      <header className={`${className} sticky top-0 z-[500] border-b border-slate-200 bg-white/70 backdrop-blur-3xl transition-all duration-300`}>
+        <div className="pointer-events-none absolute inset-0 overflow-hidden opacity-30">
+          <div className="absolute -left-16 top-0 h-full w-[30rem] bg-gradient-to-r from-indigo-50/50 via-transparent to-transparent blur-3xl" />
+          <div className="absolute right-0 top-0 h-full w-[25rem] bg-gradient-to-l from-blue-50/50 via-transparent to-transparent blur-3xl" />
         </div>
-        <div className="relative mx-auto flex w-full max-w-7xl items-center justify-between gap-4 overflow-visible px-4 py-4 lg:px-6">
-          <div className="text-xl font-black tracking-tight text-[#6366f1]">MP Developers</div>
+        <div className="relative mx-auto flex w-full max-w-7xl items-center justify-between gap-4 px-6 py-4 lg:px-8">
+          <div className="flex items-center gap-3">
+            <div className="h-9 w-9 rounded-xl bg-indigo-600 shadow-lg shadow-indigo-100 flex items-center justify-center text-white">
+              <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+            </div>
+            <div className="text-lg font-black tracking-tighter text-slate-900 uppercase">MP<span className="text-indigo-600">Admin</span></div>
+          </div>
 
           <nav className="flex flex-wrap items-center gap-2 lg:gap-3">
             {navItems.map((item) => (
