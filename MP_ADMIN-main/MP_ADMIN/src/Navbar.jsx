@@ -186,7 +186,7 @@ function Navbar({
 
   return (
     <>
-      <header className={`${className} sticky top-0 z-[200] border-b border-[#e2e8f0] bg-gradient-to-r from-[#f0f9ff] to-[#e0f2fe] backdrop-blur-md overflow-visible`}>
+      <header className={`${className} sticky top-0 z-[500] border-b border-[#6366f1]/10 bg-white/80 backdrop-blur-2xl transition-all duration-300`}>
         <div className="pointer-events-none absolute inset-0 overflow-hidden">
           <div className="absolute -left-16 top-0 h-full w-[26rem] rotate-[4deg] bg-gradient-to-r from-transparent via-[#2f3fa9]/18 to-transparent blur-xl" />
           <div className="absolute right-0 top-0 h-full w-[22rem] rotate-[-3deg] bg-gradient-to-r from-transparent via-[#1a79d1]/14 to-transparent blur-xl" />

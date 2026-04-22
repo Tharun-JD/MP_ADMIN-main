@@ -118,6 +118,7 @@ function Moreoption({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, on
   const bgGlowRefs = useRef([])
   const [openActionIndex, setOpenActionIndex] = useState(null)
   const [menuAnchorRect, setMenuAnchorRect] = useState(null)
+  const [exportAnchorRect, setExportAnchorRect] = useState(null)
 
   // Persistent storage for channel partners and form drafts
   useEffect(() => {
@@ -130,8 +131,9 @@ function Moreoption({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, on
 
   useEffect(() => {
     const onPointerDown = (event) => {
-      if (exportMenuRef.current && !exportMenuRef.current.contains(event.target)) {
+      if (exportMenuRef.current && !exportMenuRef.current.contains(event.target) && !event.target.closest('.cp-export-trigger')) {
         setIsExportOpen(false)
+        setExportAnchorRect(null)
       }
       if (statusMenuRef.current && !statusMenuRef.current.contains(event.target)) {
         setIsStatusOpen(false)
@@ -448,7 +450,7 @@ function Moreoption({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, on
         onSignOut={onSignOut}
       />
 
-      <section className="relative z-10 mx-auto w-full max-w-7xl px-4 py-8 lg:px-6">
+      <section className="relative z-10 mx-auto w-full max-w-7xl px-4 py-12 lg:px-6">
         <div className="mb-4">
           {/* <button
             type="button"
@@ -482,27 +484,57 @@ function Moreoption({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, on
             >
               Add New
             </button>
-            <div ref={exportMenuRef} className="relative">
+            <div className="relative">
               <button
                 type="button"
-                onClick={() => setIsExportOpen((prev) => !prev)}
-                className="cp-control cp-clickable flex items-center gap-1 rounded-md border border-[#8a86ff] bg-white px-5 py-2 text-base font-semibold text-[#6b66ff]"
+                onClick={(e) => {
+                  if (isExportOpen) {
+                    setIsExportOpen(false)
+                    setExportAnchorRect(null)
+                  } else {
+                    const rect = e.currentTarget.getBoundingClientRect()
+                    setExportAnchorRect({
+                      top: rect.bottom + window.scrollY,
+                      left: rect.left + window.scrollX
+                    })
+                    setIsExportOpen(true)
+                  }
+                }}
+                className={`cp-export-trigger cp-control cp-clickable flex items-center gap-2 rounded-xl border border-[#e2e8f0] px-5 py-2.5 text-sm font-black uppercase tracking-widest transition-all duration-300 ${isExportOpen ? 'bg-[#6366f1] text-white border-[#6366f1] shadow-lg shadow-indigo-100' : 'bg-white text-[#475569] hover:border-[#6366f1] hover:text-[#6366f1]'}`}
               >
-                Exports <IconChevron />
+                <span>Exports</span>
+                <svg className={`h-4 w-4 transition-transform duration-300 ${isExportOpen ? 'rotate-180' : ''}`} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><polyline points="6 9 12 15 18 9"></polyline></svg>
               </button>
-              {isExportOpen && (
-                <div className="absolute left-0 top-12 z-[70] w-64 rounded-xl border border-[#d4e3f8] bg-[#f8fbff] p-2 shadow-2xl shadow-[#1e78c8]/25">
-                  {exportOptions.map((option) => (
-                    <button
-                      key={option}
-                      type="button"
-                      onClick={() => setIsExportOpen(false)}
-                      className="cp-clickable block w-full rounded-lg px-3 py-2 text-left text-sm font-medium text-[#2f3e57] transition hover:bg-[#e8f1ff] hover:text-[#124785]"
-                    >
-                      {option}
-                    </button>
-                  ))}
-                </div>
+              {isExportOpen && exportAnchorRect && createPortal(
+                <div 
+                  ref={exportMenuRef}
+                  className="fixed z-[500] w-64 overflow-hidden rounded-[2rem] border border-white bg-white/90 p-3 shadow-[0_25px_70px_rgba(49,46,129,0.25)] backdrop-blur-3xl animate-elastic-pop"
+                  style={{ 
+                    top: `${exportAnchorRect.top - window.scrollY + 8}px`, 
+                    left: `${exportAnchorRect.left - window.scrollX}px` 
+                  }}
+                >
+                  <div className="absolute inset-0 bg-gradient-to-br from-[#6366f1]/5 to-transparent opacity-50" />
+                  <div className="relative space-y-1">
+                    {exportOptions.map((option) => (
+                      <button
+                        key={option}
+                        type="button"
+                        onClick={() => {
+                          setIsExportOpen(false)
+                          setExportAnchorRect(null)
+                        }}
+                        className="group flex w-full items-center gap-3 rounded-2xl p-3 text-left transition-all duration-300 hover:bg-[#6366f1] hover:text-white hover:shadow-lg hover:shadow-indigo-100"
+                      >
+                        <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-indigo-50 text-[#6366f1] transition-colors group-hover:bg-white/20 group-hover:text-white">
+                          <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" /><polyline points="7 10 12 15 17 10" /><line x1="12" y1="15" x2="12" y2="3" /></svg>
+                        </div>
+                        <span className="text-sm font-bold">{option}</span>
+                      </button>
+                    ))}
+                  </div>
+                </div>,
+                document.body
               )}
             </div>
             <button
@@ -609,8 +641,8 @@ function Moreoption({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, on
         )}
 
         {isAddFormOpen && (
-          <div className="cp-add-overlay fixed inset-0 z-[300] flex items-center justify-center bg-[#0a1222]/35 p-4 backdrop-blur-sm">
-            <div ref={addFormRef} className="relative flex max-h-[92vh] w-full max-w-5xl flex-col overflow-hidden rounded-[2.5rem] border border-white bg-white shadow-[0_35px_80px_rgba(0,0,0,0.25)]">
+          <div className="fixed inset-0 z-[300] flex items-center justify-center bg-white pt-[72px]">
+            <div ref={addFormRef} className="relative flex h-full w-full flex-col overflow-hidden bg-white">
               <div className="sticky top-0 z-10 flex items-center justify-between border-b border-[#e2e8f0] bg-gradient-to-r from-[#f8fafc] to-[#f1f5f9] px-8 py-6">
                 <div>
                   <h2 className="text-3xl font-black tracking-tight text-[#0f172a]">
@@ -636,8 +668,18 @@ function Moreoption({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, on
                       <h3 className="text-lg font-black uppercase tracking-widest text-[#1e293b]">Basic Profile</h3>
                     </div>
                     <div className="grid gap-6 md:grid-cols-2">
+                      <div className="cp-add-field space-y-1.5 md:col-span-2">
+                        <label className="ml-1 text-[11px] font-black uppercase tracking-widest text-[#64748b]">CP Company Name / CP Name *</label>
+                        <input
+                          type="text"
+                          placeholder="Enter company name"
+                          value={formValues.companyName}
+                          onChange={(e) => setFormField('companyName', e.target.value)}
+                          className="w-full rounded-2xl border border-[#e2e8f0] bg-[#f8fafc] px-5 py-3.5 text-base font-semibold text-[#0f172a] outline-none transition-all placeholder:text-[#94a3b8] focus:border-[#6366f1] focus:bg-white focus:ring-4 focus:ring-[#6366f1]/10"
+                        />
+                      </div>
                       {[
-                        { label: 'Name *', field: 'name', placeholder: 'Full Name' },
+                        { label: 'Owner Name *', field: 'name', placeholder: 'Full Name' },
                         { label: 'Phone *', field: 'phone', placeholder: '+91' },
                         { label: 'Email *', field: 'email', placeholder: 'email@example.com', type: 'email' },
                         { label: 'Alternate Number', field: 'alternateNumber', placeholder: '' },
@@ -645,7 +687,6 @@ function Moreoption({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, on
                         { label: 'PAN Number *', field: 'pan', placeholder: 'ABCDE1234F' },
                         { label: 'Occupation', field: 'occupation', placeholder: 'Professional / Business' },
                         { label: 'RERA Number', field: 'rera', placeholder: 'RERA Registration' },
-                        { label: 'CP Company Name', field: 'companyName', placeholder: 'Enter company name' },
                       ].map((item) => (
                         <div key={item.field} className="cp-add-field space-y-1.5">
                           <label className="ml-1 text-[11px] font-black uppercase tracking-widest text-[#64748b]">{item.label}</label>
@@ -662,8 +703,8 @@ function Moreoption({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, on
                   </section>
 
                   {/* GST Configuration */}
-                  <section className="rounded-3xl bg-[#f8fafc] p-6 border border-[#f1f5f9]">
-                    <div className="grid gap-8 md:grid-cols-2">
+                  <section className="rounded-[2rem] bg-[#f8fafc] p-8 border border-[#f1f5f9] shadow-inner shadow-slate-100/50">
+                    <div className="grid gap-10 md:grid-cols-[1fr_1.5fr]">
                       <div className="cp-add-field space-y-3">
                         <label className="text-[11px] font-black uppercase tracking-widest text-[#64748b]">Is GST Applicable? *</label>
                         <div className="flex gap-4">
@@ -672,10 +713,10 @@ function Moreoption({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, on
                               key={val}
                               type="button"
                               onClick={() => setFormField('gstApplicable', val)}
-                              className={`flex-1 rounded-xl border-2 py-3 text-sm font-bold transition-all ${
+                              className={`flex-1 rounded-2xl border-2 py-3.5 text-sm font-black tracking-widest uppercase transition-all duration-300 ${
                                 formValues.gstApplicable === val 
-                                ? 'border-[#6366f1] bg-[#6366f1]/05 text-[#6366f1]' 
-                                : 'border-[#e2e8f0] bg-white text-[#94a3b8] hover:border-[#cbd5e1]'
+                                ? 'border-[#6366f1] bg-white text-[#6366f1] shadow-lg shadow-indigo-100' 
+                                : 'border-transparent bg-slate-200/50 text-[#94a3b8] hover:bg-slate-200'
                               }`}
                             >
                               {val}
@@ -683,18 +724,18 @@ function Moreoption({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, on
                           ))}
                         </div>
                       </div>
-                      <div className="cp-add-field space-y-1.5">
+                      <div className="cp-add-field space-y-2">
                         <label className="ml-1 text-[11px] font-black uppercase tracking-widest text-[#64748b]">GST Number</label>
                         <input
                           type="text"
                           disabled={formValues.gstApplicable === 'No'}
-                          placeholder="Enter GSTIN"
+                          placeholder={formValues.gstApplicable === 'No' ? 'GST Not Applicable' : 'Enter 15-digit GSTIN'}
                           value={formValues.gstNumber}
                           onChange={(e) => setFormField('gstNumber', e.target.value)}
-                          className={`w-full rounded-2xl border px-5 py-3.5 text-base font-semibold outline-none transition-all ${
+                          className={`w-full rounded-2xl border px-6 py-4 text-base font-bold outline-none transition-all duration-300 ${
                             formValues.gstApplicable === 'No' 
-                            ? 'bg-slate-100 border-transparent text-slate-400 cursor-not-allowed' 
-                            : 'border-[#e2e8f0] bg-white text-[#0f172a] focus:border-[#6366f1] focus:ring-4 focus:ring-[#6366f1]/10'
+                            ? 'bg-slate-100/50 border-transparent text-slate-400 cursor-not-allowed italic' 
+                            : 'border-[#e2e8f0] bg-white text-[#0f172a] shadow-sm focus:border-[#6366f1] focus:ring-4 focus:ring-[#6366f1]/10'
                           }`}
                         />
                       </div>
@@ -787,13 +828,29 @@ function Moreoption({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, on
                       <h3 className="text-lg font-black uppercase tracking-widest text-[#1e293b]">Address</h3>
                     </div>
                     <div className="grid gap-6 md:grid-cols-2">
+                      <div className="cp-add-field space-y-1.5 md:col-span-2">
+                        <label className="ml-1 text-[11px] font-black uppercase tracking-widest text-[#64748b]">House / Flat / Company *</label>
+                        <input
+                          type="text"
+                          value={formValues.house}
+                          onChange={(e) => setFormField('house', e.target.value)}
+                          className="w-full rounded-2xl border border-[#e2e8f0] bg-[#f8fafc] px-5 py-3.5 text-base font-semibold text-[#0f172a] outline-none transition-all focus:border-[#f59e0b] focus:bg-white focus:ring-4 focus:ring-[#f59e0b]/10"
+                        />
+                      </div>
+                      <div className="cp-add-field space-y-1.5 md:col-span-2">
+                        <label className="ml-1 text-[11px] font-black uppercase tracking-widest text-[#64748b]">Street / Area *</label>
+                        <input
+                          type="text"
+                          value={formValues.street}
+                          onChange={(e) => setFormField('street', e.target.value)}
+                          className="w-full rounded-2xl border border-[#e2e8f0] bg-[#f8fafc] px-5 py-3.5 text-base font-semibold text-[#0f172a] outline-none transition-all focus:border-[#f59e0b] focus:bg-white focus:ring-4 focus:ring-[#f59e0b]/10"
+                        />
+                      </div>
                       {[
-                        { label: 'House/Flat/Company', field: 'house' },
-                        { label: 'Street', field: 'street' },
-                        { label: 'City', field: 'city' },
-                        { label: 'Zip / Pin Code', field: 'zip' },
-                        { label: 'State / Region', field: 'state' },
-                        { label: 'Country', field: 'country' },
+                        { label: 'City *', field: 'city' },
+                        { label: 'Zip / Pin Code *', field: 'zip' },
+                        { label: 'State / Region *', field: 'state' },
+                        { label: 'Country *', field: 'country' },
                       ].map((item) => (
                         <div key={item.field} className="cp-add-field space-y-1.5">
                           <label className="ml-1 text-[11px] font-black uppercase tracking-widest text-[#64748b]">{item.label}</label>
@@ -831,8 +888,8 @@ function Moreoption({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, on
         )}
 
         {isDetailsOpen && selectedPartner && (
-          <div className="fixed inset-0 z-[400] flex items-center justify-center bg-[#0f172a]/20 p-4 backdrop-blur-sm">
-            <div ref={detailsPanelRef} className="relative flex max-h-[90vh] w-full max-w-4xl flex-col overflow-hidden rounded-[2.5rem] border border-white bg-white shadow-[0_35px_90px_rgba(49,46,129,0.2)]">
+          <div className="fixed inset-0 z-[400] flex items-center justify-center bg-white pt-[72px]">
+            <div ref={detailsPanelRef} className="relative flex h-full w-full flex-col overflow-hidden bg-white">
               {/* Header */}
               <div className="sticky top-0 z-10 flex items-center justify-between border-b border-[#f1f5f9] bg-gradient-to-r from-[#f8fafc] to-[#f1f5f9] px-8 py-6">
                 <div>
