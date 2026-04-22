@@ -606,8 +606,8 @@ function Moreoption({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, on
         )}
 
         {isAddFormOpen && (
-          <div className="cp-add-overlay fixed inset-0 z-[320] flex items-center justify-center bg-[#071525]/55 px-4 py-6 backdrop-blur-[3px]">
-            <div ref={addFormRef} className="max-h-[92vh] w-full max-w-6xl overflow-y-auto rounded-2xl border border-[#0f2c4d]/25 bg-[radial-gradient(circle_at_5%_0%,#ffffff_0%,#f6fbff_45%,#eef6ff_100%)] shadow-2xl shadow-[#031021]/35">
+          <div className="cp-add-overlay fixed inset-0 z-[320] bg-white overflow-hidden">
+            <div ref={addFormRef} className="h-full w-full overflow-y-auto bg-[radial-gradient(circle_at_5%_0%,#ffffff_0%,#f6fbff_45%,#eef6ff_100%)]">
               <div className="sticky top-0 z-10 border-b border-[#7de4ff]/45 bg-[linear-gradient(115deg,#07307c_0%,#0f5ecf_32%,#00a7cf_66%,#4ee9c5_100%)] px-8 py-5 shadow-[0_10px_26px_rgba(7,48,124,0.28)]">
                 <h2 className="text-2xl font-semibold tracking-wide text-white">
                   {editingPartnerIndex !== null ? 'Edit Channel Partner' : 'Create Channel Partner'}
