@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import { createPortal } from 'react-dom'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import Navbar from './Navbar.jsx'
@@ -116,6 +117,7 @@ function Moreoption({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, on
   const tableRef = useRef(null)
   const bgGlowRefs = useRef([])
   const [openActionIndex, setOpenActionIndex] = useState(null)
+  const [menuAnchorRect, setMenuAnchorRect] = useState(null)
 
   // Persistent storage for channel partners and form drafts
   useEffect(() => {
@@ -144,8 +146,9 @@ function Moreoption({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, on
       if (detailsPanelRef.current && !detailsPanelRef.current.contains(event.target)) {
         setIsDetailsOpen(false)
       }
-      if (actionMenuRef.current && !actionMenuRef.current.contains(event.target)) {
+      if (actionMenuRef.current && !actionMenuRef.current.contains(event.target) && !event.target.closest('.cp-action-trigger')) {
         setOpenActionIndex(null)
+        setMenuAnchorRect(null)
       }
     }
 
@@ -606,377 +609,221 @@ function Moreoption({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, on
         )}
 
         {isAddFormOpen && (
-          <div className="cp-add-overlay fixed inset-0 z-[320] bg-white overflow-hidden">
-            <div ref={addFormRef} className="h-full w-full overflow-y-auto bg-[#f8fafc]">
-              <div className="sticky top-0 z-10 border-b border-[#e2e8f0] bg-gradient-to-r from-[#f0f9ff] to-[#e0f2fe] px-8 py-6 backdrop-blur-md">
-                <h2 className="text-3xl font-bold tracking-tight text-[#0f172a]">
-                  {editingPartnerIndex !== null ? 'Edit Channel Partner' : 'Create Channel Partner'}
-                </h2>
-                <p className="mt-1 text-base font-medium text-[#475569]">Capture partner profile and address details</p>
-              </div>
-
-              <div className="px-6 py-6">
-                <div className="grid gap-5 rounded-2xl border border-[#d2e6ff] bg-white/70 p-5 backdrop-blur md:grid-cols-2">
-                  <div className="cp-add-field space-y-1.5">
-                    <label className="text-sm font-bold uppercase tracking-wider text-[#475569]">Name *</label>
-                    <input
-                      type="text"
-                      placeholder="Name"
-                      value={formValues.name}
-                      onChange={(event) => setFormField('name', event.target.value)}
-                      className="w-full rounded-xl border border-[#e2e8f0] bg-white px-4 py-3.5 text-base text-[#1e293b] outline-none placeholder:text-[#94a3b8] transition focus:border-[#6366f1] focus:ring-4 focus:ring-[#6366f1]/10"
-                    />
-                  </div>
-
-                  <div className="cp-add-field space-y-1.5">
-                    <label className="text-xs font-bold uppercase tracking-[0.08em] text-[#1f4772]">Phone *</label>
-                    <input
-                      type="text"
-                      value={formValues.phone}
-                      onChange={(event) => setFormField('phone', event.target.value)}
-                      className="w-full rounded-xl border border-[#c5d6ee] bg-white px-4 py-3 text-sm text-[#153256] outline-none transition focus:border-[#1799c7] focus:ring-2 focus:ring-[#1799c7]/25"
-                    />
-                  </div>
-
-                  <div className="cp-add-field space-y-1.5">
-                    <label className="text-xs font-bold uppercase tracking-[0.08em] text-[#1f4772]">Email *</label>
-                    <input
-                      type="email"
-                      placeholder="eg. abc@gmail.com"
-                      value={formValues.email}
-                      onChange={(event) => setFormField('email', event.target.value)}
-                      className="w-full rounded-xl border border-[#c5d6ee] bg-white px-4 py-3 text-sm text-[#153256] outline-none placeholder:text-[#6782a6] transition focus:border-[#1799c7] focus:ring-2 focus:ring-[#1799c7]/25"
-                    />
-                  </div>
-
-                  <div className="cp-add-field space-y-1.5">
-                    <label className="text-xs font-bold uppercase tracking-[0.08em] text-[#1f4772]">Alternate Number</label>
-                    <input
-                      type="text"
-                      value={formValues.alternateNumber}
-                      onChange={(event) => setFormField('alternateNumber', event.target.value)}
-                      className="w-full rounded-xl border border-[#c5d6ee] bg-white px-4 py-3 text-sm text-[#153256] outline-none transition focus:border-[#1799c7] focus:ring-2 focus:ring-[#1799c7]/25"
-                    />
-                  </div>
-
-                  <div className="cp-add-field space-y-1.5">
-                    <label className="text-xs font-bold uppercase tracking-[0.08em] text-[#1f4772]">Aadhaar *</label>
-                    <input
-                      type="text"
-                      placeholder=""
-                      value={formValues.aadhaar}
-                      onChange={(event) => setFormField('aadhaar', event.target.value)}
-                      className="w-full rounded-xl border border-[#c5d6ee] bg-white px-4 py-3 text-sm text-[#153256] outline-none placeholder:text-[#6782a6] transition focus:border-[#1799c7] focus:ring-2 focus:ring-[#1799c7]/25"
-                    />
-                  </div>
-
-                  <div className="cp-add-field space-y-1.5">
-                    <label className="text-xs font-bold uppercase tracking-[0.08em] text-[#1f4772]">PAN Number *</label>
-                    <input
-                      type="text"
-                      placeholder=""
-                      value={formValues.pan}
-                      onChange={(event) => setFormField('pan', event.target.value)}
-                      className="w-full rounded-xl border border-[#c5d6ee] bg-white px-4 py-3 text-sm text-[#153256] outline-none placeholder:text-[#6782a6] transition focus:border-[#1799c7] focus:ring-2 focus:ring-[#1799c7]/25"
-                    />
-                  </div>
-
-                  <div className="cp-add-field space-y-1.5">
-                    <label className="text-xs font-bold uppercase tracking-[0.08em] text-[#1f4772]">Occupation</label>
-                    <input
-                      type="text"
-                      value={formValues.occupation}
-                      onChange={(event) => setFormField('occupation', event.target.value)}
-                      className="w-full rounded-xl border border-[#c5d6ee] bg-white px-4 py-3 text-sm text-[#153256] outline-none transition focus:border-[#1799c7] focus:ring-2 focus:ring-[#1799c7]/25"
-                    />
-                  </div>
-
-                  <div className="cp-add-field space-y-1.5">
-                    <label className="text-xs font-bold uppercase tracking-[0.08em] text-[#1f4772]">RERA Registration Number</label>
-                    <input
-                      type="text"
-                      placeholder="Enter the RERA N0"
-                      value={formValues.rera}
-                      onChange={(event) => setFormField('rera', event.target.value)}
-                      className="w-full rounded-xl border border-[#c5d6ee] bg-white px-4 py-3 text-sm text-[#153256] outline-none placeholder:text-[#6782a6] transition focus:border-[#1799c7] focus:ring-2 focus:ring-[#1799c7]/25"
-                    />
-                  </div>
-
-                  <div className="cp-add-field space-y-1.5">
-                    <label className="text-xs font-bold uppercase tracking-[0.08em] text-[#1f4772]">CP Company Name / CP Name</label>
-                    <input
-                      type="text"
-                      placeholder="Company Name"
-                      value={formValues.companyName}
-                      onChange={(event) => setFormField('companyName', event.target.value)}
-                      className="w-full rounded-xl border border-[#c5d6ee] bg-white px-4 py-3 text-sm text-[#153256] outline-none placeholder:text-[#6782a6] transition focus:border-[#1799c7] focus:ring-2 focus:ring-[#1799c7]/25"
-                    />
-                  </div>
+          <div className="cp-add-overlay fixed inset-0 z-[300] flex items-center justify-center bg-[#0a1222]/35 p-4 backdrop-blur-sm">
+            <div ref={addFormRef} className="relative flex max-h-[92vh] w-full max-w-5xl flex-col overflow-hidden rounded-[2.5rem] border border-white bg-white shadow-[0_35px_80px_rgba(0,0,0,0.25)]">
+              <div className="sticky top-0 z-10 flex items-center justify-between border-b border-[#e2e8f0] bg-gradient-to-r from-[#f8fafc] to-[#f1f5f9] px-8 py-6">
+                <div>
+                  <h2 className="text-3xl font-black tracking-tight text-[#0f172a]">
+                    {editingPartnerIndex !== null ? 'Update Partner' : 'New Partner'}
+                  </h2>
+                  <p className="mt-1 text-sm font-bold text-[#6366f1]">Capture registration and business profile details</p>
                 </div>
-
-                <div className="mt-6 grid gap-5 rounded-2xl border border-[#d2e6ff] bg-white/75 p-5 md:grid-cols-2">
-                  <div className="cp-add-field space-y-2">
-                    <label className="text-xs font-bold uppercase tracking-[0.08em] text-[#1f4772]">Is GST Applicable? *</label>
-                    <div className="flex items-center gap-5 pt-1 text-sm font-semibold text-[#153256]">
-                      <label className="inline-flex cursor-pointer items-center gap-2">
-                        <input
-                          type="radio"
-                          name="gstApplicable"
-                          value="Yes"
-                          checked={formValues.gstApplicable === 'Yes'}
-                          onChange={(event) => setFormField('gstApplicable', event.target.value)}
-                          className="h-4 w-4 accent-[#1a79d1]"
-                        />
-                        Yes
-                      </label>
-                      <label className="inline-flex cursor-pointer items-center gap-2">
-                        <input
-                          type="radio"
-                          name="gstApplicable"
-                          value="No"
-                          checked={formValues.gstApplicable === 'No'}
-                          onChange={(event) => setFormField('gstApplicable', event.target.value)}
-                          className="h-4 w-4 accent-[#1a79d1]"
-                        />
-                        No
-                      </label>
-                    </div>
-                  </div>
-
-                  <div className="cp-add-field space-y-1.5">
-                    <label className="text-xs font-bold uppercase tracking-[0.08em] text-[#1f4772]">GST Number</label>
-                    <input
-                      type="text"
-                      placeholder="GSTIN Number"
-                      value={formValues.gstNumber}
-                      onChange={(event) => setFormField('gstNumber', event.target.value)}
-                      className="w-full rounded-xl border border-[#c5d6ee] bg-white px-4 py-3 text-sm text-[#153256] outline-none placeholder:text-[#6782a6] transition focus:border-[#1799c7] focus:ring-2 focus:ring-[#1799c7]/25"
-                    />
-                  </div>
-                </div>
-
-                <div className="relative mt-6 rounded-t-2xl bg-[linear-gradient(95deg,#0d3fa7_0%,#1168d3_35%,#00a8d0_70%,#3de4b8_100%)] px-6 py-3 shadow-[0_10px_22px_rgba(13,63,167,0.24)]">
-                  <h3 className="text-xl font-semibold tracking-wide text-white">Bank Details</h3>
-                  <div className="pointer-events-none absolute left-5 top-2 h-6 w-6 rounded-full bg-[#89e8ff]/45 blur-md" />
-                  <div className="pointer-events-none absolute right-8 top-2 h-6 w-6 rounded-full bg-[#79ffc9]/40 blur-md" />
-                </div>
-
-                <div className="grid gap-5 rounded-b-2xl border border-t-0 border-[#d2e6ff] bg-white/75 p-5 md:grid-cols-2">
-                  <div className="cp-add-field space-y-1.5">
-                    <label className="text-xs font-bold uppercase tracking-[0.08em] text-[#1f4772]">Bank Name</label>
-                    <input
-                      type="text"
-                      placeholder="Bank Name"
-                      value={formValues.bankName}
-                      onChange={(event) => setFormField('bankName', event.target.value)}
-                      className="w-full rounded-xl border border-[#c5d6ee] bg-white px-4 py-3 text-sm text-[#153256] outline-none placeholder:text-[#6782a6] transition focus:border-[#1799c7] focus:ring-2 focus:ring-[#1799c7]/25"
-                    />
-                  </div>
-
-                  <div className="cp-add-field space-y-1.5">
-                    <label className="text-xs font-bold uppercase tracking-[0.08em] text-[#1f4772]">Branch</label>
-                    <input
-                      type="text"
-                      value={formValues.branch}
-                      onChange={(event) => setFormField('branch', event.target.value)}
-                      className="w-full rounded-xl border border-[#c5d6ee] bg-white px-4 py-3 text-sm text-[#153256] outline-none transition focus:border-[#1799c7] focus:ring-2 focus:ring-[#1799c7]/25"
-                    />
-                  </div>
-
-                  <div className="cp-add-field space-y-1.5">
-                    <label className="text-xs font-bold uppercase tracking-[0.08em] text-[#1f4772]">Account Type</label>
-                    <div className="relative">
-                      <select
-                        value={formValues.accountType}
-                        onChange={(event) => setFormField('accountType', event.target.value)}
-                        className="w-full appearance-none rounded-xl border border-[#c5d6ee] bg-white px-4 py-3 pr-10 text-sm text-[#153256] outline-none transition focus:border-[#1799c7] focus:ring-2 focus:ring-[#1799c7]/25"
-                      >
-                        {accountTypeOptions.map((option) => (
-                          <option key={option} value={option}>
-                            {option}
-                          </option>
-                        ))}
-                      </select>
-                      <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-[#6b84a5]"><IconChevron /></span>
-                    </div>
-                  </div>
-
-                  <div className="cp-add-field space-y-1.5">
-                    <label className="text-xs font-bold uppercase tracking-[0.08em] text-[#1f4772]">IFSC Code</label>
-                    <input
-                      type="text"
-                      placeholder="eg. ICIC00000"
-                      value={formValues.ifsc}
-                      onChange={(event) => setFormField('ifsc', event.target.value)}
-                      className="w-full rounded-xl border border-[#c5d6ee] bg-white px-4 py-3 text-sm text-[#153256] outline-none placeholder:text-[#6782a6] transition focus:border-[#1799c7] focus:ring-2 focus:ring-[#1799c7]/25"
-                    />
-                  </div>
-
-                  <div className="cp-add-field space-y-1.5">
-                    <label className="text-xs font-bold uppercase tracking-[0.08em] text-[#1f4772]">Account Number</label>
-                    <input
-                      type="text"
-                      placeholder="eg. 00000000"
-                      value={formValues.accountNumber}
-                      onChange={(event) => setFormField('accountNumber', event.target.value)}
-                      className="w-full rounded-xl border border-[#c5d6ee] bg-white px-4 py-3 text-sm text-[#153256] outline-none placeholder:text-[#6782a6] transition focus:border-[#1799c7] focus:ring-2 focus:ring-[#1799c7]/25"
-                    />
-                  </div>
-
-                  <div className="cp-add-field space-y-1.5">
-                    <label className="text-xs font-bold uppercase tracking-[0.08em] text-[#1f4772]">Zip / Pin Code</label>
-                    <input
-                      type="text"
-                      placeholder="eg. 411045"
-                      value={formValues.bankZip}
-                      onChange={(event) => setFormField('bankZip', event.target.value)}
-                      className="w-full rounded-xl border border-[#c5d6ee] bg-white px-4 py-3 text-sm text-[#153256] outline-none placeholder:text-[#6782a6] transition focus:border-[#1799c7] focus:ring-2 focus:ring-[#1799c7]/25"
-                    />
-                  </div>
-                </div>
-
-                <div className="relative mt-6 rounded-t-2xl bg-[linear-gradient(95deg,#0d3fa7_0%,#1168d3_35%,#00a8d0_70%,#3de4b8_100%)] px-6 py-3 shadow-[0_10px_22px_rgba(13,63,167,0.24)]">
-                  <h3 className="text-xl font-semibold tracking-wide text-white">Upload Docs</h3>
-                  <div className="pointer-events-none absolute left-5 top-2 h-6 w-6 rounded-full bg-[#89e8ff]/45 blur-md" />
-                  <div className="pointer-events-none absolute right-8 top-2 h-6 w-6 rounded-full bg-[#79ffc9]/40 blur-md" />
-                </div>
-
-                <div className="grid gap-5 rounded-b-2xl border border-t-0 border-[#d2e6ff] bg-white/75 p-5 md:grid-cols-2">
-                  <div className="cp-add-field space-y-1.5">
-                    <label className="text-xs font-bold uppercase tracking-[0.08em] text-[#1f4772]">Upload Document</label>
-                    <input
-                      type="file"
-                      multiple
-                      onChange={handleUploadDocs}
-                      className="w-full rounded-xl border border-[#c5d6ee] bg-white px-3 py-2.5 text-sm text-[#153256] outline-none file:mr-3 file:rounded-lg file:border-0 file:bg-[#e6f2ff] file:px-3 file:py-1.5 file:text-xs file:font-semibold file:text-[#1a5ea8] hover:file:bg-[#dcecff]"
-                    />
-                    {(formValues.uploadDocuments || []).length === 0 ? (
-                      <p className="text-xs text-[#5b7393]">No file selected</p>
-                    ) : (
-                      <div className="space-y-2">
-                        {formValues.uploadDocuments.map((doc, docIndex) => (
-                          <div key={`${doc.name}-${docIndex}`} className="flex items-center justify-between rounded-lg border border-[#d6e4f7] bg-white px-3 py-2 text-xs text-[#324c70]">
-                            <span className="truncate pr-3">{doc.name}</span>
-                            <div className="flex items-center gap-2">
-                              <button
-                                type="button"
-                                onClick={() => window.open(doc.url, '_blank', 'noopener,noreferrer')}
-                                className="rounded-md border border-[#9fc1e9] bg-[#eef6ff] px-2 py-1 text-[11px] font-semibold text-[#1b5ea5] hover:bg-[#e2f0ff]"
-                              >
-                                View
-                              </button>
-                              <button
-                                type="button"
-                                aria-label="Remove document"
-                                onClick={() => handleRemoveUploadedDoc(docIndex)}
-                                className="text-sm font-bold leading-none text-[#d11a2a] hover:text-[#a3121f]"
-                              >
-                                X
-                              </button>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                </div>
-
-                <div className="relative mt-6 rounded-t-2xl bg-[linear-gradient(95deg,#0d3fa7_0%,#1168d3_35%,#00a8d0_70%,#3de4b8_100%)] px-6 py-3 shadow-[0_10px_22px_rgba(13,63,167,0.24)]">
-                  <h3 className="text-xl font-semibold tracking-wide text-white">Address</h3>
-                  <div className="pointer-events-none absolute left-5 top-2 h-6 w-6 rounded-full bg-[#89e8ff]/45 blur-md" />
-                  <div className="pointer-events-none absolute right-8 top-2 h-6 w-6 rounded-full bg-[#79ffc9]/40 blur-md" />
-                </div>
-
-                <div className="grid gap-5 rounded-b-2xl border border-t-0 border-[#d2e6ff] bg-white/75 p-5 md:grid-cols-2">
-                  <div className="cp-add-field space-y-1.5">
-                    <label className="text-xs font-bold uppercase tracking-[0.08em] text-[#1f4772]">House/Flat/Company</label>
-                    <input
-                      type="text"
-                      value={formValues.house}
-                      onChange={(event) => setFormField('house', event.target.value)}
-                      className="w-full rounded-xl border border-[#c5d6ee] bg-white px-4 py-3 text-sm text-[#153256] outline-none transition focus:border-[#1799c7] focus:ring-2 focus:ring-[#1799c7]/25"
-                    />
-                  </div>
-
-                  <div className="cp-add-field space-y-1.5">
-                    <label className="text-xs font-bold uppercase tracking-[0.08em] text-[#1f4772]">Street</label>
-                    <input
-                      type="text"
-                      value={formValues.street}
-                      onChange={(event) => setFormField('street', event.target.value)}
-                      className="w-full rounded-xl border border-[#c5d6ee] bg-white px-4 py-3 text-sm text-[#153256] outline-none transition focus:border-[#1799c7] focus:ring-2 focus:ring-[#1799c7]/25"
-                    />
-                  </div>
-
-                  <div className="cp-add-field space-y-1.5">
-                    <label className="text-xs font-bold uppercase tracking-[0.08em] text-[#1f4772]">Country</label>
-                    <div className="relative">
-                      <input
-                        type="text"
-                        value={formValues.country}
-                        onChange={(event) => setFormField('country', event.target.value)}
-                        className="w-full rounded-xl border border-[#c5d6ee] bg-white px-4 py-3 text-sm text-[#153256] outline-none transition focus:border-[#1799c7] focus:ring-2 focus:ring-[#1799c7]/25"
-                      />
-                      <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-[#6b84a5]"><IconChevron /></span>
-                    </div>
-                  </div>
-
-                  <div className="cp-add-field space-y-1.5">
-                    <label className="text-xs font-bold uppercase tracking-[0.08em] text-[#1f4772]">State / Region</label>
-                    <div className="relative">
-                      <input
-                        type="text"
-                        value={formValues.state}
-                        onChange={(event) => setFormField('state', event.target.value)}
-                        className="w-full rounded-xl border border-[#c5d6ee] bg-white px-4 py-3 text-sm text-[#153256] outline-none transition focus:border-[#1799c7] focus:ring-2 focus:ring-[#1799c7]/25"
-                      />
-                      <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-[#6b84a5]"><IconChevron /></span>
-                    </div>
-                  </div>
-
-                  <div className="cp-add-field space-y-1.5">
-                    <label className="text-xs font-bold uppercase tracking-[0.08em] text-[#1f4772]">City</label>
-                    <input
-                      type="text"
-                      placeholder=""
-                      value={formValues.city}
-                      onChange={(event) => setFormField('city', event.target.value)}
-                      className="w-full rounded-xl border border-[#c5d6ee] bg-white px-4 py-3 text-sm text-[#153256] outline-none placeholder:text-[#6782a6] transition focus:border-[#1799c7] focus:ring-2 focus:ring-[#1799c7]/25"
-                    />
-                  </div>
-
-                  <div className="cp-add-field space-y-1.5">
-                    <label className="text-xs font-bold uppercase tracking-[0.08em] text-[#1f4772]">Zip / Pin Code</label>
-                    <input
-                      type="text"
-                      placeholder=""
-                      value={formValues.zip}
-                      onChange={(event) => setFormField('zip', event.target.value)}
-                      className="w-full rounded-xl border border-[#c5d6ee] bg-white px-4 py-3 text-sm text-[#153256] outline-none placeholder:text-[#6782a6] transition focus:border-[#1799c7] focus:ring-2 focus:ring-[#1799c7]/25"
-                    />
-                  </div>
-                </div>
-
-              </div>
-
-              <div className="sticky bottom-0 flex items-center justify-end gap-4 border-t border-[#e2e8f0] bg-gradient-to-r from-[#f0f9ff] to-[#e0f2fe] px-8 py-5 backdrop-blur-md">
                 <button
                   type="button"
-                  onClick={() => {
-                    setEditingPartnerIndex(null)
-                    setFormValues(initialFormValues)
-                    setIsAddFormOpen(false)
-                  }}
-                  className="cp-clickable cp-add-action rounded-xl border border-[#e2e8f0] bg-white px-6 py-2.5 text-base font-bold text-[#475569] transition hover:bg-[#f8fafc]"
+                  onClick={() => setIsAddFormOpen(false)}
+                  className="ua-clickable flex h-12 w-12 items-center justify-center rounded-full bg-white text-3xl font-bold text-[#94a3b8] shadow-sm transition hover:text-[#0f172a]"
+                >
+                  &times;
+                </button>
+              </div>
+
+              <div className="flex-1 overflow-y-auto px-8 py-8 no-scrollbar">
+                <div className="space-y-10">
+                  {/* Basic Profile */}
+                  <section>
+                    <div className="mb-5 flex items-center gap-3">
+                      <div className="h-8 w-1 bg-[#6366f1] rounded-full" />
+                      <h3 className="text-lg font-black uppercase tracking-widest text-[#1e293b]">Basic Profile</h3>
+                    </div>
+                    <div className="grid gap-6 md:grid-cols-2">
+                      {[
+                        { label: 'Name *', field: 'name', placeholder: 'Full Name' },
+                        { label: 'Phone *', field: 'phone', placeholder: '+91' },
+                        { label: 'Email *', field: 'email', placeholder: 'email@example.com', type: 'email' },
+                        { label: 'Alternate Number', field: 'alternateNumber', placeholder: '' },
+                        { label: 'Aadhaar *', field: 'aadhaar', placeholder: '12-digit number' },
+                        { label: 'PAN Number *', field: 'pan', placeholder: 'ABCDE1234F' },
+                        { label: 'Occupation', field: 'occupation', placeholder: 'Professional / Business' },
+                        { label: 'RERA Number', field: 'rera', placeholder: 'RERA Registration' },
+                        { label: 'CP Company Name', field: 'companyName', placeholder: 'Enter company name' },
+                      ].map((item) => (
+                        <div key={item.field} className="cp-add-field space-y-1.5">
+                          <label className="ml-1 text-[11px] font-black uppercase tracking-widest text-[#64748b]">{item.label}</label>
+                          <input
+                            type={item.type || 'text'}
+                            placeholder={item.placeholder}
+                            value={formValues[item.field]}
+                            onChange={(e) => setFormField(item.field, e.target.value)}
+                            className="w-full rounded-2xl border border-[#e2e8f0] bg-[#f8fafc] px-5 py-3.5 text-base font-semibold text-[#0f172a] outline-none transition-all placeholder:text-[#94a3b8] focus:border-[#6366f1] focus:bg-white focus:ring-4 focus:ring-[#6366f1]/10"
+                          />
+                        </div>
+                      ))}
+                    </div>
+                  </section>
+
+                  {/* GST Configuration */}
+                  <section className="rounded-3xl bg-[#f8fafc] p-6 border border-[#f1f5f9]">
+                    <div className="grid gap-8 md:grid-cols-2">
+                      <div className="cp-add-field space-y-3">
+                        <label className="text-[11px] font-black uppercase tracking-widest text-[#64748b]">Is GST Applicable? *</label>
+                        <div className="flex gap-4">
+                          {['Yes', 'No'].map((val) => (
+                            <button
+                              key={val}
+                              type="button"
+                              onClick={() => setFormField('gstApplicable', val)}
+                              className={`flex-1 rounded-xl border-2 py-3 text-sm font-bold transition-all ${
+                                formValues.gstApplicable === val 
+                                ? 'border-[#6366f1] bg-[#6366f1]/05 text-[#6366f1]' 
+                                : 'border-[#e2e8f0] bg-white text-[#94a3b8] hover:border-[#cbd5e1]'
+                              }`}
+                            >
+                              {val}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                      <div className="cp-add-field space-y-1.5">
+                        <label className="ml-1 text-[11px] font-black uppercase tracking-widest text-[#64748b]">GST Number</label>
+                        <input
+                          type="text"
+                          disabled={formValues.gstApplicable === 'No'}
+                          placeholder="Enter GSTIN"
+                          value={formValues.gstNumber}
+                          onChange={(e) => setFormField('gstNumber', e.target.value)}
+                          className={`w-full rounded-2xl border px-5 py-3.5 text-base font-semibold outline-none transition-all ${
+                            formValues.gstApplicable === 'No' 
+                            ? 'bg-slate-100 border-transparent text-slate-400 cursor-not-allowed' 
+                            : 'border-[#e2e8f0] bg-white text-[#0f172a] focus:border-[#6366f1] focus:ring-4 focus:ring-[#6366f1]/10'
+                          }`}
+                        />
+                      </div>
+                    </div>
+                  </section>
+
+                  {/* Bank Details */}
+                  <section>
+                    <div className="mb-5 flex items-center gap-3">
+                      <div className="h-8 w-1 bg-[#10b981] rounded-full" />
+                      <h3 className="text-lg font-black uppercase tracking-widest text-[#1e293b]">Bank Details</h3>
+                    </div>
+                    <div className="grid gap-6 md:grid-cols-2">
+                      {[
+                        { label: 'Bank Name', field: 'bankName', placeholder: 'e.g. HDFC Bank' },
+                        { label: 'Branch Name', field: 'branch', placeholder: 'Branch location' },
+                        { label: 'IFSC Code', field: 'ifsc', placeholder: 'HDFC0001234' },
+                        { label: 'Account Number', field: 'accountNumber', placeholder: 'Enter Account Number' },
+                        { label: 'Bank Pincode', field: 'bankZip', placeholder: 'Pincode' },
+                      ].map((item) => (
+                        <div key={item.field} className="cp-add-field space-y-1.5">
+                          <label className="ml-1 text-[11px] font-black uppercase tracking-widest text-[#64748b]">{item.label}</label>
+                          <input
+                            type="text"
+                            placeholder={item.placeholder}
+                            value={formValues[item.field]}
+                            onChange={(e) => setFormField(item.field, e.target.value)}
+                            className="w-full rounded-2xl border border-[#e2e8f0] bg-[#f8fafc] px-5 py-3.5 text-base font-semibold text-[#0f172a] outline-none transition-all focus:border-[#10b981] focus:bg-white focus:ring-4 focus:ring-[#10b981]/10"
+                          />
+                        </div>
+                      ))}
+                      <div className="cp-add-field space-y-1.5">
+                        <label className="ml-1 text-[11px] font-black uppercase tracking-widest text-[#64748b]">Account Type</label>
+                        <div className="relative">
+                          <select
+                            value={formValues.accountType}
+                            onChange={(e) => setFormField('accountType', e.target.value)}
+                            className="w-full appearance-none rounded-2xl border border-[#e2e8f0] bg-[#f8fafc] px-5 py-3.5 text-base font-semibold text-[#0f172a] outline-none transition-all focus:border-[#10b981] focus:bg-white focus:ring-4 focus:ring-[#10b981]/10"
+                          >
+                            {accountTypeOptions.map((opt) => <option key={opt} value={opt}>{opt}</option>)}
+                          </select>
+                          <span className="pointer-events-none absolute right-5 top-1/2 -translate-y-1/2 text-[#94a3b8]"><IconChevron /></span>
+                        </div>
+                      </div>
+                    </div>
+                  </section>
+
+                  {/* Documents */}
+                  <section>
+                    <div className="mb-5 flex items-center gap-3">
+                      <div className="h-8 w-1 bg-[#3b82f6] rounded-full" />
+                      <h3 className="text-lg font-black uppercase tracking-widest text-[#1e293b]">Documents</h3>
+                    </div>
+                    <div className="cp-add-field rounded-3xl border-2 border-dashed border-[#e2e8f0] bg-[#f8fafc] p-8 text-center transition hover:border-[#3b82f6]/50">
+                      <input
+                        type="file"
+                        id="cp-doc-upload"
+                        multiple
+                        className="hidden"
+                        onChange={handleUploadDocs}
+                      />
+                      <label htmlFor="cp-doc-upload" className="flex cursor-pointer flex-col items-center">
+                        <div className="mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-[#3b82f6]/10 text-[#3b82f6]">
+                          <svg className="h-7 w-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M12 5v14M5 12h14" /></svg>
+                        </div>
+                        <p className="text-base font-bold text-[#1e293b]">Click to upload documents</p>
+                        <p className="mt-1 text-sm text-[#94a3b8]">Aadhaar, PAN, RERA certificate, etc.</p>
+                      </label>
+
+                      {formValues.uploadDocuments?.length > 0 && (
+                        <div className="mt-6 grid gap-3 text-left">
+                          {formValues.uploadDocuments.map((doc, idx) => (
+                            <div key={idx} className="flex items-center justify-between rounded-xl border border-[#e2e8f0] bg-white p-3 shadow-sm">
+                              <span className="truncate font-bold text-[#475569]">{doc.name}</span>
+                              <div className="flex items-center gap-2">
+                                <button type="button" onClick={() => window.open(doc.url)} className="text-[11px] font-bold text-[#6366f1] hover:underline">View</button>
+                                <button type="button" onClick={() => handleRemoveUploadedDoc(idx)} className="text-sm font-black text-red-500">&times;</button>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  </section>
+
+                  {/* Address */}
+                  <section className="pb-8">
+                    <div className="mb-5 flex items-center gap-3">
+                      <div className="h-8 w-1 bg-[#f59e0b] rounded-full" />
+                      <h3 className="text-lg font-black uppercase tracking-widest text-[#1e293b]">Address</h3>
+                    </div>
+                    <div className="grid gap-6 md:grid-cols-2">
+                      {[
+                        { label: 'House/Flat/Company', field: 'house' },
+                        { label: 'Street', field: 'street' },
+                        { label: 'City', field: 'city' },
+                        { label: 'Zip / Pin Code', field: 'zip' },
+                        { label: 'State / Region', field: 'state' },
+                        { label: 'Country', field: 'country' },
+                      ].map((item) => (
+                        <div key={item.field} className="cp-add-field space-y-1.5">
+                          <label className="ml-1 text-[11px] font-black uppercase tracking-widest text-[#64748b]">{item.label}</label>
+                          <input
+                            type="text"
+                            value={formValues[item.field]}
+                            onChange={(e) => setFormField(item.field, e.target.value)}
+                            className="w-full rounded-2xl border border-[#e2e8f0] bg-[#f8fafc] px-5 py-3.5 text-base font-semibold text-[#0f172a] outline-none transition-all focus:border-[#f59e0b] focus:bg-white focus:ring-4 focus:ring-[#f59e0b]/10"
+                          />
+                        </div>
+                      ))}
+                    </div>
+                  </section>
+                </div>
+              </div>
+
+              <div className="sticky bottom-0 flex items-center justify-end gap-4 border-t border-[#e2e8f0] bg-white px-8 py-6">
+                <button
+                  type="button"
+                  onClick={() => setIsAddFormOpen(false)}
+                  className="rounded-xl px-8 py-3.5 text-base font-bold text-[#94a3b8] transition hover:text-[#0f172a]"
                 >
                   Cancel
                 </button>
                 <button
                   type="button"
                   onClick={handleSavePartner}
-                  className="cp-clickable cp-add-action rounded-xl bg-[#6366f1] px-8 py-2.5 text-base font-bold text-white shadow-lg shadow-indigo-100 transition hover:bg-[#4f46e5]"
+                  className="rounded-2xl bg-[#6366f1] px-12 py-3.5 text-base font-bold text-white shadow-xl shadow-[#6366f1]/20 transition-all hover:scale-105 hover:bg-[#4f46e5] active:scale-95"
                 >
-                  {editingPartnerIndex !== null ? 'Update' : 'Save'}
+                  {editingPartnerIndex !== null ? 'Update Partner' : 'Register Partner'}
                 </button>
               </div>
             </div>
@@ -984,90 +831,136 @@ function Moreoption({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, on
         )}
 
         {isDetailsOpen && selectedPartner && (
-          <div className="fixed inset-0 z-[330] flex items-center justify-center bg-[#071525]/55 px-4 py-6 backdrop-blur-[3px]">
-            <div ref={detailsPanelRef} className="max-h-[90vh] w-full max-w-5xl overflow-y-auto rounded-2xl border border-[#0f2c4d]/25 bg-[#f6fbff] shadow-2xl shadow-[#031021]/35">
-              <div className="sticky top-0 z-10 border-b border-[#7de4ff]/45 bg-[linear-gradient(115deg,#07307c_0%,#0f5ecf_32%,#00a7cf_66%,#4ee9c5_100%)] px-8 py-5">
-                <h2 className="text-2xl font-semibold tracking-wide text-white">View partner Details</h2>
-              </div>
-
-              <div className="space-y-5 px-6 py-6">
-                <div className="cp-detail-block grid gap-4 md:grid-cols-2">
-                  <DetailField label="Name" value={selectedPartner.name} />
-                  <DetailField label="CP Company Name / CP Name" value={selectedPartner.companyName} />
-                  <DetailField label="Phone" value={selectedPartner.phone} />
-                  <DetailField label="Email" value={selectedPartner.email} />
-                  <DetailField label="Alternate Number" value={selectedPartner.alternateNumber} />
-                  <DetailField label="Occupation" value={selectedPartner.occupation} />
-                  <DetailField label="Aadhaar" value={selectedPartner.aadhaar} />
-                  <DetailField label="PAN Number" value={selectedPartner.pan} />
-                  <DetailField label="RERA Registration Number" value={selectedPartner.rera} />
-                  <DetailField label="Status" value={selectedPartner.status} />
-                  <DetailField label="Is GST Applicable?" value={selectedPartner.gstApplicable} />
-                  <DetailField label="GST Number" value={selectedPartner.gstNumber} />
-                </div>
-
-                <div className="cp-detail-block rounded-xl border border-[#cfe5ff] bg-[#eff7ff] p-4">
-                  <h3 className="mb-3 text-lg font-semibold text-[#124172]">Bank Details</h3>
-                  <div className="grid gap-4 md:grid-cols-2">
-                    <DetailField label="Bank Name" value={selectedPartner.bankName} />
-                    <DetailField label="Branch" value={selectedPartner.branch} />
-                    <DetailField label="Account Type" value={selectedPartner.accountType} />
-                    <DetailField label="IFSC Code" value={selectedPartner.ifsc} />
-                    <DetailField label="Account Number" value={selectedPartner.accountNumber} />
-                    <DetailField label="Zip / Pin Code" value={selectedPartner.bankZip} />
-                  </div>
-                </div>
-
-                <div className="cp-detail-block rounded-xl border border-[#cfe5ff] bg-[#eff7ff] p-4">
-                  <h3 className="mb-3 text-lg font-semibold text-[#124172]">Upload Docs</h3>
-                  {selectedPartnerDocs.length === 0 ? (
-                    <p className="rounded-lg border border-[#d8e6f8] bg-white px-4 py-3 text-sm text-[#4c6484]">No uploaded documents.</p>
-                  ) : (
-                    <div className="space-y-2">
-                      {selectedPartnerDocs.map((doc, docIndex) => (
-                        <div key={`${doc.name}-${docIndex}`} className="flex items-center justify-between rounded-lg border border-[#d8e6f8] bg-white px-4 py-3">
-                          <span className="truncate pr-4 text-sm font-medium text-[#1f3655]">{doc.name}</span>
-                          <button
-                            type="button"
-                            onClick={() => {
-                              if (doc.url) {
-                                window.open(doc.url, '_blank', 'noopener,noreferrer')
-                              }
-                            }}
-                            disabled={!doc.url}
-                            className="cp-clickable rounded-md border border-[#9fc1e9] bg-[#eef6ff] px-3 py-1.5 text-xs font-semibold text-[#1b5ea5] hover:bg-[#e2f0ff] disabled:cursor-not-allowed disabled:opacity-50"
-                          >
-                            View
-                          </button>
-                        </div>
-                      ))}
+          <div className="fixed inset-0 z-[400] flex items-center justify-center bg-[#0f172a]/20 p-4 backdrop-blur-sm">
+            <div ref={detailsPanelRef} className="relative flex max-h-[90vh] w-full max-w-4xl flex-col overflow-hidden rounded-[2.5rem] border border-white bg-white shadow-[0_35px_90px_rgba(49,46,129,0.2)]">
+              {/* Header */}
+              <div className="sticky top-0 z-10 flex items-center justify-between border-b border-[#f1f5f9] bg-gradient-to-r from-[#f8fafc] to-[#f1f5f9] px-8 py-6">
+                <div>
+                  <div className="flex items-center gap-3">
+                    <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#6366f1] text-white shadow-lg shadow-indigo-100">
+                      <svg className="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" /><circle cx="8.5" cy="7" r="4" /><polyline points="17 11 19 13 23 9" /></svg>
                     </div>
-                  )}
-                </div>
-
-                <div className="cp-detail-block rounded-xl border border-[#cfe5ff] bg-[#eff7ff] p-4">
-                  <h3 className="mb-3 text-lg font-semibold text-[#124172]">Address</h3>
-                  <div className="grid gap-4 md:grid-cols-2">
-                    <DetailField label="House/Flat/Company" value={selectedPartner.house} />
-                    <DetailField label="Street" value={selectedPartner.street} />
-                    <DetailField label="Country" value={selectedPartner.country} />
-                    <DetailField label="State / Region" value={selectedPartner.state} />
-                    <DetailField label="City" value={selectedPartner.city} />
-                    <DetailField label="Zip / Pin Code" value={selectedPartner.zip} />
+                    <div>
+                      <h2 className="text-2xl font-black text-[#0f172a]">{selectedPartner.companyName || selectedPartner.name}</h2>
+                      <p className="text-[11px] font-black uppercase tracking-widest text-[#6366f1]">Channel Partner Profile</p>
+                    </div>
                   </div>
                 </div>
-              </div>
-
-              <div className="sticky bottom-0 flex items-center justify-end border-t border-[#cfe5ff] bg-[#f4f9ff] px-6 py-4">
                 <button
                   type="button"
-                  onClick={() => {
-                    setViewingPartnerIndex(null)
-                    setIsDetailsOpen(false)
-                  }}
-                  className="cp-clickable rounded-xl border border-[#0f69c9] bg-white px-6 py-2 text-sm font-semibold text-[#0f69c9] transition hover:bg-[#ecf5ff]"
+                  onClick={() => setIsDetailsOpen(false)}
+                  className="flex h-10 w-10 items-center justify-center rounded-full bg-white text-2xl font-bold text-[#94a3b8] shadow-sm transition hover:text-[#0f172a]"
                 >
-                  Close
+                  &times;
+                </button>
+              </div>
+
+              {/* Content */}
+              <div className="flex-1 overflow-y-auto px-8 py-8 no-scrollbar">
+                <div className="space-y-10">
+                  {/* Identification */}
+                  <section>
+                    <div className="mb-4 flex items-center gap-3">
+                      <div className="h-6 w-1 rounded-full bg-[#6366f1]" />
+                      <h3 className="text-sm font-black uppercase tracking-widest text-[#1e293b]">Identification & Contact</h3>
+                    </div>
+                    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                      <DetailField label="Owner Name" value={selectedPartner.name} />
+                      <DetailField label="Phone" value={selectedPartner.phone} />
+                      <DetailField label="Email" value={selectedPartner.email} />
+                      <DetailField label="Alt Number" value={selectedPartner.alternateNumber} />
+                      <DetailField label="Occupation" value={selectedPartner.occupation} />
+                      <DetailField label="Aadhaar" value={selectedPartner.aadhaar} />
+                      <DetailField label="PAN Number" value={selectedPartner.pan} />
+                      <DetailField label="RERA Number" value={selectedPartner.rera} />
+                      <div className="rounded-2xl border border-[#f1f5f9] bg-[#f8fafc] px-4 py-3">
+                        <p className="text-[10px] font-black uppercase tracking-widest text-[#94a3b8]">Status</p>
+                        <div className="mt-1">
+                          <span className="inline-block rounded-full bg-[#10b981]/10 px-3 py-1 text-[11px] font-bold text-[#10b981]">
+                            {selectedPartner.status || 'Active'}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </section>
+
+                  {/* Financial & GST */}
+                  <section>
+                    <div className="mb-4 flex items-center gap-3">
+                      <div className="h-6 w-1 rounded-full bg-[#10b981]" />
+                      <h3 className="text-sm font-black uppercase tracking-widest text-[#1e293b]">Financial & Bank Details</h3>
+                    </div>
+                    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                      <DetailField label="GST Applicable" value={selectedPartner.gstApplicable} />
+                      <DetailField label="GST Number" value={selectedPartner.gstNumber} />
+                      <DetailField label="Bank Name" value={selectedPartner.bankName} />
+                      <DetailField label="Branch" value={selectedPartner.branch} />
+                      <DetailField label="Account Type" value={selectedPartner.accountType} />
+                      <DetailField label="IFSC Code" value={selectedPartner.ifsc} />
+                      <DetailField label="Account Number" value={selectedPartner.accountNumber} />
+                      <DetailField label="Bank Pincode" value={selectedPartner.bankZip} />
+                    </div>
+                  </section>
+
+                  {/* Documents */}
+                  <section>
+                    <div className="mb-4 flex items-center gap-3">
+                      <div className="h-6 w-1 rounded-full bg-[#3b82f6]" />
+                      <h3 className="text-sm font-black uppercase tracking-widest text-[#1e293b]">Uploaded Documents</h3>
+                    </div>
+                    {selectedPartnerDocs.length === 0 ? (
+                      <div className="rounded-2xl border border-dashed border-[#e2e8f0] bg-[#f8fafc] p-6 text-center text-sm font-bold text-[#94a3b8]">
+                        No documents available for this partner.
+                      </div>
+                    ) : (
+                      <div className="grid gap-3 sm:grid-cols-2">
+                        {selectedPartnerDocs.map((doc, idx) => (
+                          <div key={idx} className="flex items-center justify-between rounded-2xl border border-[#e2e8f0] bg-white p-4 transition hover:border-[#3b82f6]/30">
+                            <div className="flex items-center gap-3 truncate">
+                              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#3b82f6]/10 text-[#3b82f6]">
+                                <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" /><polyline points="14 2 14 8 20 8" /></svg>
+                              </div>
+                              <span className="truncate text-sm font-bold text-[#475569]">{doc.name}</span>
+                            </div>
+                            <button
+                              type="button"
+                              onClick={() => doc.url && window.open(doc.url)}
+                              className="rounded-lg bg-[#eff6ff] px-4 py-2 text-[11px] font-black uppercase tracking-widest text-[#3b82f6] transition hover:bg-[#3b82f6] hover:text-white"
+                            >
+                              View
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </section>
+
+                  {/* Address */}
+                  <section className="pb-6">
+                    <div className="mb-4 flex items-center gap-3">
+                      <div className="h-6 w-1 rounded-full bg-[#f59e0b]" />
+                      <h3 className="text-sm font-black uppercase tracking-widest text-[#1e293b]">Registered Address</h3>
+                    </div>
+                    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                      <DetailField label="House/Flat" value={selectedPartner.house} />
+                      <DetailField label="Street" value={selectedPartner.street} />
+                      <DetailField label="City" value={selectedPartner.city} />
+                      <DetailField label="State" value={selectedPartner.state} />
+                      <DetailField label="Country" value={selectedPartner.country} />
+                      <DetailField label="Zip Code" value={selectedPartner.zip} />
+                    </div>
+                  </section>
+                </div>
+              </div>
+
+              {/* Footer */}
+              <div className="sticky bottom-0 flex items-center justify-end border-t border-[#f1f5f9] bg-white px-8 py-5">
+                <button
+                  type="button"
+                  onClick={() => setIsDetailsOpen(false)}
+                  className="rounded-2xl bg-[#0f172a] px-10 py-3 text-sm font-black uppercase tracking-widest text-white shadow-xl shadow-slate-200 transition hover:bg-[#1e293b]"
+                >
+                  Close Profile
                 </button>
               </div>
             </div>
@@ -1124,54 +1017,85 @@ function Moreoption({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, on
                   </span>
                 </div>
                 <div className="px-4 py-4 text-sm font-semibold text-[#475569]">{partner.name}</div>
-                <div ref={openActionIndex === index ? actionMenuRef : null} className="relative px-4 py-4 text-center">
-                  <button
-                    type="button"
-                    onClick={() => setOpenActionIndex((prev) => (prev === index ? null : index))}
-                    className="cp-clickable flex h-9 w-9 items-center justify-center rounded-full bg-[#312e81] text-white transition hover:bg-[#1e1b4b] shadow-lg shadow-indigo-100"
-                  >
-                    <span className="text-xl leading-none mb-1">...</span>
-                  </button>
-                  {openActionIndex === index && (
-                    <div className="absolute top-full right-4 z-[240] mt-3 w-72 rounded-[2rem] border border-[#f1f5f9] bg-white p-4 shadow-[0_20px_50px_rgba(0,0,0,0.1)] backdrop-blur-xl">
-                      <button
-                        type="button"
-                        onClick={() => {
+                <div className="relative px-4 py-4 text-center">
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        if (openActionIndex === index) {
                           setOpenActionIndex(null)
-                          setViewingPartnerIndex(index)
-                          setIsDetailsOpen(true)
+                          setMenuAnchorRect(null)
+                        } else {
+                          const rect = e.currentTarget.getBoundingClientRect()
+                          setMenuAnchorRect({
+                            top: rect.bottom + window.scrollY,
+                            left: rect.right + window.scrollX
+                          })
+                          setOpenActionIndex(index)
+                        }
+                      }}
+                      className={`cp-action-trigger cp-clickable flex h-9 w-9 items-center justify-center rounded-full transition-all duration-300 ${openActionIndex === index ? 'bg-[#312e81] text-white shadow-lg' : 'bg-[#eff6ff] text-[#312e81] hover:bg-[#312e81] hover:text-white'}`}
+                    >
+                      <span className="text-xl font-bold leading-none mb-1">...</span>
+                    </button>
+                    {openActionIndex === index && menuAnchorRect && createPortal(
+                      <div 
+                        ref={actionMenuRef}
+                        className="fixed z-[999] w-72 overflow-hidden rounded-[2.5rem] border border-white bg-white/90 p-4 shadow-[0_25px_70px_rgba(49,46,129,0.25)] backdrop-blur-3xl animate-elastic-pop"
+                        style={{ 
+                          top: `${menuAnchorRect.top - window.scrollY + 12}px`, 
+                          left: `${menuAnchorRect.left - window.scrollX - 260}px` 
                         }}
-                        className="cp-clickable flex w-full items-center gap-4 rounded-2xl p-3 transition hover:bg-[#f8faff]"
                       >
-                        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#eff6ff] text-[#4f46e5]">
-                          <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
-                            <circle cx="12" cy="12" r="3" />
-                          </svg>
+                        <div className="absolute inset-0 bg-gradient-to-br from-[#312e81]/5 to-transparent opacity-50" />
+                        <div className="relative space-y-1.5">
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setOpenActionIndex(null)
+                              setMenuAnchorRect(null)
+                              setViewingPartnerIndex(index)
+                              setIsDetailsOpen(true)
+                            }}
+                            className="group flex w-full items-center gap-4 rounded-2xl p-3 text-left transition-all duration-300 hover:bg-[#312e81] hover:text-white hover:shadow-lg hover:shadow-indigo-200"
+                          >
+                            <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-[#eff6ff] text-[#312e81] transition-colors group-hover:bg-white/20 group-hover:text-white">
+                              <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                                <circle cx="12" cy="12" r="3" />
+                              </svg>
+                            </div>
+                            <div>
+                              <div className="text-base font-bold">View Details</div>
+                              <div className="text-[10px] opacity-70 font-medium">Partner profile & history</div>
+                            </div>
+                          </button>
+                          
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setOpenActionIndex(null)
+                              setMenuAnchorRect(null)
+                              setEditingPartnerIndex(index)
+                              setFormValues(partner)
+                              setIsAddFormOpen(true)
+                            }}
+                            className="group flex w-full items-center gap-4 rounded-2xl p-3 text-left transition-all duration-300 hover:bg-[#ea580c] hover:text-white hover:shadow-lg hover:shadow-orange-200"
+                          >
+                            <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-[#fff7ed] text-[#ea580c] transition-colors group-hover:bg-white/20 group-hover:text-white">
+                              <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+                                <path d="M18.5 2.5a2.121 2.121 0 1 1 3 3L12 15l-4 1-1-4 9.5-9.5z" />
+                              </svg>
+                            </div>
+                            <div>
+                              <div className="text-base font-bold">Edit Partner</div>
+                              <div className="text-[10px] opacity-70 font-medium">Update profile details</div>
+                            </div>
+                          </button>
                         </div>
-                        <span className="text-base font-bold text-[#1e293b]">View Details</span>
-                      </button>
-                      
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setOpenActionIndex(null)
-                          setEditingPartnerIndex(index)
-                          setFormValues(partner)
-                          setIsAddFormOpen(true)
-                        }}
-                        className="cp-clickable flex w-full items-center gap-4 rounded-2xl p-3 transition hover:bg-[#fffcf9]"
-                      >
-                        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#fff7ed] text-[#ea580c]">
-                          <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
-                            <path d="M18.5 2.5a2.121 2.121 0 1 1 3 3L12 15l-4 1-1-4 9.5-9.5z" />
-                          </svg>
-                        </div>
-                        <span className="text-base font-bold text-[#1e293b]">Edit Partner</span>
-                      </button>
-                    </div>
-                  )}
+                      </div>,
+                      document.body
+                    )}
                 </div>
               </div>
             ))

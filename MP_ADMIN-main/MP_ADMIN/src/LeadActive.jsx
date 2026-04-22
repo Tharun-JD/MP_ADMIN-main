@@ -113,8 +113,9 @@ function LeadActive({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, on
         setIsFilterOpen(false)
         setIsCountStatusOpen(false)
       }
-      if (actionMenuRef.current && !actionMenuRef.current.contains(event.target)) {
+      if (actionMenuRef.current && !actionMenuRef.current.contains(event.target) && !event.target.closest('.la-action-trigger')) {
         setOpenActionIndex(null)
+        setMenuAnchorRect(null)
       }
       if (followUpPanelRef.current && !followUpPanelRef.current.contains(event.target)) {
         setIsFollowUpOpen(false)
@@ -614,12 +615,13 @@ function LeadActive({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, on
                         setOpenActionIndex(index)
                       }
                     }}
-                    className={`la-clickable flex h-10 w-10 items-center justify-center rounded-full transition-all duration-300 ${openActionIndex === index ? 'bg-[#312e81] text-white shadow-lg' : 'bg-[#eff6ff] text-[#312e81] hover:bg-[#312e81] hover:text-white'}`}
+                    className={`la-action-trigger la-clickable flex h-10 w-10 items-center justify-center rounded-full transition-all duration-300 ${openActionIndex === index ? 'bg-[#312e81] text-white shadow-lg' : 'bg-[#eff6ff] text-[#312e81] hover:bg-[#312e81] hover:text-white'}`}
                   >
                     <span className="text-xl font-bold leading-none mb-1">...</span>
                   </button>
                   {openActionIndex === index && menuAnchorRect && createPortal(
                     <div
+                      ref={actionMenuRef}
                       className="fixed z-[999] w-72 overflow-hidden rounded-[2.5rem] border border-white bg-white/90 p-4 shadow-[0_25px_70px_rgba(49,46,129,0.25)] backdrop-blur-3xl animate-elastic-pop"
                       style={{ 
                         top: `${menuAnchorRect.top - window.scrollY + 12}px`, 
