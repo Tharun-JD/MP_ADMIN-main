@@ -66,13 +66,28 @@ function Navbar({
   const [openWelcome, setOpenWelcome] = useState(false)
   const [isProfileOpen, setIsProfileOpen] = useState(false)
   const [isPasswordOpen, setIsPasswordOpen] = useState(false)
-  const [profileValues, setProfileValues] = useState({
-    firstName: '',
-    lastName: '',
-    email: '',
-    phone: '',
-    timeZone: '(GMT+05:30) Mumbai',
+  const [profileValues, setProfileValues] = useState(() => {
+    const saved = localStorage.getItem('mp_profile')
+    if (saved) {
+      try {
+        return JSON.parse(saved)
+      } catch (e) {
+        console.error('Error loading profile', e)
+      }
+    }
+    return {
+      firstName: '',
+      lastName: '',
+      email: '',
+      phone: '',
+      timeZone: '(GMT+05:30) Mumbai',
+    }
   })
+
+  useEffect(() => {
+    localStorage.setItem('mp_profile', JSON.stringify(profileValues))
+  }, [profileValues])
+
   const [passwordValues, setPasswordValues] = useState({
     Newpassword: '',
     confirmPassword: '',

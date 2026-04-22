@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import { createPortal } from 'react-dom'
 
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
@@ -969,48 +970,78 @@ function UserAccount({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, o
                   <div className="relative px-4 py-4 text-center">
                     <button
                       type="button"
-                      onClick={() => setOpenActionIndex((prev) => (prev === index ? null : index))}
+                      onClick={(e) => {
+                        if (openActionIndex === index) {
+                          setOpenActionIndex(null)
+                          setMenuAnchorRect(null)
+                        } else {
+                          const rect = e.currentTarget.getBoundingClientRect()
+                          setMenuAnchorRect({
+                            top: rect.bottom + window.scrollY,
+                            left: rect.right + window.scrollX
+                          })
+                          setOpenActionIndex(index)
+                        }
+                      }}
                       className={`ua-clickable flex h-10 w-10 items-center justify-center rounded-full transition-all duration-300 ${openActionIndex === index ? 'bg-[#312e81] text-white shadow-lg' : 'bg-[#eff6ff] text-[#312e81] hover:bg-[#312e81] hover:text-white'}`}
                     >
                       <span className="text-xl font-bold leading-none mb-1">...</span>
                     </button>
-                    {openActionIndex === index && (
-                      <div ref={actionMenuRef} className="absolute top-full right-4 z-[240] mt-3 w-72 rounded-[2rem] border border-[#f1f5f9] bg-white p-4 shadow-[0_20px_50px_rgba(0,0,0,0.1)] backdrop-blur-xl">
-                        <button
-                          type="button"
-                          onClick={() => {
-                            setOpenActionIndex(null)
-                            setViewingAccountIndex(index)
-                            setIsDetailsOpen(true)
-                          }}
-                          className="ua-clickable flex w-full items-center gap-4 rounded-2xl p-3 transition hover:bg-[#f8faff]"
-                        >
-                          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#eff6ff] text-[#4f46e5]">
-                            <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
-                              <circle cx="12" cy="12" r="3" />
-                            </svg>
-                          </div>
-                          <span className="text-base font-bold text-[#1e293b]">View Details</span>
-                        </button>
-                        
-                        <button
-                          type="button"
-                          onClick={() => {
-                            setOpenActionIndex(null)
-                            handleOpenFollowUp(row)
-                          }}
-                          className="ua-clickable flex w-full items-center gap-4 rounded-2xl p-3 transition hover:bg-[#fffcf9]"
-                        >
-                          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#fff7ed] text-[#ea580c]">
-                            <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                              <line x1="12" y1="5" x2="12" y2="19" />
-                              <line x1="5" y1="12" x2="19" y2="12" />
-                            </svg>
-                          </div>
-                          <span className="text-base font-bold text-[#1e293b]">Add Follow-up</span>
-                        </button>
-                      </div>
+                    {openActionIndex === index && menuAnchorRect && createPortal(
+                      <div 
+                        className="fixed z-[999] w-72 overflow-hidden rounded-[2.5rem] border border-white bg-white/90 p-4 shadow-[0_25px_70px_rgba(49,46,129,0.25)] backdrop-blur-3xl animate-elastic-pop"
+                        style={{ 
+                          top: `${menuAnchorRect.top - window.scrollY + 12}px`, 
+                          left: `${menuAnchorRect.left - window.scrollX - 260}px` 
+                        }}
+                      >
+                        <div className="absolute inset-0 bg-gradient-to-br from-[#312e81]/5 to-transparent opacity-50" />
+                        <div className="relative space-y-1.5">
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setOpenActionIndex(null)
+                              setMenuAnchorRect(null)
+                              setViewingAccountIndex(index)
+                              setIsDetailsOpen(true)
+                            }}
+                            className="group flex w-full items-center gap-4 rounded-2xl p-3 text-left transition-all duration-300 hover:bg-[#312e81] hover:text-white hover:shadow-lg hover:shadow-indigo-200"
+                          >
+                            <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-[#eff6ff] text-[#312e81] transition-colors group-hover:bg-white/20 group-hover:text-white">
+                              <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                                <circle cx="12" cy="12" r="3" />
+                              </svg>
+                            </div>
+                            <div>
+                              <div className="text-base font-bold">View Details</div>
+                              <div className="text-[10px] opacity-70 font-medium">Full profile & history</div>
+                            </div>
+                          </button>
+                          
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setOpenActionIndex(null)
+                              setMenuAnchorRect(null)
+                              handleOpenFollowUp(row)
+                            }}
+                            className="group flex w-full items-center gap-4 rounded-2xl p-3 text-left transition-all duration-300 hover:bg-[#ea580c] hover:text-white hover:shadow-lg hover:shadow-orange-200"
+                          >
+                            <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-[#fff7ed] text-[#ea580c] transition-colors group-hover:bg-white/20 group-hover:text-white">
+                              <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                                <line x1="12" y1="5" x2="12" y2="19" />
+                                <line x1="5" y1="12" x2="19" y2="12" />
+                              </svg>
+                            </div>
+                            <div>
+                              <div className="text-base font-bold">Add Follow-up</div>
+                              <div className="text-[10px] opacity-70 font-medium">Schedule next activity</div>
+                            </div>
+                          </button>
+                        </div>
+                      </div>,
+                      document.body
                     )}
                   </div>
                 </div>

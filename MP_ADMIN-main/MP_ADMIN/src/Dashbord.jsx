@@ -99,6 +99,11 @@ function Dashbord({ onSignOut, onBackToDashboard, onOpenUserAccount, onOpenLeadA
   const [managerProject, setManagerProject] = useState('')
   const [toast, setToast] = useState(null)
 
+  // Data persistence counts
+  const [leadsCount] = useState(() => JSON.parse(localStorage.getItem('mp_leads') || '[]').length)
+  const [partnersCount] = useState(() => JSON.parse(localStorage.getItem('mp_channel_partners') || '[]').length)
+  const [accountsCount] = useState(() => JSON.parse(localStorage.getItem('mp_user_accounts') || '[]').length)
+
   const canvasRef = useRef(null)
   const sceneRef = useRef(null)
   const heroRef = useRef(null)
@@ -635,15 +640,15 @@ function Dashbord({ onSignOut, onBackToDashboard, onOpenUserAccount, onOpenLeadA
             <div className="mt-5 grid grid-cols-1 gap-3 sm:grid-cols-3">
               <div className="hero-kpi rounded-xl border border-[#d6e4f7] bg-white p-3">
                 <p className="text-xs uppercase tracking-[0.15em] text-[#6784a9]">New Leads</p>
-                <p className="mt-1 text-xl font-black">-</p>
+                <p className="mt-1 text-xl font-black">{leadsCount}</p>
               </div>
               <div className="hero-kpi rounded-xl border border-[#d6e4f7] bg-white p-3">
                 <p className="text-xs uppercase tracking-[0.15em] text-[#6784a9]">Active Partners</p>
-                <p className="mt-1 text-xl font-black">-</p>
+                <p className="mt-1 text-xl font-black">{partnersCount}</p>
               </div>
               <div className="hero-kpi rounded-xl border border-[#d6e4f7] bg-white p-3">
-                <p className="text-xs uppercase tracking-[0.15em] text-[#6784a9]">This Month Bookings</p>
-                <p className="mt-1 text-xl font-black">-</p>
+                <p className="text-xs uppercase tracking-[0.15em] text-[#6784a9]">System Users</p>
+                <p className="mt-1 text-xl font-black">{accountsCount}</p>
               </div>
             </div>
           </div>

@@ -78,6 +78,17 @@ function LeadActive({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, on
   const [menuAnchorRect, setMenuAnchorRect] = useState(null)
   const actionMenuRef = useRef(null)
 
+  // -- Follow-up State --
+  const [isFollowUpOpen, setIsFollowUpOpen] = useState(false)
+  const [editingLeadIndex, setEditingLeadIndex] = useState(null)
+  const [followUpValues, setFollowUpValues] = useState({
+    leadStage: 'Visit Done',
+    leadStatus: 'Active',
+    countStatus: 'Pending',
+    remark: ''
+  })
+  const followUpPanelRef = useRef(null)
+
   useEffect(() => {
     localStorage.setItem('mp_leads', JSON.stringify(leads))
   }, [leads])
@@ -105,11 +116,23 @@ function LeadActive({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, on
       if (actionMenuRef.current && !actionMenuRef.current.contains(event.target)) {
         setOpenActionIndex(null)
       }
+      if (followUpPanelRef.current && !followUpPanelRef.current.contains(event.target)) {
+        setIsFollowUpOpen(false)
+      }
     }
 
     document.addEventListener('mousedown', onPointerDown)
     return () => document.removeEventListener('mousedown', onPointerDown)
   }, [])
+
+  useEffect(() => {
+    if (!isFollowUpOpen || !followUpPanelRef.current) return
+    
+    gsap.fromTo(followUpPanelRef.current,
+      { y: 20, opacity: 0, scale: 0.95 },
+      { y: 0, opacity: 1, scale: 1, duration: 0.3, ease: 'power2.out' }
+    )
+  }, [isFollowUpOpen])
 
   useEffect(() => {
     if (!pageRef.current) {
@@ -258,6 +281,34 @@ function LeadActive({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, on
     setIsFilterOpen(false)
   }
 
+  const handleOpenFollowUp = (index) => {
+    const lead = leads[index]
+    setEditingLeadIndex(index)
+    setFollowUpValues({
+      leadStage: lead.leadStage || 'Visit Done',
+      leadStatus: lead.leadStatus || 'Active',
+      countStatus: lead.countStatus || 'Pending',
+      remark: ''
+    })
+    setIsFollowUpOpen(true)
+  }
+
+  const handleSaveFollowUp = () => {
+    if (editingLeadIndex === null) return
+    
+    const updatedLeads = [...leads]
+    updatedLeads[editingLeadIndex] = {
+      ...updatedLeads[editingLeadIndex],
+      leadStage: followUpValues.leadStage,
+      leadStatus: followUpValues.leadStatus,
+      countStatus: followUpValues.countStatus,
+    }
+    
+    setLeads(updatedLeads)
+    setIsFollowUpOpen(false)
+    setEditingLeadIndex(null)
+  }
+
   return (
     <main ref={pageRef} className="relative min-h-screen overflow-x-hidden bg-[#f8fafc] text-[#0f172a]">
       <div className="pointer-events-none absolute inset-0">
@@ -286,7 +337,7 @@ function LeadActive({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, on
 
           <div ref={controlsRef} className="flex items-center gap-3">
             <button type="button" className="la-control la-clickable rounded-lg border border-[#e2e8f0] bg-white px-5 py-2.5 text-base font-bold text-[#475569] shadow-sm">
-              Total : 0
+              Total : {leads.length}
             </button>
             <div ref={exportMenuRef} className="relative z-40">
               <button
@@ -599,27 +650,28 @@ function LeadActive({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, on
                           </div>
                         </button>
                         
-                        <button
-                          type="button"
-                          onClick={() => {
-                            setOpenActionIndex(null)
-                            setMenuAnchorRect(null)
-                            alert('Add Follow feature coming soon!')
-                          }}
-                          className="group flex w-full items-center gap-4 rounded-2xl p-3 text-left transition-all duration-300 hover:bg-[#ea580c] hover:text-white hover:shadow-lg hover:shadow-orange-200"
-                        >
-                          <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-[#fff7ed] text-[#ea580c] transition-colors group-hover:bg-white/20 group-hover:text-white">
-                            <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                              <line x1="12" y1="5" x2="12" y2="19" />
-                              <line x1="5" y1="12" x2="19" y2="12" />
-                            </svg>
-                          </div>
-                          <div>
-                            <div className="text-base font-bold">Add Follow-up</div>
-                            <div className="text-[10px] opacity-70 font-medium">Schedule next activity</div>
-                          </div>
-                        </button>
-                      </div>
+                         <button
+                           type="button"
+                           onClick={() => {
+                             setOpenActionIndex(null)
+                             setMenuAnchorRect(null)
+                             handleOpenFollowUp(index)
+                           }}
+                           className="group flex w-full items-center gap-4 rounded-2xl p-3 text-left transition-all duration-300 hover:bg-[#ea580c] hover:text-white hover:shadow-lg hover:shadow-orange-200"
+                         >
+                           <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-[#fff7ed] text-[#ea580c] transition-colors group-hover:bg-white/20 group-hover:text-white">
+                             <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                               <line x1="12" y1="5" x2="12" y2="19" />
+                               <line x1="5" y1="12" x2="19" y2="12" />
+                             </svg>
+                           </div>
+                           <div>
+                             <div className="text-base font-bold">Add Follow-up</div>
+                             <div className="text-[10px] opacity-70 font-medium">Schedule next activity</div>
+                           </div>
+                         </button>
+                         
+                        </div>
                     </div>,
                     document.body
                   )}
@@ -673,6 +725,83 @@ function LeadActive({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, on
                   className="la-clickable rounded-xl bg-[#6366f1] px-8 py-2.5 text-base font-bold text-white shadow-lg shadow-indigo-100 transition hover:bg-[#4f46e5]"
                 >
                   Close
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {isFollowUpOpen && (
+          <div className="fixed inset-0 z-[500] flex items-center justify-center bg-[#0f172a]/10 p-4 backdrop-blur-sm">
+            <div ref={followUpPanelRef} className="w-full max-w-2xl overflow-hidden rounded-2xl border border-[#e2e8f0] bg-white shadow-2xl shadow-slate-200/50">
+              <div className="flex items-center justify-between border-b border-[#e2e8f0] bg-gradient-to-r from-[#fff7ed] to-[#ffedd5] px-6 py-5">
+                <h2 className="text-2xl font-bold tracking-tight text-[#c2410c]">Lead Follow-up</h2>
+                <button
+                  type="button"
+                  onClick={() => setIsFollowUpOpen(false)}
+                  className="la-clickable text-3xl font-bold leading-none text-[#9a3412]/60 transition hover:text-[#9a3412]"
+                >
+                  &times;
+                </button>
+              </div>
+              <div className="p-6 space-y-5">
+                <div className="space-y-2">
+                  <label className="text-sm font-semibold text-[#2f466c]">Lead Stage</label>
+                  <select
+                    value={followUpValues.leadStage}
+                    onChange={(e) => setFollowUpValues({...followUpValues, leadStage: e.target.value})}
+                    className="w-full rounded-md border border-[#b8c4e3] bg-white px-4 py-2.5 text-base text-[#1f2f45] outline-none focus:border-[#7f8cff]"
+                  >
+                    <option>Enquiry Received</option>
+                    <option>Visit Done</option>
+                    <option>Interested</option>
+                    <option>Not Interested</option>
+                  </select>
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-sm font-semibold text-[#2f466c]">Lead Status</label>
+                  <select
+                    value={followUpValues.leadStatus}
+                    onChange={(e) => setFollowUpValues({...followUpValues, leadStatus: e.target.value})}
+                    className="w-full rounded-md border border-[#b8c4e3] bg-white px-4 py-2.5 text-base text-[#1f2f45] outline-none focus:border-[#7f8cff]"
+                  >
+                    <option>Active</option>
+                    <option>Inactive</option>
+                    <option>Closed</option>
+                  </select>
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-sm font-semibold text-[#2f466c]">Count Status</label>
+                  <select
+                    value={followUpValues.countStatus}
+                    onChange={(e) => setFollowUpValues({...followUpValues, countStatus: e.target.value})}
+                    className="w-full rounded-md border border-[#b8c4e3] bg-white px-4 py-2.5 text-base text-[#1f2f45] outline-none focus:border-[#7f8cff]"
+                  >
+                    <option>Pending</option>
+                    <option>Count Given</option>
+                    <option>No Count</option>
+                  </select>
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-sm font-semibold text-[#2f466c]">Remarks</label>
+                  <textarea
+                    value={followUpValues.remark}
+                    onChange={(e) => setFollowUpValues({...followUpValues, remark: e.target.value})}
+                    placeholder="Enter follow-up details..."
+                    className="w-full h-24 rounded-md border border-[#b8c4e3] bg-white px-4 py-2.5 text-base text-[#1f2f45] outline-none focus:border-[#7f8cff] resize-none"
+                  />
+                </div>
+              </div>
+              <div className="border-t border-[#e2e8f0] bg-[#f8fafc] px-6 py-5 text-right">
+                <button
+                  type="button"
+                  onClick={handleSaveFollowUp}
+                  className="la-clickable rounded-xl bg-[#ea580c] px-8 py-2.5 text-base font-bold text-white shadow-lg shadow-orange-100 transition hover:bg-[#d9480f]"
+                >
+                  Update Lead
                 </button>
               </div>
             </div>
