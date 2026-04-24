@@ -523,7 +523,7 @@ function Moreoption({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, on
         onSignOut={onSignOut}
       />
 
-      <section className="relative z-10 mx-auto w-full max-w-7xl px-4 py-12 lg:px-6">
+      <section className="relative z-10 w-full px-4 py-12 lg:px-6">
         <div className="mb-4">
           {/* <button
             type="button"

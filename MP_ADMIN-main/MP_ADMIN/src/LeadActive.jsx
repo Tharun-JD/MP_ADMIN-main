@@ -340,7 +340,7 @@ function LeadActive({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, on
         onSignOut={onSignOut}
       />
 
-      <section className="relative z-10 mx-auto w-full max-w-[94rem] overflow-visible px-4 py-7 lg:px-6">
+      <section className="relative z-10 w-full overflow-visible px-4 py-7 lg:px-6">
         <div ref={headerRef} className="relative z-30 flex flex-wrap items-center justify-between gap-4">
           <h1 className="flex items-center gap-3 font-sans text-2xl font-bold tracking-tight text-[#0f172a] lg:text-3xl">
             <span className="text-[#6366f1]"><IconKey /></span>
@@ -391,7 +391,7 @@ function LeadActive({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, on
           <div className="la-filter-overlay fixed inset-0 z-[280] flex items-center justify-center bg-[#0e1730]/30 px-4 py-6 backdrop-blur-[2px]">
             <div
               ref={filterPanelRef}
-              className="w-full max-w-5xl rounded-2xl border border-[#cfd6f8] bg-[linear-gradient(180deg,#f8faff_0%,#f4f6ff_100%)] shadow-2xl shadow-[#5d68d8]/20 [transform-style:preserve-3d]"
+              className="w-full rounded-2xl border border-[#cfd6f8] bg-[linear-gradient(180deg,#f8faff_0%,#f4f6ff_100%)] shadow-2xl shadow-[#5d68d8]/20 [transform-style:preserve-3d]"
             >
               <div className="flex items-center justify-between border-b border-[#d5dcfb] px-6 py-4">
                 <h2 className="text-2xl font-semibold text-[#20365c]">Filter</h2>
@@ -696,7 +696,7 @@ function LeadActive({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, on
 
         {isDetailsOpen && viewingLeadIndex !== null && (
           <div className="fixed inset-0 z-[500] flex items-center justify-center bg-[#0f172a]/10 p-4 backdrop-blur-sm">
-            <div className="w-full max-w-4xl overflow-hidden rounded-2xl border border-[#e2e8f0] bg-white shadow-2xl shadow-slate-200/50">
+            <div className="w-full overflow-hidden rounded-2xl border border-[#e2e8f0] bg-white shadow-2xl shadow-slate-200/50">
               <div className="flex items-center justify-between border-b border-[#e2e8f0] bg-gradient-to-r from-[#f0f9ff] to-[#e0f2fe] px-6 py-5">
                 <h2 className="text-2xl font-bold tracking-tight text-[#0f172a]">Lead Activity Details</h2>
                 <button
@@ -746,7 +746,7 @@ function LeadActive({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, on
 
         {isFollowUpOpen && (
           <div className="fixed inset-0 z-[500] flex items-center justify-center bg-[#0f172a]/10 p-4 backdrop-blur-sm">
-            <div ref={followUpPanelRef} className="w-full max-w-2xl overflow-hidden rounded-2xl border border-[#e2e8f0] bg-white shadow-2xl shadow-slate-200/50">
+            <div ref={followUpPanelRef} className="w-full overflow-hidden rounded-2xl border border-[#e2e8f0] bg-white shadow-2xl shadow-slate-200/50">
               <div className="flex items-center justify-between border-b border-[#e2e8f0] bg-gradient-to-r from-[#fff7ed] to-[#ffedd5] px-6 py-5">
                 <h2 className="text-2xl font-bold tracking-tight text-[#c2410c]">Lead Follow-up</h2>
                 <button

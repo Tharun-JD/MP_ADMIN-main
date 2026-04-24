@@ -631,7 +631,7 @@ function UserAccount({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, o
         onSignOut={onSignOut}
       />
 
-      <section className="relative z-10 mx-auto w-full max-w-7xl px-3 py-8 lg:px-6">
+      <section className="relative z-10 w-full px-3 py-8 lg:px-6">
         <div ref={headerRef} className="relative z-40 flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-white/70 bg-white/75 px-4 py-4 shadow-xl shadow-[#2f3fa9]/10 backdrop-blur-xl">
           <h1 className="flex items-center gap-3 text-2xl font-bold tracking-tight text-[#0f172a] lg:text-3xl">
             <span className="text-[#6366f1]"><IconUsers /></span>

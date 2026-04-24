@@ -516,7 +516,7 @@ function Dashbord({ onSignOut, onBackToDashboard, onOpenUserAccount, onOpenLeadA
             className="absolute left-1/3 top-0 h-full w-[22rem] rotate-[1deg] bg-gradient-to-r from-transparent via-[#eb7a26]/16 to-transparent blur-xl"
           />
         </div>
-        <div className="mx-auto flex w-full max-w-7xl items-center justify-between gap-4 px-4 py-4 lg:px-8">
+        <div className="flex w-full items-center justify-between gap-4 px-4 py-4 lg:px-8">
           <div className="text-xl font-black tracking-tight text-[#6366f1]">MP Developers</div>
 
           <nav className="flex flex-wrap items-center gap-2 lg:gap-3">
@@ -618,8 +618,8 @@ function Dashbord({ onSignOut, onBackToDashboard, onOpenUserAccount, onOpenLeadA
         </div>
       </header>
 
-      <section className="relative z-10 mx-auto flex min-h-[calc(100vh-88px)] w-full max-w-7xl items-center justify-center px-4 py-8 lg:px-8">
-        <div ref={canvasRef} className="relative w-full max-w-6xl [transform-style:preserve-3d]">
+      <section className="relative z-10 flex min-h-[calc(100vh-88px)] w-full items-start justify-center px-4 py-8 lg:px-8">
+        <div ref={canvasRef} className="relative w-full [transform-style:preserve-3d]">
           <div
             ref={heroRef}
             className="relative mb-6 overflow-hidden rounded-2xl border border-[#e2e8f0] bg-white p-6 text-[#0f172a] shadow-xl shadow-slate-200/40 [transform-style:preserve-3d] sm:p-8"
@@ -671,7 +671,7 @@ function Dashbord({ onSignOut, onBackToDashboard, onOpenUserAccount, onOpenLeadA
               className="overflow-hidden opacity-0"
               style={{ height: 0 }}
             >
-              <div className="mt-3 grid w-full max-w-5xl grid-cols-1 gap-3 rounded-2xl border border-[#d6e5fb] bg-white/95 p-4 shadow-2xl shadow-[#2f3fa9]/20 backdrop-blur sm:grid-cols-2 lg:grid-cols-[1fr_1fr_1fr_auto_auto]">
+              <div className="mt-3 grid w-full grid-cols-1 gap-3 rounded-2xl border border-[#d6e5fb] bg-white/95 p-4 shadow-2xl shadow-[#2f3fa9]/20 backdrop-blur sm:grid-cols-2 lg:grid-cols-[1fr_1fr_1fr_auto_auto]">
                 <input
                   type="text"
                   value={filterFromDate}

@@ -191,7 +191,7 @@ function Navbar({
           <div className="absolute -left-16 top-0 h-full w-[26rem] rotate-[4deg] bg-gradient-to-r from-transparent via-[#2f3fa9]/18 to-transparent blur-xl" />
           <div className="absolute right-0 top-0 h-full w-[22rem] rotate-[-3deg] bg-gradient-to-r from-transparent via-[#1a79d1]/14 to-transparent blur-xl" />
         </div>
-        <div className="relative mx-auto flex w-full max-w-7xl items-center justify-between gap-4 overflow-visible px-4 py-4 lg:px-6">
+        <div className="relative flex w-full items-center justify-between gap-4 overflow-visible px-4 py-4 lg:px-6">
           <div className="text-xl font-black tracking-tight text-[#6366f1]">MP Developers</div>
 
           <nav className="flex flex-wrap items-center gap-2 lg:gap-3">

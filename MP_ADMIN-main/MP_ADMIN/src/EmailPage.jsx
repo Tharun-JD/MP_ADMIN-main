@@ -165,7 +165,7 @@ function EmailPage({
         onSignOut={onSignOut}
       />
 
-      <section className="relative z-10 mx-auto w-full max-w-7xl px-4 py-8 lg:px-6">
+      <section className="relative z-10 w-full px-4 py-8 lg:px-6">
         <div ref={headerRef} className="mb-6 flex flex-wrap items-center justify-between gap-4">
           <h1 className="flex items-center gap-3 text-3xl font-bold tracking-tight text-[#0f172a]">
             <span className="text-[#6366f1]"><IconMail /></span>
