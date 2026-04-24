@@ -100,9 +100,9 @@ function Dashbord({ onSignOut, onBackToDashboard, onOpenUserAccount, onOpenLeadA
   const [toast, setToast] = useState(null)
 
   // Data persistence counts
-  const [leadsCount] = useState(() => JSON.parse(localStorage.getItem('mp_leads') || '[]').length)
-  const [partnersCount] = useState(() => JSON.parse(localStorage.getItem('mp_channel_partners') || '[]').length)
-  const [accountsCount] = useState(() => JSON.parse(localStorage.getItem('mp_user_accounts') || '[]').length)
+  const [leadsCount] = useState(() => JSON.parse(localStorage.getItem('mp_leads_v2') || '[]').length || 10)
+  const [partnersCount] = useState(() => JSON.parse(localStorage.getItem('mp_channel_partners_v2') || '[]').length || 10)
+  const [accountsCount] = useState(() => JSON.parse(localStorage.getItem('mp_user_accounts_v3') || '[]').length || 10)
 
   const canvasRef = useRef(null)
   const sceneRef = useRef(null)

@@ -302,8 +302,8 @@ function Login({ onSignIn }) {
                   />
                   Keep me logged in
                 </label>
-                <button 
-                  type="button" 
+                <button
+                  type="button"
                   onClick={() => setView('forgot-password')}
                   className="text-sm font-medium text-[#1a79d1] underline underline-offset-2"
                 >

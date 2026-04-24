@@ -69,21 +69,35 @@ const initialFormValues = {
   zip: '',
 }
 
+const initialChannelPartners = [
+  { id: 1, name: 'John Doe', phonePrefix: '+91', phone: '9876543210', email: 'john@skyline.com', alternatePhonePrefix: '+91', alternateNumber: '', aadhaar: '123456789012', pan: 'ABCDE1234F', occupation: 'Broker', rera: 'RERA/101', companyName: 'Skyline Realty', bankName: 'HDFC', branch: 'Mumbai', accountType: 'Current', ifsc: 'HDFC0001234', accountNumber: '1234567890', uploadDocuments: [], status: 'Active', createdAt: 1682410000000 },
+  { id: 2, name: 'Sarah Smith', phonePrefix: '+1', phone: '5550123', email: 'sarah@elite.com', alternatePhonePrefix: '+1', alternateNumber: '', aadhaar: '234567890123', pan: 'BCDEF2345G', occupation: 'Agent', rera: 'RERA/102', companyName: 'Elite Properties', bankName: 'Chase', branch: 'NY', accountType: 'Savings', ifsc: 'CHAS0002345', accountNumber: '2345678901', uploadDocuments: [], status: 'Active', createdAt: 1682410100000 },
+  { id: 3, name: 'Michael Chen', phonePrefix: '+44', phone: '7700900123', email: 'm.chen@cityscape.co.uk', alternatePhonePrefix: '+44', alternateNumber: '', aadhaar: '345678901234', pan: 'CDEFG3456H', occupation: 'Realtor', rera: 'RERA/103', companyName: 'CityScape Homes', bankName: 'Barclays', branch: 'London', accountType: 'Current', ifsc: 'BARC0003456', accountNumber: '3456789012', uploadDocuments: [], status: 'Active', createdAt: 1682410200000 },
+  { id: 4, name: 'David Wilson', phonePrefix: '+1', phone: '5550124', email: 'dwilson@prime.com', alternatePhonePrefix: '+1', alternateNumber: '', aadhaar: '456789012345', pan: 'DEFGH4567I', occupation: 'Broker', rera: 'RERA/104', companyName: 'Prime Realty', bankName: 'BoA', branch: 'Chicago', accountType: 'Current', ifsc: 'BOFA0004567', accountNumber: '4567890123', uploadDocuments: [], status: 'Active', createdAt: 1682410300000 },
+  { id: 5, name: 'Elena Rodriguez', phonePrefix: '+34', phone: '600123456', email: 'elena@globalestates.es', alternatePhonePrefix: '+34', alternateNumber: '', aadhaar: '567890123456', pan: 'EFGHI5678J', occupation: 'Agent', rera: 'RERA/105', companyName: 'Global Estates', bankName: 'Santander', branch: 'Madrid', accountType: 'Current', ifsc: 'SANT0005678', accountNumber: '5678901234', uploadDocuments: [], status: 'Active', createdAt: 1682410400000 },
+  { id: 6, name: 'James Taylor', phonePrefix: '+61', phone: '400123456', email: 'jtaylor@apex.com.au', alternatePhonePrefix: '+61', alternateNumber: '', aadhaar: '678901234567', pan: 'FGHIJ6789K', occupation: 'Realtor', rera: 'RERA/106', companyName: 'Apex Properties', bankName: 'CBA', branch: 'Sydney', accountType: 'Savings', ifsc: 'CBAN0006789', accountNumber: '6789012345', uploadDocuments: [], status: 'Active', createdAt: 1682410500000 },
+  { id: 7, name: 'Aisha Patel', phonePrefix: '+91', phone: '9876543212', email: 'a.patel@horizon.in', alternatePhonePrefix: '+91', alternateNumber: '', aadhaar: '789012345678', pan: 'GHIJK7890L', occupation: 'Broker', rera: 'RERA/107', companyName: 'Horizon Homes', bankName: 'SBI', branch: 'Delhi', accountType: 'Current', ifsc: 'SBIN0007890', accountNumber: '7890123456', uploadDocuments: [], status: 'Active', createdAt: 1682410600000 },
+  { id: 8, name: 'Robert Johnson', phonePrefix: '+1', phone: '5550125', email: 'robert.j@vanguard.com', alternatePhonePrefix: '+1', alternateNumber: '', aadhaar: '890123456789', pan: 'HIJKL8901M', occupation: 'Agent', rera: 'RERA/108', companyName: 'Vanguard Realty', bankName: 'Wells Fargo', branch: 'LA', accountType: 'Current', ifsc: 'WFAR0008901', accountNumber: '8901234567', uploadDocuments: [], status: 'Active', createdAt: 1682410700000 },
+  { id: 9, name: 'Wei Lin', phonePrefix: '+86', phone: '13012345678', email: 'wei.lin@zenith.cn', alternatePhonePrefix: '+86', alternateNumber: '', aadhaar: '901234567890', pan: 'IJKLM9012N', occupation: 'Broker', rera: 'RERA/109', companyName: 'Zenith Estates', bankName: 'BOC', branch: 'Beijing', accountType: 'Current', ifsc: 'BOCN0009012', accountNumber: '9012345678', uploadDocuments: [], status: 'Active', createdAt: 1682410800000 },
+  { id: 10, name: 'Fatima Ali', phonePrefix: '+971', phone: '501234567', email: 'fatima@oasis.ae', alternatePhonePrefix: '+971', alternateNumber: '', aadhaar: '012345678901', pan: 'JKLMN0123O', occupation: 'Realtor', rera: 'RERA/110', companyName: 'Oasis Properties', bankName: 'ENBD', branch: 'Dubai', accountType: 'Savings', ifsc: 'ENBD0000123', accountNumber: '0123456789', uploadDocuments: [], status: 'Active', createdAt: 1682410900000 },
+]
+
 function Moreoption({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, onOpenChannelPartners, onOpenEmails, onOpenSms, onSignOut }) {
   const [isExportOpen, setIsExportOpen] = useState(false)
   const [isFilterOpen, setIsFilterOpen] = useState(false)
   const [isStatusOpen, setIsStatusOpen] = useState(false)
   const [isAddFormOpen, setIsAddFormOpen] = useState(() => localStorage.getItem('mp_cp_add_form_open') === 'true')
   const [channelPartners, setChannelPartners] = useState(() => {
-    const saved = localStorage.getItem('mp_channel_partners')
+    const saved = localStorage.getItem('mp_channel_partners_v2')
     if (saved) {
       try {
-        return JSON.parse(saved)
+        const parsed = JSON.parse(saved)
+        if (parsed.length > 0) return parsed
       } catch (e) {
         console.error('Error loading partners from localStorage', e)
       }
     }
-    return []
+    return initialChannelPartners
   })
   const [editingPartnerIndex, setEditingPartnerIndex] = useState(() => {
     const saved = localStorage.getItem('mp_cp_editing_index')
@@ -152,7 +166,7 @@ function Moreoption({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, on
 
   // Persistent storage for channel partners and form drafts
   useEffect(() => {
-    localStorage.setItem('mp_channel_partners', JSON.stringify(channelPartners))
+    localStorage.setItem('mp_channel_partners_v2', JSON.stringify(channelPartners))
   }, [channelPartners])
 
   useEffect(() => {
@@ -1142,31 +1156,26 @@ function Moreoption({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, on
                         <label className="ml-1 text-[11px] font-black uppercase tracking-widest text-[#64748b]">Country *</label>
                         <div 
                           onClick={(e) => {
-                            if (isCountryDropdownOpen) {
-                              setIsCountryDropdownOpen(false)
-                              setCountryAnchor(null)
-                            } else {
-                              const rect = e.currentTarget.getBoundingClientRect()
-                              setCountryAnchor({ top: rect.bottom, left: rect.left, width: rect.width })
-                              setIsCountryDropdownOpen(true)
-                            }
+                            setIsCountryDropdownOpen(!isCountryDropdownOpen)
                           }}
                           className={`country-trigger flex w-full cursor-pointer items-center justify-between rounded-2xl border px-5 py-3.5 transition-all duration-300 ${isCountryDropdownOpen ? 'border-[#f59e0b] bg-white ring-4 ring-[#f59e0b]/10' : 'border-[#e2e8f0] bg-[#f8fafc]'}`}
                         >
-                          <span className={`text-base font-semibold ${formValues.country === 'Select country' ? 'text-[#94a3b8]' : 'text-[#0f172a]'}`}>
+                          <span className={`flex items-center gap-2 text-base font-semibold ${formValues.country === 'Select country' ? 'text-[#94a3b8]' : 'text-[#0f172a]'}`}>
+                            {formValues.country !== 'Select country' && (
+                              <span className="text-xl">{countryPhoneOptions.find(opt => opt.country === formValues.country)?.flag || '🌐'}</span>
+                            )}
                             {formValues.country}
                           </span>
                           <span className={`transition-transform duration-300 ${isCountryDropdownOpen ? 'rotate-180' : ''}`}>
                             <IconChevron />
                           </span>
                         </div>
-                        {isCountryDropdownOpen && countryAnchor && createPortal(
+                        {isCountryDropdownOpen && (
                           <div 
                             ref={countryDropdownRef}
                             onMouseDown={(e) => e.stopPropagation()}
                             onClick={(e) => e.stopPropagation()}
-                            className="fixed z-[600] overflow-hidden rounded-2xl border border-white bg-white p-2 shadow-[0_20px_50px_rgba(0,0,0,0.15)] backdrop-blur-xl animate-elastic-pop"
-                            style={{ top: `${countryAnchor.top + 8}px`, left: `${countryAnchor.left}px`, width: `${countryAnchor.width}px` }}
+                            className="absolute left-0 top-[calc(100%+8px)] z-[100] w-full overflow-hidden rounded-2xl border border-white bg-white p-2 shadow-[0_20px_50px_rgba(0,0,0,0.15)] backdrop-blur-xl animate-elastic-pop"
                           >
                             <div className="mb-2 px-2">
                               <input 
@@ -1181,28 +1190,30 @@ function Moreoption({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, on
                             <div className="max-h-60 overflow-y-auto no-scrollbar">
                               {countries
                                 .filter(c => c.name.toLowerCase().includes(countrySearch.toLowerCase()))
-                                .map(c => (
-                                  <button
-                                    key={c.code}
-                                    type="button"
-                                    onClick={(e) => {
-                                      e.preventDefault()
-                                      e.stopPropagation()
-                                      setFormField('country', c.name)
-                                      setFormField('state', '-')
-                                      setIsCountryDropdownOpen(false)
-                                      setCountryAnchor(null)
-                                      setCountrySearch('')
-                                    }}
-                                    className="flex w-full items-center px-4 py-2.5 text-left text-sm font-bold text-[#475569] transition hover:bg-[#fff7ed] hover:text-[#f59e0b]"
-                                  >
-                                    {c.name}
-                                  </button>
-                                ))
+                                .map(c => {
+                                  const flag = countryPhoneOptions.find(opt => opt.country === c.name)?.flag || '🌐'
+                                  return (
+                                    <button
+                                      key={c.code}
+                                      type="button"
+                                      onClick={(e) => {
+                                        e.preventDefault()
+                                        e.stopPropagation()
+                                        setFormField('country', c.name)
+                                        setFormField('state', '-')
+                                        setIsCountryDropdownOpen(false)
+                                        setCountrySearch('')
+                                      }}
+                                      className="flex w-full items-center gap-3 px-4 py-2.5 text-left text-sm font-bold text-[#475569] transition hover:bg-[#fff7ed] hover:text-[#f59e0b]"
+                                    >
+                                      <span className="text-xl">{flag}</span>
+                                      {c.name}
+                                    </button>
+                                  )
+                                })
                               }
                             </div>
-                          </div>,
-                          document.body
+                          </div>
                         )}
                       </div>
 
@@ -1212,32 +1223,27 @@ function Moreoption({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, on
                         <div 
                           onClick={(e) => {
                             if (formValues.country !== 'Select country') {
-                              if (isStateDropdownOpen) {
-                                setIsStateDropdownOpen(false)
-                                setStateAnchor(null)
-                              } else {
-                                const rect = e.currentTarget.getBoundingClientRect()
-                                setStateAnchor({ top: rect.bottom, left: rect.left, width: rect.width })
-                                setIsStateDropdownOpen(true)
-                              }
+                              setIsStateDropdownOpen(!isStateDropdownOpen)
                             }
                           }}
                           className={`state-trigger flex w-full items-center justify-between rounded-2xl border px-5 py-3.5 transition-all duration-300 ${formValues.country === 'Select country' ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'} ${isStateDropdownOpen ? 'border-[#f59e0b] bg-white ring-4 ring-[#f59e0b]/10' : 'border-[#e2e8f0] bg-[#f8fafc]'}`}
                         >
-                          <span className={`text-base font-semibold ${formValues.state === '-' ? 'text-[#94a3b8]' : 'text-[#0f172a]'}`}>
+                          <span className={`flex items-center gap-2 text-base font-semibold ${formValues.state === '-' ? 'text-[#94a3b8]' : 'text-[#0f172a]'}`}>
+                            {formValues.state !== '-' && (
+                              <span className="text-lg text-[#94a3b8]">📍</span>
+                            )}
                             {formValues.state}
                           </span>
                           <span className={`transition-transform duration-300 ${isStateDropdownOpen ? 'rotate-180' : ''}`}>
                             <IconChevron />
                           </span>
                         </div>
-                        {isStateDropdownOpen && stateAnchor && createPortal(
+                        {isStateDropdownOpen && (
                           <div 
                             ref={stateDropdownRef}
                             onMouseDown={(e) => e.stopPropagation()}
                             onClick={(e) => e.stopPropagation()}
-                            className="fixed z-[600] overflow-hidden rounded-2xl border border-white bg-white p-2 shadow-[0_20px_50px_rgba(0,0,0,0.15)] backdrop-blur-xl animate-elastic-pop"
-                            style={{ top: `${stateAnchor.top + 8}px`, left: `${stateAnchor.left}px`, width: `${stateAnchor.width}px` }}
+                            className="absolute left-0 top-[calc(100%+8px)] z-[100] w-full overflow-hidden rounded-2xl border border-white bg-white p-2 shadow-[0_20px_50px_rgba(0,0,0,0.15)] backdrop-blur-xl animate-elastic-pop"
                           >
                             <div className="mb-2 px-2">
                               <input 
@@ -1261,11 +1267,11 @@ function Moreoption({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, on
                                       e.stopPropagation()
                                       setFormField('state', s)
                                       setIsStateDropdownOpen(false)
-                                      setStateAnchor(null)
                                       setStateSearch('')
                                     }}
-                                    className="flex w-full items-center px-4 py-2.5 text-left text-sm font-bold text-[#475569] transition hover:bg-[#fff7ed] hover:text-[#f59e0b]"
+                                    className="flex w-full items-center gap-3 px-4 py-2.5 text-left text-sm font-bold text-[#475569] transition hover:bg-[#fff7ed] hover:text-[#f59e0b]"
                                   >
+                                    <span className="text-lg text-[#cbd5e1]">📍</span>
                                     {s}
                                   </button>
                                 ))
@@ -1277,8 +1283,7 @@ function Moreoption({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, on
                                 </div>
                               )}
                             </div>
-                          </div>,
-                          document.body
+                          </div>
                         )}
                       </div>
                     </div>
