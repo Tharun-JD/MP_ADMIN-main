@@ -13,31 +13,31 @@ const DEFAULT_PAGE = 'dashboard'
 const VALID_PAGES = new Set(['dashboard', 'user-account', 'lead-active', 'channel-partners', 'emails', 'sms'])
 
 const getInitialPage = () => {
-  const storedPage = sessionStorage.getItem(ACTIVE_PAGE_KEY)
+  const storedPage = localStorage.getItem(ACTIVE_PAGE_KEY)
   return VALID_PAGES.has(storedPage) ? storedPage : DEFAULT_PAGE
 }
 
 function RootApp() {
-  const [isSignedIn, setIsSignedIn] = useState(() => sessionStorage.getItem(SIGNED_IN_KEY) === 'true')
+  const [isSignedIn, setIsSignedIn] = useState(() => localStorage.getItem(SIGNED_IN_KEY) === 'true')
   const [activePage, setActivePage] = useState(getInitialPage)
 
   const goToPage = (page) => {
     if (!VALID_PAGES.has(page)) {
       return
     }
-    sessionStorage.setItem(ACTIVE_PAGE_KEY, page)
+    localStorage.setItem(ACTIVE_PAGE_KEY, page)
     setActivePage(page)
   }
 
   const handleSignIn = () => {
-    sessionStorage.setItem(SIGNED_IN_KEY, 'true')
+    localStorage.setItem(SIGNED_IN_KEY, 'true')
     setIsSignedIn(true)
     goToPage(DEFAULT_PAGE)
   }
 
   const handleSignOut = () => {
-    sessionStorage.removeItem(SIGNED_IN_KEY)
-    sessionStorage.removeItem(ACTIVE_PAGE_KEY)
+    localStorage.removeItem(SIGNED_IN_KEY)
+    localStorage.removeItem(ACTIVE_PAGE_KEY)
     setIsSignedIn(false)
     setActivePage(DEFAULT_PAGE)
   }

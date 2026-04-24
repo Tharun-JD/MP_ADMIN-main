@@ -3,6 +3,7 @@ import { createPortal } from 'react-dom'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import Navbar from './Navbar.jsx'
+import { countries, statesByCountry } from './data/locationData.js'
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -120,6 +121,14 @@ function Moreoption({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, on
   const [menuAnchorRect, setMenuAnchorRect] = useState(null)
   const [exportAnchorRect, setExportAnchorRect] = useState(null)
 
+  // Location dropdown states
+  const [isCountryDropdownOpen, setIsCountryDropdownOpen] = useState(false)
+  const [isStateDropdownOpen, setIsStateDropdownOpen] = useState(false)
+  const [countrySearch, setCountrySearch] = useState('')
+  const [stateSearch, setStateSearch] = useState('')
+  const countryDropdownRef = useRef(null)
+  const stateDropdownRef = useRef(null)
+
   // Persistent storage for channel partners and form drafts
   useEffect(() => {
     localStorage.setItem('mp_channel_partners', JSON.stringify(channelPartners))
@@ -151,6 +160,12 @@ function Moreoption({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, on
       if (actionMenuRef.current && !actionMenuRef.current.contains(event.target) && !event.target.closest('.cp-action-trigger')) {
         setOpenActionIndex(null)
         setMenuAnchorRect(null)
+      }
+      if (countryDropdownRef.current && !countryDropdownRef.current.contains(event.target)) {
+        setIsCountryDropdownOpen(false)
+      }
+      if (stateDropdownRef.current && !stateDropdownRef.current.contains(event.target)) {
+        setIsStateDropdownOpen(false)
       }
     }
 
@@ -846,22 +861,133 @@ function Moreoption({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, on
                           className="w-full rounded-2xl border border-[#e2e8f0] bg-[#f8fafc] px-5 py-3.5 text-base font-semibold text-[#0f172a] outline-none transition-all focus:border-[#f59e0b] focus:bg-white focus:ring-4 focus:ring-[#f59e0b]/10"
                         />
                       </div>
-                      {[
-                        { label: 'City *', field: 'city' },
-                        { label: 'Zip / Pin Code *', field: 'zip' },
-                        { label: 'State / Region *', field: 'state' },
-                        { label: 'Country *', field: 'country' },
-                      ].map((item) => (
-                        <div key={item.field} className="cp-add-field space-y-1.5">
-                          <label className="ml-1 text-[11px] font-black uppercase tracking-widest text-[#64748b]">{item.label}</label>
-                          <input
-                            type="text"
-                            value={formValues[item.field]}
-                            onChange={(e) => setFormField(item.field, e.target.value)}
-                            className="w-full rounded-2xl border border-[#e2e8f0] bg-[#f8fafc] px-5 py-3.5 text-base font-semibold text-[#0f172a] outline-none transition-all focus:border-[#f59e0b] focus:bg-white focus:ring-4 focus:ring-[#f59e0b]/10"
-                          />
+                      <div className="cp-add-field space-y-1.5 md:col-span-1">
+                        <label className="ml-1 text-[11px] font-black uppercase tracking-widest text-[#64748b]">City *</label>
+                        <input
+                          type="text"
+                          value={formValues.city}
+                          onChange={(e) => setFormField('city', e.target.value)}
+                          className="w-full rounded-2xl border border-[#e2e8f0] bg-[#f8fafc] px-5 py-3.5 text-base font-semibold text-[#0f172a] outline-none transition-all focus:border-[#f59e0b] focus:bg-white focus:ring-4 focus:ring-[#f59e0b]/10"
+                        />
+                      </div>
+                      <div className="cp-add-field space-y-1.5 md:col-span-1">
+                        <label className="ml-1 text-[11px] font-black uppercase tracking-widest text-[#64748b]">Zip / Pin Code *</label>
+                        <input
+                          type="text"
+                          value={formValues.zip}
+                          onChange={(e) => setFormField('zip', e.target.value)}
+                          className="w-full rounded-2xl border border-[#e2e8f0] bg-[#f8fafc] px-5 py-3.5 text-base font-semibold text-[#0f172a] outline-none transition-all focus:border-[#f59e0b] focus:bg-white focus:ring-4 focus:ring-[#f59e0b]/10"
+                        />
+                      </div>
+
+                      {/* Country Select */}
+                      <div className="cp-add-field relative space-y-1.5" ref={countryDropdownRef}>
+                        <label className="ml-1 text-[11px] font-black uppercase tracking-widest text-[#64748b]">Country *</label>
+                        <div 
+                          onClick={() => setIsCountryDropdownOpen(!isCountryDropdownOpen)}
+                          className={`flex w-full cursor-pointer items-center justify-between rounded-2xl border px-5 py-3.5 transition-all duration-300 ${isCountryDropdownOpen ? 'border-[#f59e0b] bg-white ring-4 ring-[#f59e0b]/10' : 'border-[#e2e8f0] bg-[#f8fafc]'}`}
+                        >
+                          <span className={`text-base font-semibold ${formValues.country === 'Select country' ? 'text-[#94a3b8]' : 'text-[#0f172a]'}`}>
+                            {formValues.country}
+                          </span>
+                          <span className={`transition-transform duration-300 ${isCountryDropdownOpen ? 'rotate-180' : ''}`}>
+                            <IconChevron />
+                          </span>
                         </div>
-                      ))}
+                        {isCountryDropdownOpen && (
+                          <div className="absolute left-0 top-[calc(100%+0.5rem)] z-[500] w-full overflow-hidden rounded-2xl border border-white bg-white p-2 shadow-[0_20px_50px_rgba(0,0,0,0.1)] backdrop-blur-xl animate-elastic-pop">
+                            <div className="mb-2 px-2">
+                              <input 
+                                type="text"
+                                placeholder="Search country..."
+                                value={countrySearch}
+                                onChange={(e) => setCountrySearch(e.target.value)}
+                                onClick={(e) => e.stopPropagation()}
+                                className="w-full rounded-xl border border-[#f1f5f9] bg-[#f8fafc] px-4 py-2 text-sm font-bold text-[#0f172a] outline-none focus:border-[#f59e0b]"
+                              />
+                            </div>
+                            <div className="max-h-60 overflow-y-auto no-scrollbar">
+                              {countries
+                                .filter(c => c.name.toLowerCase().includes(countrySearch.toLowerCase()))
+                                .map(c => (
+                                  <button
+                                    key={c.code}
+                                    type="button"
+                                    onClick={() => {
+                                      setFormField('country', c.name)
+                                      setFormField('state', '-') // Reset state on country change
+                                      setIsCountryDropdownOpen(false)
+                                      setCountrySearch('')
+                                    }}
+                                    className="flex w-full items-center px-4 py-2.5 text-left text-sm font-bold text-[#475569] transition hover:bg-[#fff7ed] hover:text-[#f59e0b]"
+                                  >
+                                    {c.name}
+                                  </button>
+                                ))
+                              }
+                            </div>
+                          </div>
+                        )}
+                      </div>
+
+                      {/* State Select */}
+                      <div className="cp-add-field relative space-y-1.5" ref={stateDropdownRef}>
+                        <label className="ml-1 text-[11px] font-black uppercase tracking-widest text-[#64748b]">State / Region *</label>
+                        <div 
+                          onClick={() => {
+                            if (formValues.country !== 'Select country') {
+                              setIsStateDropdownOpen(!isStateDropdownOpen)
+                            }
+                          }}
+                          className={`flex w-full items-center justify-between rounded-2xl border px-5 py-3.5 transition-all duration-300 ${formValues.country === 'Select country' ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'} ${isStateDropdownOpen ? 'border-[#f59e0b] bg-white ring-4 ring-[#f59e0b]/10' : 'border-[#e2e8f0] bg-[#f8fafc]'}`}
+                        >
+                          <span className={`text-base font-semibold ${formValues.state === '-' ? 'text-[#94a3b8]' : 'text-[#0f172a]'}`}>
+                            {formValues.state}
+                          </span>
+                          <span className={`transition-transform duration-300 ${isStateDropdownOpen ? 'rotate-180' : ''}`}>
+                            <IconChevron />
+                          </span>
+                        </div>
+                        {isStateDropdownOpen && (
+                          <div className="absolute left-0 top-[calc(100%+0.5rem)] z-[500] w-full overflow-hidden rounded-2xl border border-white bg-white p-2 shadow-[0_20px_50px_rgba(0,0,0,0.1)] backdrop-blur-xl animate-elastic-pop">
+                            <div className="mb-2 px-2">
+                              <input 
+                                type="text"
+                                placeholder="Search state..."
+                                value={stateSearch}
+                                onChange={(e) => setStateSearch(e.target.value)}
+                                onClick={(e) => e.stopPropagation()}
+                                className="w-full rounded-xl border border-[#f1f5f9] bg-[#f8fafc] px-4 py-2 text-sm font-bold text-[#0f172a] outline-none focus:border-[#f59e0b]"
+                              />
+                            </div>
+                            <div className="max-h-60 overflow-y-auto no-scrollbar">
+                              {(statesByCountry[countries.find(c => c.name === formValues.country)?.code] || [])
+                                .filter(s => s.toLowerCase().includes(stateSearch.toLowerCase()))
+                                .map(s => (
+                                  <button
+                                    key={s}
+                                    type="button"
+                                    onClick={() => {
+                                      setFormField('state', s)
+                                      setIsStateDropdownOpen(false)
+                                      setStateSearch('')
+                                    }}
+                                    className="flex w-full items-center px-4 py-2.5 text-left text-sm font-bold text-[#475569] transition hover:bg-[#fff7ed] hover:text-[#f59e0b]"
+                                  >
+                                    {s}
+                                  </button>
+                                ))
+                              }
+                              {!(statesByCountry[countries.find(c => c.name === formValues.country)?.code]) && (
+                                <div className="px-4 py-3 text-center">
+                                  <p className="text-xs font-bold text-[#94a3b8]">No state data for this country</p>
+                                  <p className="mt-1 text-[10px] text-[#cbd5e1]">Please type manually in the field above or select another country</p>
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                        )}
+                      </div>
                     </div>
                   </section>
                 </div>
