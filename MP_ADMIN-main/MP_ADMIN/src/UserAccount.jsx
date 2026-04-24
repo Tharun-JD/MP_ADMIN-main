@@ -165,6 +165,7 @@ function UserAccount({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, o
     leadStage: 'Visit Done',
     leadStatus: 'Active',
     countStatus: 'Pending',
+    remark: '',
   })
 
   useEffect(() => {
@@ -407,19 +408,30 @@ function UserAccount({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, o
   }
 
   const handleSaveFollowUp = () => {
-    const newLead = {
-      id: Date.now(),
-      ...followUpFormValues,
-      registeredAt: new Date().toISOString().split('T')[0],
-      validityPeriod: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+    const currentLeads = JSON.parse(localStorage.getItem('mp_leads') || '[]')
+    const existingIndex = currentLeads.findIndex((l) => l.name === followUpFormValues.name)
+
+    if (existingIndex !== -1) {
+      // Update existing lead
+      currentLeads[existingIndex] = {
+        ...currentLeads[existingIndex],
+        ...followUpFormValues,
+        // We update the lead but keep its original ID and registration date if they exist
+      }
+    } else {
+      // Add new lead if not found
+      const newLead = {
+        id: Date.now(),
+        ...followUpFormValues,
+        registeredAt: new Date().toISOString().split('T')[0],
+        validityPeriod: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+      }
+      currentLeads.unshift(newLead)
     }
 
-    const currentLeads = JSON.parse(localStorage.getItem('mp_leads') || '[]')
-    const updatedLeads = [newLead, ...currentLeads]
-    localStorage.setItem('mp_leads', JSON.stringify(updatedLeads))
-
+    localStorage.setItem('mp_leads', JSON.stringify(currentLeads))
     setIsFollowUpFormOpen(false)
-    // Automatically navigate to Lead Activities page
+    // Automatically navigate to Lead Activities page to show the update
     onOpenLeadActive()
   }
 
@@ -1169,11 +1181,23 @@ function UserAccount({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, o
                     onChange={(e) => setFollowUpFormValues({...followUpFormValues, leadStage: e.target.value})}
                     className="w-full rounded-md border border-[#c6d4ea] bg-white px-4 py-2 text-base text-[#2d4568] outline-none focus:border-[#7d88ff]"
                   >
+                    <option>Fresh</option>
                     <option>Enquiry Received</option>
                     <option>Visit Done</option>
                     <option>Interested</option>
                     <option>Not Interested</option>
                   </select>
+                </div>
+
+                <div className="ua-followup-field space-y-2">
+                  <label className="text-sm font-semibold text-[#1f3557]">Remarks</label>
+                  <textarea
+                    value={followUpFormValues.remark}
+                    onChange={(e) => setFollowUpFormValues({...followUpFormValues, remark: e.target.value})}
+                    placeholder="Add notes about this follow-up..."
+                    rows={3}
+                    className="w-full rounded-md border border-[#c6d4ea] bg-white px-4 py-2 text-base text-[#2d4568] outline-none focus:border-[#7d88ff]"
+                  />
                 </div>
               </div>
 

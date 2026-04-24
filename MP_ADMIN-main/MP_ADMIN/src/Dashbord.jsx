@@ -341,57 +341,57 @@ function Dashbord({ onSignOut, onBackToDashboard, onOpenUserAccount, onOpenLeadA
   }, [])
 
   useEffect(() => {
-    if (!filterPanelRef.current) {
-      return
-    }
-
+    if (!filterPanelRef.current) return
     if (isFilterOpen) {
-      gsap.fromTo(
-        filterPanelRef.current,
-        { autoAlpha: 0, y: -14, scale: 0.97 },
-        { autoAlpha: 1, y: 0, scale: 1, duration: 0.34, ease: 'power2.out' },
+      gsap.fromTo(filterPanelRef.current, 
+        { height: 0, opacity: 0, marginTop: 0 }, 
+        { height: 'auto', opacity: 1, marginTop: 12, duration: 0.4, ease: 'power2.out' }
+      )
+    } else {
+      gsap.to(filterPanelRef.current, 
+        { height: 0, opacity: 0, marginTop: 0, duration: 0.3, ease: 'power2.in' }
       )
     }
   }, [isFilterOpen])
 
   useEffect(() => {
-    if (!incentiveFilterPanelRef.current) {
-      return
-    }
-
+    if (!incentiveFilterPanelRef.current) return
     if (isIncentiveFilterOpen) {
-      gsap.fromTo(
-        incentiveFilterPanelRef.current,
-        { autoAlpha: 0, y: -12, scale: 0.97 },
-        { autoAlpha: 1, y: 0, scale: 1, duration: 0.32, ease: 'power2.out' },
+      gsap.fromTo(incentiveFilterPanelRef.current, 
+        { height: 0, opacity: 0, marginTop: 0 }, 
+        { height: 'auto', opacity: 1, marginTop: 16, duration: 0.4, ease: 'power2.out' }
+      )
+    } else {
+      gsap.to(incentiveFilterPanelRef.current, 
+        { height: 0, opacity: 0, marginTop: 0, duration: 0.3, ease: 'power2.in' }
       )
     }
   }, [isIncentiveFilterOpen])
 
   useEffect(() => {
-    if (!channelFilterPanelRef.current) {
-      return
-    }
-
+    if (!channelFilterPanelRef.current) return
     if (isChannelFilterOpen) {
-      gsap.fromTo(
-        channelFilterPanelRef.current,
-        { autoAlpha: 0, y: -12, scale: 0.97 },
-        { autoAlpha: 1, y: 0, scale: 1, duration: 0.32, ease: 'power2.out' },
+      gsap.fromTo(channelFilterPanelRef.current, 
+        { height: 0, opacity: 0, marginTop: 0 }, 
+        { height: 'auto', opacity: 1, marginTop: 16, duration: 0.4, ease: 'power2.out' }
+      )
+    } else {
+      gsap.to(channelFilterPanelRef.current, 
+        { height: 0, opacity: 0, marginTop: 0, duration: 0.3, ease: 'power2.in' }
       )
     }
   }, [isChannelFilterOpen])
 
   useEffect(() => {
-    if (!managerFilterPanelRef.current) {
-      return
-    }
-
+    if (!managerFilterPanelRef.current) return
     if (isManagerFilterOpen) {
-      gsap.fromTo(
-        managerFilterPanelRef.current,
-        { autoAlpha: 0, y: -12, scale: 0.97 },
-        { autoAlpha: 1, y: 0, scale: 1, duration: 0.32, ease: 'power2.out' },
+      gsap.fromTo(managerFilterPanelRef.current, 
+        { height: 0, opacity: 0, marginTop: 0 }, 
+        { height: 'auto', opacity: 1, marginTop: 12, duration: 0.4, ease: 'power2.out' }
+      )
+    } else {
+      gsap.to(managerFilterPanelRef.current, 
+        { height: 0, opacity: 0, marginTop: 0, duration: 0.3, ease: 'power2.in' }
       )
     }
   }, [isManagerFilterOpen])
@@ -666,11 +666,12 @@ function Dashbord({ onSignOut, onBackToDashboard, onOpenUserAccount, onOpenLeadA
               </button>
             </div>
 
-            {isFilterOpen && (
-              <div
-                ref={filterPanelRef}
-                className="mt-3 grid w-full max-w-5xl grid-cols-1 gap-3 rounded-2xl border border-[#d6e5fb] bg-white/95 p-4 shadow-2xl shadow-[#2f3fa9]/20 backdrop-blur sm:grid-cols-2 lg:grid-cols-[1fr_1fr_1fr_auto_auto]"
-              >
+            <div
+              ref={filterPanelRef}
+              className="overflow-hidden opacity-0"
+              style={{ height: 0 }}
+            >
+              <div className="mt-3 grid w-full max-w-5xl grid-cols-1 gap-3 rounded-2xl border border-[#d6e5fb] bg-white/95 p-4 shadow-2xl shadow-[#2f3fa9]/20 backdrop-blur sm:grid-cols-2 lg:grid-cols-[1fr_1fr_1fr_auto_auto]">
                 <input
                   type="text"
                   value={filterFromDate}
@@ -717,7 +718,7 @@ function Dashbord({ onSignOut, onBackToDashboard, onOpenUserAccount, onOpenLeadA
                   Apply
                 </button>
               </div>
-            )}
+            </div>
           </div>
 
           <div className="scroll-3d scroll-float reveal-panel relative z-10 mb-8 grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4 [transform-style:preserve-3d]">
@@ -754,11 +755,12 @@ function Dashbord({ onSignOut, onBackToDashboard, onOpenUserAccount, onOpenLeadA
               </button>
             </div>
 
-            {isIncentiveFilterOpen && (
-              <div
-                ref={incentiveFilterPanelRef}
-                className="mt-4 grid grid-cols-1 gap-3 rounded-xl border border-[#d6e5fb] bg-[#f8fbff]/90 p-4 shadow-inner sm:grid-cols-2 lg:grid-cols-[1fr_auto_auto]"
-              >
+            <div
+              ref={incentiveFilterPanelRef}
+              className="overflow-hidden opacity-0"
+              style={{ height: 0 }}
+            >
+              <div className="mt-4 grid grid-cols-1 gap-3 rounded-xl border border-[#d6e5fb] bg-[#f8fbff]/90 p-4 shadow-inner sm:grid-cols-2 lg:grid-cols-[1fr_auto_auto]">
                 <input
                   type="text"
                   value={incentiveProjectEntry}
@@ -789,7 +791,7 @@ function Dashbord({ onSignOut, onBackToDashboard, onOpenUserAccount, onOpenLeadA
                   Apply
                 </button>
               </div>
-            )}
+            </div>
           </div>
 
           <div className="scroll-3d scroll-float reveal-panel relative z-20 mt-14 rounded-2xl border border-white/65 bg-white/80 p-5 shadow-xl shadow-[#2f3fa9]/10 backdrop-blur-xl [transform-style:preserve-3d]">
@@ -808,11 +810,24 @@ function Dashbord({ onSignOut, onBackToDashboard, onOpenUserAccount, onOpenLeadA
           >
             <div className="flex flex-wrap items-center justify-between gap-3">
               <h4 className="text-base font-black text-[#1b3e72]">Channel Partner Performance</h4>
+              <button
+                type="button"
+                onClick={toggleChannelFilter}
+                className={`flex items-center gap-2 rounded-lg border px-4 py-1.5 text-sm font-bold transition-all duration-300 ${
+                  isChannelFilterOpen 
+                    ? 'border-[#6366f1] bg-[#6366f1] text-white shadow-lg shadow-indigo-100' 
+                    : 'border-[#6366f1]/20 bg-[#6366f1]/5 text-[#6366f1] hover:bg-[#6366f1]/10'
+                }`}
+              >
+                <Icon name="filter" className="h-4 w-4" />
+                Filter
+              </button>
             </div>
 
             <div
               ref={channelFilterPanelRef}
-              className="relative z-20 mt-4 overflow-hidden rounded-lg border border-[#d3dbe9] bg-[#f3f5f9]"
+              className="relative z-20 overflow-hidden rounded-lg border border-[#d3dbe9] bg-[#f3f5f9] opacity-0"
+              style={{ height: 0 }}
             >
                 <div className="flex items-center justify-between border-b border-[#d3dbe9] px-4 py-3.5">
                   <h5 className="text-xl font-medium leading-none text-[#2f3e56]">Filter</h5>
@@ -863,6 +878,7 @@ function Dashbord({ onSignOut, onBackToDashboard, onOpenUserAccount, onOpenLeadA
                       setChannelFromDate('')
                       setChannelToDate('')
                       setChannelProject('')
+                      setIsChannelFilterOpen(false)
                       showToast('Channel partner filter cleared')
                     }}
                     className="h-10 rounded-md border border-[#6d76ff] bg-white px-5 text-sm font-semibold text-[#636eff] transition hover:bg-[#f3f4ff]"
@@ -872,6 +888,7 @@ function Dashbord({ onSignOut, onBackToDashboard, onOpenUserAccount, onOpenLeadA
                   <button
                     type="button"
                     onClick={() => {
+                      setIsChannelFilterOpen(false)
                       showToast('Channel partner filter applied', 'success')
                     }}
                     className="inline-flex h-10 items-center gap-2 rounded-md bg-gradient-to-r from-[#777dff] to-[#6b69ec] px-6 text-sm font-semibold text-white transition hover:brightness-110"
@@ -889,11 +906,24 @@ function Dashbord({ onSignOut, onBackToDashboard, onOpenUserAccount, onOpenLeadA
           >
             <div className="flex flex-wrap items-center justify-between gap-3">
               <h4 className="text-base font-black text-[#1b3e72]">Channel Partner Manager Performance</h4>
+              <button
+                type="button"
+                onClick={toggleManagerFilter}
+                className={`flex items-center gap-2 rounded-lg border px-4 py-1.5 text-sm font-bold transition-all duration-300 ${
+                  isManagerFilterOpen 
+                    ? 'border-[#6366f1] bg-[#6366f1] text-white shadow-lg shadow-indigo-100' 
+                    : 'border-[#6366f1]/20 bg-[#6366f1]/5 text-[#6366f1] hover:bg-[#6366f1]/10'
+                }`}
+              >
+                <Icon name="filter" className="h-4 w-4" />
+                Filter
+              </button>
             </div>
 
             <div
               ref={managerFilterPanelRef}
-              className="relative z-20 mt-3 overflow-hidden rounded-lg border border-[#d3dbe9] bg-[#f3f5f9] shadow-2xl"
+              className="relative z-20 overflow-hidden rounded-lg border border-[#d3dbe9] bg-[#f3f5f9] opacity-0 shadow-2xl"
+              style={{ height: 0 }}
             >
                 <div className="flex items-center justify-between border-b border-[#d3dbe9] px-4 py-3.5">
                   <h5 className="text-xl font-medium leading-none text-[#2f3e56]">Filter</h5>
@@ -944,6 +974,7 @@ function Dashbord({ onSignOut, onBackToDashboard, onOpenUserAccount, onOpenLeadA
                       setManagerFromDate('')
                       setManagerToDate('')
                       setManagerProject('')
+                      setIsManagerFilterOpen(false)
                       showToast('Manager filter cleared')
                     }}
                     className="h-10 rounded-md border border-[#6d76ff] bg-white px-5 text-sm font-semibold text-[#636eff] transition hover:bg-[#f3f4ff]"
@@ -953,6 +984,7 @@ function Dashbord({ onSignOut, onBackToDashboard, onOpenUserAccount, onOpenLeadA
                   <button
                     type="button"
                     onClick={() => {
+                      setIsManagerFilterOpen(false)
                       showToast('Manager filter applied', 'success')
                     }}
                     className="inline-flex h-10 items-center gap-2 rounded-md bg-gradient-to-r from-[#777dff] to-[#6b69ec] px-6 text-sm font-semibold text-white transition hover:brightness-110"
