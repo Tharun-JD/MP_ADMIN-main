@@ -1,9 +1,11 @@
 import { useEffect, useRef, useState } from 'react'
 
 function Login({ onSignIn }) {
+  const [view, setView] = useState('login')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [remember, setRemember] = useState(true)
+  const [recoveryEmail, setRecoveryEmail] = useState('')
 
   const pageRef = useRef(null)
   const cardRef = useRef(null)
@@ -187,6 +189,12 @@ function Login({ onSignIn }) {
     }
   }
 
+  const handleRecoverPassword = (e) => {
+    e.preventDefault()
+    window.alert(`Password recovery link sent to: ${recoveryEmail}`)
+    setView('login')
+  }
+
   return (
     <main
       ref={pageRef}
@@ -242,70 +250,112 @@ function Login({ onSignIn }) {
       </div>
 
       <section className="relative z-10 mx-auto grid min-h-screen w-full max-w-7xl grid-cols-1 items-center gap-10 px-5 py-8 lg:grid-cols-2 lg:px-8">
-        <form
+        <div
           ref={cardRef}
-          onSubmit={handleSubmit}
-          autoComplete="off"
           className="w-full max-w-xl rounded-[2rem] border border-[#2f3fa9]/18 bg-white/85 p-8 shadow-2xl shadow-[#2f3fa9]/20 backdrop-blur-xl sm:p-10 lg:order-2 lg:justify-self-end"
         >
-          <p className="text-sm font-bold uppercase tracking-[0.24em] text-[#1a79d1]">MP Developers</p>
-          <h1 className="mt-3 text-4xl font-black tracking-tight text-[#102d57]">Construction Portal</h1>
-          <p className="mt-3 max-w-md text-[15px] text-[#425677]">
-            Sign in to manage projects, approvals, engineering reports, and partner workflow updates.
-          </p>
+          {view === 'login' ? (
+            <form onSubmit={handleSubmit} autoComplete="off">
+              <p className="text-sm font-bold uppercase tracking-[0.24em] text-[#1a79d1]">MP Developers</p>
+              <h1 className="mt-3 text-4xl font-black tracking-tight text-[#102d57]">Construction Portal</h1>
+              <p className="mt-3 max-w-md text-[15px] text-[#425677]">
+                Sign in to manage projects, approvals, engineering reports, and partner workflow updates.
+              </p>
 
-          <label className="mt-7 block text-sm font-semibold text-[#1f365d]" htmlFor="email">
-            Email
-          </label>
-          <input
-            id="email"
-            name="mp_email"
-            type="email"
-            autoComplete="off"
-            value={email}
-            onChange={(event) => setEmail(event.target.value)}
-            className="mt-2 w-full rounded-xl border border-[#a8c2e9] bg-[#f8fbff] px-4 py-3 text-sm outline-none transition placeholder:text-[#8094b2] focus:border-[#1a79d1] focus:ring-2 focus:ring-[#1a79d1]/30"
-            placeholder="Email"
-            required
-          />
-
-          <label className="mt-4 block text-sm font-semibold text-[#1f365d]" htmlFor="password">
-            Password
-          </label>
-          <input
-            id="password"
-            name="mp_password"
-            type="password"
-            autoComplete="new-password"
-            value={password}
-            onChange={(event) => setPassword(event.target.value)}
-            className="mt-2 w-full rounded-xl border border-[#a8c2e9] bg-[#f8fbff] px-4 py-3 text-sm outline-none transition placeholder:text-[#8094b2] focus:border-[#1a79d1] focus:ring-2 focus:ring-[#1a79d1]/30"
-            placeholder="Password"
-            required
-          />
-
-          <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
-            <label className="flex items-center gap-2 text-sm text-[#4a5d7d]">
+              <label className="mt-7 block text-sm font-semibold text-[#1f365d]" htmlFor="email">
+                Email
+              </label>
               <input
-                type="checkbox"
-                checked={remember}
-                onChange={(event) => setRemember(event.target.checked)}
-                className="h-4 w-4 rounded border-[#a8c2e9] text-[#1a79d1] focus:ring-[#1a79d1]/40"
+                id="email"
+                name="mp_email"
+                type="email"
+                autoComplete="off"
+                value={email}
+                onChange={(event) => setEmail(event.target.value)}
+                className="mt-2 w-full rounded-xl border border-[#a8c2e9] bg-[#f8fbff] px-4 py-3 text-sm outline-none transition placeholder:text-[#8094b2] focus:border-[#1a79d1] focus:ring-2 focus:ring-[#1a79d1]/30"
+                placeholder="Email"
+                required
               />
-              Keep me logged in
-            </label>
-            <a href="#" className="text-sm font-medium text-[#1a79d1] underline underline-offset-2">
-              Forgot password?
-            </a>
-          </div>
 
-          <button
-            type="submit"
-            className="mt-6 w-full rounded-xl bg-gradient-to-r from-[#1a79d1] via-[#2f3fa9] to-[#eb7a26] px-4 py-3 text-sm font-bold text-white shadow-lg shadow-[#2f3fa9]/25 transition hover:brightness-110"
-          >
-            Sign In
-          </button>
-        </form>
+              <label className="mt-4 block text-sm font-semibold text-[#1f365d]" htmlFor="password">
+                Password
+              </label>
+              <input
+                id="password"
+                name="mp_password"
+                type="password"
+                autoComplete="new-password"
+                value={password}
+                onChange={(event) => setPassword(event.target.value)}
+                className="mt-2 w-full rounded-xl border border-[#a8c2e9] bg-[#f8fbff] px-4 py-3 text-sm outline-none transition placeholder:text-[#8094b2] focus:border-[#1a79d1] focus:ring-2 focus:ring-[#1a79d1]/30"
+                placeholder="Password"
+                required
+              />
+
+              <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
+                <label className="flex items-center gap-2 text-sm text-[#4a5d7d]">
+                  <input
+                    type="checkbox"
+                    checked={remember}
+                    onChange={(event) => setRemember(event.target.checked)}
+                    className="h-4 w-4 rounded border-[#a8c2e9] text-[#1a79d1] focus:ring-[#1a79d1]/40"
+                  />
+                  Keep me logged in
+                </label>
+                <button 
+                  type="button" 
+                  onClick={() => setView('forgot-password')}
+                  className="text-sm font-medium text-[#1a79d1] underline underline-offset-2"
+                >
+                  Forgot password?
+                </button>
+              </div>
+
+              <button
+                type="submit"
+                className="mt-6 w-full rounded-xl bg-gradient-to-r from-[#1a79d1] via-[#2f3fa9] to-[#eb7a26] px-4 py-3 text-sm font-bold text-white shadow-lg shadow-[#2f3fa9]/25 transition hover:brightness-110"
+              >
+                Sign In
+              </button>
+            </form>
+          ) : (
+            <form onSubmit={handleRecoverPassword} autoComplete="off">
+              <p className="text-sm font-bold uppercase tracking-[0.24em] text-[#eb7a26]">Account Recovery</p>
+              <h1 className="mt-3 text-4xl font-black tracking-tight text-[#102d57]">Forgot Password?</h1>
+              <p className="mt-3 max-w-md text-[15px] text-[#425677]">
+                Enter your registered email address below. We&apos;ll send you a link to reset your password and regain access.
+              </p>
+
+              <label className="mt-7 block text-sm font-semibold text-[#1f365d]" htmlFor="recovery-email">
+                Email Address
+              </label>
+              <input
+                id="recovery-email"
+                type="email"
+                value={recoveryEmail}
+                onChange={(e) => setRecoveryEmail(e.target.value)}
+                className="mt-2 w-full rounded-xl border border-[#a8c2e9] bg-[#f8fbff] px-4 py-3 text-sm outline-none transition placeholder:text-[#8094b2] focus:border-[#eb7a26] focus:ring-2 focus:ring-[#eb7a26]/30"
+                placeholder="Enter your email"
+                required
+              />
+
+              <button
+                type="submit"
+                className="mt-6 w-full rounded-xl bg-[#0f172a] px-4 py-3 text-sm font-bold text-white shadow-lg shadow-slate-200 transition hover:bg-[#1e293b]"
+              >
+                Send Reset Link
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setView('login')}
+                className="mt-4 w-full text-center text-sm font-bold text-[#1a79d1] transition hover:text-[#2f3fa9]"
+              >
+                &larr; Back to Sign In
+              </button>
+            </form>
+          )}
+        </div>
 
         <aside ref={sceneRef} className="relative mx-auto w-full max-w-2xl lg:order-1 lg:justify-self-start">
           <div

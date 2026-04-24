@@ -3,7 +3,7 @@ import { createPortal } from 'react-dom'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import Navbar from './Navbar.jsx'
-import { countries, statesByCountry } from './data/locationData.js'
+import { countries, statesByCountry, countryPhoneOptions } from './data/locationData.js'
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -42,8 +42,10 @@ function DetailField({ label, value }) {
 
 const initialFormValues = {
   name: '',
+  phonePrefix: '+91',
   phone: '',
   email: '',
+  alternatePhonePrefix: '+91',
   alternateNumber: '',
   aadhaar: '',
   pan: '',
@@ -71,7 +73,7 @@ function Moreoption({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, on
   const [isExportOpen, setIsExportOpen] = useState(false)
   const [isFilterOpen, setIsFilterOpen] = useState(false)
   const [isStatusOpen, setIsStatusOpen] = useState(false)
-  const [isAddFormOpen, setIsAddFormOpen] = useState(false)
+  const [isAddFormOpen, setIsAddFormOpen] = useState(() => localStorage.getItem('mp_cp_add_form_open') === 'true')
   const [channelPartners, setChannelPartners] = useState(() => {
     const saved = localStorage.getItem('mp_channel_partners')
     if (saved) {
@@ -83,9 +85,15 @@ function Moreoption({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, on
     }
     return []
   })
-  const [editingPartnerIndex, setEditingPartnerIndex] = useState(null)
-  const [viewingPartnerIndex, setViewingPartnerIndex] = useState(null)
-  const [isDetailsOpen, setIsDetailsOpen] = useState(false)
+  const [editingPartnerIndex, setEditingPartnerIndex] = useState(() => {
+    const saved = localStorage.getItem('mp_cp_editing_index')
+    return saved !== null ? parseInt(saved, 10) : null
+  })
+  const [viewingPartnerIndex, setViewingPartnerIndex] = useState(() => {
+    const saved = localStorage.getItem('mp_cp_viewing_index')
+    return saved !== null ? parseInt(saved, 10) : null
+  })
+  const [isDetailsOpen, setIsDetailsOpen] = useState(() => localStorage.getItem('mp_cp_details_open') === 'true')
   const [filterValues, setFilterValues] = useState({
     nameEmailPhone: '',
     reraRegistrationNumber: '',
@@ -129,6 +137,19 @@ function Moreoption({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, on
   const countryDropdownRef = useRef(null)
   const stateDropdownRef = useRef(null)
 
+  // Phone prefix states
+  const [isPhonePrefixOpen, setIsPhonePrefixOpen] = useState(false)
+  const [isAltPhonePrefixOpen, setIsAltPhonePrefixOpen] = useState(false)
+  const [phoneSearch, setPhoneSearch] = useState('')
+  const [altPhoneSearch, setAltPhoneSearch] = useState('')
+  const phonePrefixRef = useRef(null)
+  const altPhonePrefixRef = useRef(null)
+
+  const [phoneAnchor, setPhoneAnchor] = useState(null)
+  const [altPhoneAnchor, setAltPhoneAnchor] = useState(null)
+  const [countryAnchor, setCountryAnchor] = useState(null)
+  const [stateAnchor, setStateAnchor] = useState(null)
+
   // Persistent storage for channel partners and form drafts
   useEffect(() => {
     localStorage.setItem('mp_channel_partners', JSON.stringify(channelPartners))
@@ -137,6 +158,30 @@ function Moreoption({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, on
   useEffect(() => {
     localStorage.setItem('mp_cp_form_draft', JSON.stringify(formValues))
   }, [formValues])
+
+  useEffect(() => {
+    localStorage.setItem('mp_cp_add_form_open', isAddFormOpen)
+  }, [isAddFormOpen])
+
+  useEffect(() => {
+    localStorage.setItem('mp_cp_details_open', isDetailsOpen)
+  }, [isDetailsOpen])
+
+  useEffect(() => {
+    if (editingPartnerIndex !== null) {
+      localStorage.setItem('mp_cp_editing_index', editingPartnerIndex)
+    } else {
+      localStorage.removeItem('mp_cp_editing_index')
+    }
+  }, [editingPartnerIndex])
+
+  useEffect(() => {
+    if (viewingPartnerIndex !== null) {
+      localStorage.setItem('mp_cp_viewing_index', viewingPartnerIndex)
+    } else {
+      localStorage.removeItem('mp_cp_viewing_index')
+    }
+  }, [viewingPartnerIndex])
 
   useEffect(() => {
     const onPointerDown = (event) => {
@@ -164,8 +209,21 @@ function Moreoption({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, on
       if (countryDropdownRef.current && !countryDropdownRef.current.contains(event.target)) {
         setIsCountryDropdownOpen(false)
       }
-      if (stateDropdownRef.current && !stateDropdownRef.current.contains(event.target)) {
+      if (phonePrefixRef.current && !phonePrefixRef.current.contains(event.target) && !event.target.closest('.prefix-trigger')) {
+        setIsPhonePrefixOpen(false)
+        setPhoneAnchor(null)
+      }
+      if (altPhonePrefixRef.current && !altPhonePrefixRef.current.contains(event.target) && !event.target.closest('.alt-prefix-trigger')) {
+        setIsAltPhonePrefixOpen(false)
+        setAltPhoneAnchor(null)
+      }
+      if (countryDropdownRef.current && !countryDropdownRef.current.contains(event.target) && !event.target.closest('.country-trigger')) {
+        setIsCountryDropdownOpen(false)
+        setCountryAnchor(null)
+      }
+      if (stateDropdownRef.current && !stateDropdownRef.current.contains(event.target) && !event.target.closest('.state-trigger')) {
         setIsStateDropdownOpen(false)
+        setStateAnchor(null)
       }
     }
 
@@ -693,27 +751,226 @@ function Moreoption({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, on
                           className="w-full rounded-2xl border border-[#e2e8f0] bg-[#f8fafc] px-5 py-3.5 text-base font-semibold text-[#0f172a] outline-none transition-all placeholder:text-[#94a3b8] focus:border-[#6366f1] focus:bg-white focus:ring-4 focus:ring-[#6366f1]/10"
                         />
                       </div>
-                      {[
-                        { label: 'Owner Name *', field: 'name', placeholder: 'Full Name' },
-                        { label: 'Phone *', field: 'phone', placeholder: '+91' },
-                        { label: 'Email *', field: 'email', placeholder: 'email@example.com', type: 'email' },
-                        { label: 'Alternate Number', field: 'alternateNumber', placeholder: '' },
-                        { label: 'Aadhaar *', field: 'aadhaar', placeholder: '12-digit number' },
-                        { label: 'PAN Number *', field: 'pan', placeholder: 'ABCDE1234F' },
-                        { label: 'Occupation', field: 'occupation', placeholder: 'Professional / Business' },
-                        { label: 'RERA Number', field: 'rera', placeholder: 'RERA Registration' },
-                      ].map((item) => (
-                        <div key={item.field} className="cp-add-field space-y-1.5">
-                          <label className="ml-1 text-[11px] font-black uppercase tracking-widest text-[#64748b]">{item.label}</label>
+                      
+                      <div className="cp-add-field space-y-1.5">
+                        <label className="ml-1 text-[11px] font-black uppercase tracking-widest text-[#64748b]">Owner Name *</label>
+                        <input
+                          type="text"
+                          placeholder="Full Name"
+                          value={formValues.name}
+                          onChange={(e) => setFormField('name', e.target.value)}
+                          className="w-full rounded-2xl border border-[#e2e8f0] bg-[#f8fafc] px-5 py-3.5 text-base font-semibold text-[#0f172a] outline-none transition-all placeholder:text-[#94a3b8] focus:border-[#6366f1] focus:bg-white focus:ring-4 focus:ring-[#6366f1]/10"
+                        />
+                      </div>
+
+                      <div className="cp-add-field space-y-1.5">
+                        <label className="ml-1 text-[11px] font-black uppercase tracking-widest text-[#64748b]">Phone *</label>
+                        <div className="flex gap-2">
+                          <div className="relative w-32">
+                            <div 
+                              onClick={(e) => {
+                                if (isPhonePrefixOpen) {
+                                  setIsPhonePrefixOpen(false)
+                                  setPhoneAnchor(null)
+                                } else {
+                                  const rect = e.currentTarget.getBoundingClientRect()
+                                  setPhoneAnchor({ top: rect.bottom, left: rect.left, width: rect.width })
+                                  setIsPhonePrefixOpen(true)
+                                }
+                              }}
+                              className={`prefix-trigger flex h-[54px] cursor-pointer items-center justify-between rounded-2xl border px-4 transition-all duration-300 ${isPhonePrefixOpen ? 'border-[#f59e0b] bg-white ring-4 ring-[#f59e0b]/10' : 'border-[#e2e8f0] bg-[#f8fafc]'}`}
+                            >
+                              <span className="text-base font-semibold text-[#0f172a]">
+                                {formValues.phonePrefix}
+                              </span>
+                              <IconChevron />
+                            </div>
+                            {isPhonePrefixOpen && phoneAnchor && createPortal(
+                              <div 
+                                ref={phonePrefixRef}
+                                onMouseDown={(e) => e.stopPropagation()}
+                                onClick={(e) => e.stopPropagation()}
+                                className="fixed z-[600] w-64 overflow-hidden rounded-2xl border border-white bg-white p-2 shadow-[0_20px_50px_rgba(0,0,0,0.15)] backdrop-blur-xl animate-elastic-pop"
+                                style={{ top: `${phoneAnchor.top + 8}px`, left: `${phoneAnchor.left}px` }}
+                              >
+                                <div className="mb-2 px-2">
+                                  <input 
+                                    type="text"
+                                    placeholder="Search code..."
+                                    value={phoneSearch}
+                                    onChange={(e) => setPhoneSearch(e.target.value)}
+                                    onClick={(e) => e.stopPropagation()}
+                                    className="w-full rounded-xl border border-[#f1f5f9] bg-[#f8fafc] px-4 py-2 text-sm font-bold text-[#0f172a] outline-none focus:border-[#f59e0b]"
+                                  />
+                                </div>
+                                <div className="max-h-60 overflow-y-auto no-scrollbar">
+                                  {countryPhoneOptions
+                                    .filter(p => p.country.toLowerCase().includes(phoneSearch.toLowerCase()) || p.code.includes(phoneSearch))
+                                    .map(p => (
+                                      <button
+                                        key={`${p.country}-${p.code}`}
+                                        type="button"
+                                        onClick={(e) => {
+                                          e.preventDefault()
+                                          e.stopPropagation()
+                                          setFormField('phonePrefix', p.code)
+                                          setIsPhonePrefixOpen(false)
+                                          setPhoneAnchor(null)
+                                          setPhoneSearch('')
+                                        }}
+                                        className="flex w-full items-center gap-3 px-4 py-2.5 text-left text-sm font-bold text-[#475569] transition hover:bg-[#fff7ed] hover:text-[#f59e0b]"
+                                      >
+                                        <span className="text-lg">{p.flag}</span>
+                                        <span>{p.country} ({p.code})</span>
+                                      </button>
+                                    ))
+                                  }
+                                </div>
+                              </div>,
+                              document.body
+                            )}
+                          </div>
                           <input
-                            type={item.type || 'text'}
-                            placeholder={item.placeholder}
-                            value={formValues[item.field]}
-                            onChange={(e) => setFormField(item.field, e.target.value)}
-                            className="w-full rounded-2xl border border-[#e2e8f0] bg-[#f8fafc] px-5 py-3.5 text-base font-semibold text-[#0f172a] outline-none transition-all placeholder:text-[#94a3b8] focus:border-[#6366f1] focus:bg-white focus:ring-4 focus:ring-[#6366f1]/10"
+                            type="text"
+                            placeholder="Phone Number"
+                            value={formValues.phone}
+                            onChange={(e) => setFormField('phone', e.target.value)}
+                            className="flex-1 rounded-2xl border border-[#e2e8f0] bg-[#f8fafc] px-5 py-3.5 text-base font-semibold text-[#0f172a] outline-none transition-all focus:border-[#f59e0b] focus:bg-white focus:ring-4 focus:ring-[#f59e0b]/10"
                           />
                         </div>
-                      ))}
+                      </div>
+
+                      <div className="cp-add-field space-y-1.5">
+                        <label className="ml-1 text-[11px] font-black uppercase tracking-widest text-[#64748b]">Email *</label>
+                        <input
+                          type="email"
+                          placeholder="email@example.com"
+                          value={formValues.email}
+                          onChange={(e) => setFormField('email', e.target.value)}
+                          className="w-full rounded-2xl border border-[#e2e8f0] bg-[#f8fafc] px-5 py-3.5 text-base font-semibold text-[#0f172a] outline-none transition-all placeholder:text-[#94a3b8] focus:border-[#6366f1] focus:bg-white focus:ring-4 focus:ring-[#6366f1]/10"
+                        />
+                      </div>
+
+                      <div className="cp-add-field space-y-1.5">
+                        <label className="ml-1 text-[11px] font-black uppercase tracking-widest text-[#64748b]">Alternate Number</label>
+                        <div className="flex gap-2">
+                          <div className="relative w-32">
+                            <div 
+                              onClick={(e) => {
+                                if (isAltPhonePrefixOpen) {
+                                  setIsAltPhonePrefixOpen(false)
+                                  setAltPhoneAnchor(null)
+                                } else {
+                                  const rect = e.currentTarget.getBoundingClientRect()
+                                  setAltPhoneAnchor({ top: rect.bottom, left: rect.left, width: rect.width })
+                                  setIsAltPhonePrefixOpen(true)
+                                }
+                              }}
+                              className={`alt-prefix-trigger flex h-[54px] cursor-pointer items-center justify-between rounded-2xl border px-4 transition-all duration-300 ${isAltPhonePrefixOpen ? 'border-[#f59e0b] bg-white ring-4 ring-[#f59e0b]/10' : 'border-[#e2e8f0] bg-[#f8fafc]'}`}
+                            >
+                              <span className="text-base font-semibold text-[#0f172a]">
+                                {formValues.alternatePhonePrefix}
+                              </span>
+                              <IconChevron />
+                            </div>
+                            {isAltPhonePrefixOpen && altPhoneAnchor && createPortal(
+                              <div 
+                                ref={altPhonePrefixRef}
+                                onMouseDown={(e) => e.stopPropagation()}
+                                onClick={(e) => e.stopPropagation()}
+                                className="fixed z-[600] w-64 overflow-hidden rounded-2xl border border-white bg-white p-2 shadow-[0_20px_50px_rgba(0,0,0,0.15)] backdrop-blur-xl animate-elastic-pop"
+                                style={{ top: `${altPhoneAnchor.top + 8}px`, left: `${altPhoneAnchor.left}px` }}
+                              >
+                                <div className="mb-2 px-2">
+                                  <input 
+                                    type="text"
+                                    placeholder="Search code..."
+                                    value={altPhoneSearch}
+                                    onChange={(e) => setAltPhoneSearch(e.target.value)}
+                                    onClick={(e) => e.stopPropagation()}
+                                    className="w-full rounded-xl border border-[#f1f5f9] bg-[#f8fafc] px-4 py-2 text-sm font-bold text-[#0f172a] outline-none focus:border-[#f59e0b]"
+                                  />
+                                </div>
+                                <div className="max-h-60 overflow-y-auto no-scrollbar">
+                                  {countryPhoneOptions
+                                    .filter(p => p.country.toLowerCase().includes(altPhoneSearch.toLowerCase()) || p.code.includes(altPhoneSearch))
+                                    .map(p => (
+                                      <button
+                                        key={`${p.country}-${p.code}-alt`}
+                                        type="button"
+                                        onClick={(e) => {
+                                          e.preventDefault()
+                                          e.stopPropagation()
+                                          setFormField('alternatePhonePrefix', p.code)
+                                          setIsAltPhonePrefixOpen(false)
+                                          setAltPhoneAnchor(null)
+                                          setAltPhoneSearch('')
+                                        }}
+                                        className="flex w-full items-center gap-3 px-4 py-2.5 text-left text-sm font-bold text-[#475569] transition hover:bg-[#fff7ed] hover:text-[#f59e0b]"
+                                      >
+                                        <span className="text-lg">{p.flag}</span>
+                                        <span>{p.country} ({p.code})</span>
+                                      </button>
+                                    ))
+                                  }
+                                </div>
+                              </div>,
+                              document.body
+                            )}
+                          </div>
+                          <input
+                            type="text"
+                            placeholder="Alternate Number"
+                            value={formValues.alternateNumber}
+                            onChange={(e) => setFormField('alternateNumber', e.target.value)}
+                            className="flex-1 rounded-2xl border border-[#e2e8f0] bg-[#f8fafc] px-5 py-3.5 text-base font-semibold text-[#0f172a] outline-none transition-all focus:border-[#f59e0b] focus:bg-white focus:ring-4 focus:ring-[#f59e0b]/10"
+                          />
+                        </div>
+                      </div>
+
+                      <div className="cp-add-field space-y-1.5">
+                        <label className="ml-1 text-[11px] font-black uppercase tracking-widest text-[#64748b]">Aadhaar *</label>
+                        <input
+                          type="text"
+                          placeholder="12-digit number"
+                          value={formValues.aadhaar}
+                          onChange={(e) => setFormField('aadhaar', e.target.value)}
+                          className="w-full rounded-2xl border border-[#e2e8f0] bg-[#f8fafc] px-5 py-3.5 text-base font-semibold text-[#0f172a] outline-none transition-all placeholder:text-[#94a3b8] focus:border-[#6366f1] focus:bg-white focus:ring-4 focus:ring-[#6366f1]/10"
+                        />
+                      </div>
+
+                      <div className="cp-add-field space-y-1.5">
+                        <label className="ml-1 text-[11px] font-black uppercase tracking-widest text-[#64748b]">PAN Number *</label>
+                        <input
+                          type="text"
+                          placeholder="ABCDE1234F"
+                          value={formValues.pan}
+                          onChange={(e) => setFormField('pan', e.target.value)}
+                          className="w-full rounded-2xl border border-[#e2e8f0] bg-[#f8fafc] px-5 py-3.5 text-base font-semibold text-[#0f172a] outline-none transition-all placeholder:text-[#94a3b8] focus:border-[#6366f1] focus:bg-white focus:ring-4 focus:ring-[#6366f1]/10"
+                        />
+                      </div>
+
+                      <div className="cp-add-field space-y-1.5">
+                        <label className="ml-1 text-[11px] font-black uppercase tracking-widest text-[#64748b]">Occupation</label>
+                        <input
+                          type="text"
+                          placeholder="Professional / Business"
+                          value={formValues.occupation}
+                          onChange={(e) => setFormField('occupation', e.target.value)}
+                          className="w-full rounded-2xl border border-[#e2e8f0] bg-[#f8fafc] px-5 py-3.5 text-base font-semibold text-[#0f172a] outline-none transition-all placeholder:text-[#94a3b8] focus:border-[#6366f1] focus:bg-white focus:ring-4 focus:ring-[#6366f1]/10"
+                        />
+                      </div>
+
+                      <div className="cp-add-field space-y-1.5">
+                        <label className="ml-1 text-[11px] font-black uppercase tracking-widest text-[#64748b]">RERA Number</label>
+                        <input
+                          type="text"
+                          placeholder="RERA Registration"
+                          value={formValues.rera}
+                          onChange={(e) => setFormField('rera', e.target.value)}
+                          className="w-full rounded-2xl border border-[#e2e8f0] bg-[#f8fafc] px-5 py-3.5 text-base font-semibold text-[#0f172a] outline-none transition-all placeholder:text-[#94a3b8] focus:border-[#6366f1] focus:bg-white focus:ring-4 focus:ring-[#6366f1]/10"
+                        />
+                      </div>
                     </div>
                   </section>
 
@@ -880,12 +1137,21 @@ function Moreoption({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, on
                         />
                       </div>
 
-                      {/* Country Select */}
-                      <div className="cp-add-field relative space-y-1.5" ref={countryDropdownRef}>
+                       {/* Country Select */}
+                      <div className="cp-add-field relative space-y-1.5">
                         <label className="ml-1 text-[11px] font-black uppercase tracking-widest text-[#64748b]">Country *</label>
                         <div 
-                          onClick={() => setIsCountryDropdownOpen(!isCountryDropdownOpen)}
-                          className={`flex w-full cursor-pointer items-center justify-between rounded-2xl border px-5 py-3.5 transition-all duration-300 ${isCountryDropdownOpen ? 'border-[#f59e0b] bg-white ring-4 ring-[#f59e0b]/10' : 'border-[#e2e8f0] bg-[#f8fafc]'}`}
+                          onClick={(e) => {
+                            if (isCountryDropdownOpen) {
+                              setIsCountryDropdownOpen(false)
+                              setCountryAnchor(null)
+                            } else {
+                              const rect = e.currentTarget.getBoundingClientRect()
+                              setCountryAnchor({ top: rect.bottom, left: rect.left, width: rect.width })
+                              setIsCountryDropdownOpen(true)
+                            }
+                          }}
+                          className={`country-trigger flex w-full cursor-pointer items-center justify-between rounded-2xl border px-5 py-3.5 transition-all duration-300 ${isCountryDropdownOpen ? 'border-[#f59e0b] bg-white ring-4 ring-[#f59e0b]/10' : 'border-[#e2e8f0] bg-[#f8fafc]'}`}
                         >
                           <span className={`text-base font-semibold ${formValues.country === 'Select country' ? 'text-[#94a3b8]' : 'text-[#0f172a]'}`}>
                             {formValues.country}
@@ -894,8 +1160,14 @@ function Moreoption({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, on
                             <IconChevron />
                           </span>
                         </div>
-                        {isCountryDropdownOpen && (
-                          <div className="absolute left-0 top-[calc(100%+0.5rem)] z-[500] w-full overflow-hidden rounded-2xl border border-white bg-white p-2 shadow-[0_20px_50px_rgba(0,0,0,0.1)] backdrop-blur-xl animate-elastic-pop">
+                        {isCountryDropdownOpen && countryAnchor && createPortal(
+                          <div 
+                            ref={countryDropdownRef}
+                            onMouseDown={(e) => e.stopPropagation()}
+                            onClick={(e) => e.stopPropagation()}
+                            className="fixed z-[600] overflow-hidden rounded-2xl border border-white bg-white p-2 shadow-[0_20px_50px_rgba(0,0,0,0.15)] backdrop-blur-xl animate-elastic-pop"
+                            style={{ top: `${countryAnchor.top + 8}px`, left: `${countryAnchor.left}px`, width: `${countryAnchor.width}px` }}
+                          >
                             <div className="mb-2 px-2">
                               <input 
                                 type="text"
@@ -913,10 +1185,13 @@ function Moreoption({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, on
                                   <button
                                     key={c.code}
                                     type="button"
-                                    onClick={() => {
+                                    onClick={(e) => {
+                                      e.preventDefault()
+                                      e.stopPropagation()
                                       setFormField('country', c.name)
-                                      setFormField('state', '-') // Reset state on country change
+                                      setFormField('state', '-')
                                       setIsCountryDropdownOpen(false)
+                                      setCountryAnchor(null)
                                       setCountrySearch('')
                                     }}
                                     className="flex w-full items-center px-4 py-2.5 text-left text-sm font-bold text-[#475569] transition hover:bg-[#fff7ed] hover:text-[#f59e0b]"
@@ -926,20 +1201,28 @@ function Moreoption({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, on
                                 ))
                               }
                             </div>
-                          </div>
+                          </div>,
+                          document.body
                         )}
                       </div>
 
-                      {/* State Select */}
-                      <div className="cp-add-field relative space-y-1.5" ref={stateDropdownRef}>
+                       {/* State Select */}
+                      <div className="cp-add-field relative space-y-1.5">
                         <label className="ml-1 text-[11px] font-black uppercase tracking-widest text-[#64748b]">State / Region *</label>
                         <div 
-                          onClick={() => {
+                          onClick={(e) => {
                             if (formValues.country !== 'Select country') {
-                              setIsStateDropdownOpen(!isStateDropdownOpen)
+                              if (isStateDropdownOpen) {
+                                setIsStateDropdownOpen(false)
+                                setStateAnchor(null)
+                              } else {
+                                const rect = e.currentTarget.getBoundingClientRect()
+                                setStateAnchor({ top: rect.bottom, left: rect.left, width: rect.width })
+                                setIsStateDropdownOpen(true)
+                              }
                             }
                           }}
-                          className={`flex w-full items-center justify-between rounded-2xl border px-5 py-3.5 transition-all duration-300 ${formValues.country === 'Select country' ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'} ${isStateDropdownOpen ? 'border-[#f59e0b] bg-white ring-4 ring-[#f59e0b]/10' : 'border-[#e2e8f0] bg-[#f8fafc]'}`}
+                          className={`state-trigger flex w-full items-center justify-between rounded-2xl border px-5 py-3.5 transition-all duration-300 ${formValues.country === 'Select country' ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'} ${isStateDropdownOpen ? 'border-[#f59e0b] bg-white ring-4 ring-[#f59e0b]/10' : 'border-[#e2e8f0] bg-[#f8fafc]'}`}
                         >
                           <span className={`text-base font-semibold ${formValues.state === '-' ? 'text-[#94a3b8]' : 'text-[#0f172a]'}`}>
                             {formValues.state}
@@ -948,8 +1231,14 @@ function Moreoption({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, on
                             <IconChevron />
                           </span>
                         </div>
-                        {isStateDropdownOpen && (
-                          <div className="absolute left-0 top-[calc(100%+0.5rem)] z-[500] w-full overflow-hidden rounded-2xl border border-white bg-white p-2 shadow-[0_20px_50px_rgba(0,0,0,0.1)] backdrop-blur-xl animate-elastic-pop">
+                        {isStateDropdownOpen && stateAnchor && createPortal(
+                          <div 
+                            ref={stateDropdownRef}
+                            onMouseDown={(e) => e.stopPropagation()}
+                            onClick={(e) => e.stopPropagation()}
+                            className="fixed z-[600] overflow-hidden rounded-2xl border border-white bg-white p-2 shadow-[0_20px_50px_rgba(0,0,0,0.15)] backdrop-blur-xl animate-elastic-pop"
+                            style={{ top: `${stateAnchor.top + 8}px`, left: `${stateAnchor.left}px`, width: `${stateAnchor.width}px` }}
+                          >
                             <div className="mb-2 px-2">
                               <input 
                                 type="text"
@@ -967,9 +1256,12 @@ function Moreoption({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, on
                                   <button
                                     key={s}
                                     type="button"
-                                    onClick={() => {
+                                    onClick={(e) => {
+                                      e.preventDefault()
+                                      e.stopPropagation()
                                       setFormField('state', s)
                                       setIsStateDropdownOpen(false)
+                                      setStateAnchor(null)
                                       setStateSearch('')
                                     }}
                                     className="flex w-full items-center px-4 py-2.5 text-left text-sm font-bold text-[#475569] transition hover:bg-[#fff7ed] hover:text-[#f59e0b]"
@@ -985,7 +1277,8 @@ function Moreoption({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, on
                                 </div>
                               )}
                             </div>
-                          </div>
+                          </div>,
+                          document.body
                         )}
                       </div>
                     </div>
@@ -1049,9 +1342,9 @@ function Moreoption({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, on
                     </div>
                     <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                       <DetailField label="Owner Name" value={selectedPartner.name} />
-                      <DetailField label="Phone" value={selectedPartner.phone} />
+                      <DetailField label="Phone" value={`${selectedPartner.phonePrefix || ''} ${selectedPartner.phone || ''}`} />
                       <DetailField label="Email" value={selectedPartner.email} />
-                      <DetailField label="Alt Number" value={selectedPartner.alternateNumber} />
+                      <DetailField label="Alt Number" value={`${selectedPartner.alternatePhonePrefix || ''} ${selectedPartner.alternateNumber || ''}`} />
                       <DetailField label="Occupation" value={selectedPartner.occupation} />
                       <DetailField label="Aadhaar" value={selectedPartner.aadhaar} />
                       <DetailField label="PAN Number" value={selectedPartner.pan} />
@@ -1183,7 +1476,7 @@ function Moreoption({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, on
                       <div className="mt-1.5 flex flex-col gap-1">
                         <div className="flex items-center gap-2 text-[11px] font-bold text-[#64748b]">
                           <svg className="h-3.5 w-3.5 text-[#6366f1]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5"><path strokeLinecap="round" strokeLinejoin="round" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" /></svg>
-                          {partner.phone}
+                          {partner.phonePrefix} {partner.phone}
                         </div>
                         <div className="flex items-center gap-2 text-[11px] font-bold text-[#64748b]">
                           <svg className="h-3.5 w-3.5 text-[#6366f1]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5"><path strokeLinecap="round" strokeLinejoin="round" d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207" /></svg>
