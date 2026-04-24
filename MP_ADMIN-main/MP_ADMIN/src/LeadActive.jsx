@@ -61,6 +61,16 @@ function LeadActive({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, on
   const [isExportOpen, setIsExportOpen] = useState(false)
   const [isFilterOpen, setIsFilterOpen] = useState(false)
   const [isCountStatusOpen, setIsCountStatusOpen] = useState(false)
+  const [filterValues, setFilterValues] = useState({
+    lead: '',
+    sellDoLeadId: '',
+    leadStage: '',
+    channelPartner: '',
+    expiryDate: '',
+    project: '',
+    countStatus: 'Select',
+    registeredAt: '',
+  })
   const [leads, setLeads] = useState(() => {
     const saved = localStorage.getItem('mp_leads')
     if (saved) {
@@ -303,6 +313,7 @@ function LeadActive({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, on
       leadStage: followUpValues.leadStage,
       leadStatus: followUpValues.leadStatus,
       countStatus: followUpValues.countStatus,
+      remark: followUpValues.remark,
     }
     
     setLeads(updatedLeads)
@@ -624,8 +635,8 @@ function LeadActive({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, on
                       ref={actionMenuRef}
                       className="fixed z-[999] w-72 overflow-hidden rounded-[2.5rem] border border-white bg-white/90 p-4 shadow-[0_25px_70px_rgba(49,46,129,0.25)] backdrop-blur-3xl animate-elastic-pop"
                       style={{ 
-                        top: `${menuAnchorRect.top - window.scrollY + 12}px`, 
-                        left: `${menuAnchorRect.left - window.scrollX - 260}px` 
+                        top: `${Math.min(menuAnchorRect.top - window.scrollY + 12, window.innerHeight - 200)}px`, 
+                        left: `${Math.max(20, menuAnchorRect.left - window.scrollX - 260)}px` 
                       }}
                     >
                       <div className="absolute inset-0 bg-gradient-to-br from-[#312e81]/5 to-transparent opacity-50" />
@@ -754,6 +765,7 @@ function LeadActive({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, on
                     onChange={(e) => setFollowUpValues({...followUpValues, leadStage: e.target.value})}
                     className="w-full rounded-md border border-[#b8c4e3] bg-white px-4 py-2.5 text-base text-[#1f2f45] outline-none focus:border-[#7f8cff]"
                   >
+                    <option>Fresh</option>
                     <option>Enquiry Received</option>
                     <option>Visit Done</option>
                     <option>Interested</option>
