@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import logo from './assets/logo.png'
 
 function Login({ onSignIn }) {
   const [view, setView] = useState('login')
@@ -41,7 +42,7 @@ function Login({ onSignIn }) {
         { opacity: 1, x: 0, rotateY: 0, rotateX: 0, duration: 1 },
         '-=0.75',
       )
-      .fromTo('.logo-char', { y: 26, opacity: 0, rotateX: -80 }, { y: 0, opacity: 1, rotateX: 0, stagger: 0.06, duration: 0.38 }, '-=0.58')
+      .fromTo('.logo-image', { y: 26, opacity: 0, rotateX: -40 }, { y: 0, opacity: 1, rotateX: 0, duration: 0.5 }, '-=0.58')
 
     cleanups.push(() => intro.kill())
 
@@ -256,7 +257,7 @@ function Login({ onSignIn }) {
         >
           {view === 'login' ? (
             <form onSubmit={handleSubmit} autoComplete="off">
-              <p className="text-sm font-bold uppercase tracking-[0.24em] text-[#1a79d1]">MP Developers</p>
+              <img src={logo} alt="MP Developers" className="h-10 w-auto object-contain" />
               <h1 className="mt-3 text-4xl font-black tracking-tight text-[#102d57]">Construction Portal</h1>
               <p className="mt-3 max-w-md text-[15px] text-[#425677]">
                 Sign in to manage projects, approvals, engineering reports, and partner workflow updates.
@@ -320,7 +321,8 @@ function Login({ onSignIn }) {
             </form>
           ) : (
             <form onSubmit={handleRecoverPassword} autoComplete="off">
-              <p className="text-sm font-bold uppercase tracking-[0.24em] text-[#eb7a26]">Account Recovery</p>
+              <img src={logo} alt="MP Developers" className="h-10 w-auto object-contain" />
+              <p className="mt-4 text-sm font-bold uppercase tracking-[0.24em] text-[#eb7a26]">Account Recovery</p>
               <h1 className="mt-3 text-4xl font-black tracking-tight text-[#102d57]">Forgot Password?</h1>
               <p className="mt-3 max-w-md text-[15px] text-[#425677]">
                 Enter your registered email address below. We&apos;ll send you a link to reset your password and regain access.
@@ -378,14 +380,7 @@ function Login({ onSignIn }) {
           />
 
           <div className="relative rounded-[2.3rem] border border-white/70 bg-white/70 p-8 shadow-2xl shadow-[#2f3fa9]/25 backdrop-blur-lg sm:p-12">
-            <div className="flex items-start gap-1 text-[8.2rem] font-black leading-[0.8] sm:text-[10rem]">
-              <span className="logo-char text-[#2f3fa9]">m</span>
-              <span className="logo-char text-[#2f3fa9]">P</span>
-            </div>
-            <h2 className="mt-1 text-5xl font-black text-[#2f3fa9] sm:text-6xl">Developers</h2>
-            <p className="mt-3 text-lg font-extrabold tracking-[0.32em] text-[#2f3fa9] sm:text-xl">
-              TRUST <span className="text-[#eb7a26]">FOREVER</span>
-            </p>
+            <img src={logo} alt="MP Developers" className="logo-image mb-6 w-full max-w-[320px] drop-shadow-xl sm:max-w-[400px]" />
 
             <div className="relative mt-8 h-72 w-full rounded-2xl border border-[#2f3fa9]/15 bg-[linear-gradient(180deg,#ffffff_0%,#eaf1ff_100%)] p-4 [transform-style:preserve-3d]">
               <div className="absolute inset-x-4 bottom-3 h-3 rounded-full bg-[#1a79d1]/15 blur-sm" />
