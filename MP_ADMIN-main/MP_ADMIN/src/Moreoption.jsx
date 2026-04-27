@@ -1259,7 +1259,7 @@ function Moreoption({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, on
                   {/* KYC Verification Section */}
                   <section className="animate-rise rounded-[3rem] border border-white bg-white p-8 shadow-xl shadow-slate-200/50 md:p-12" style={{ animationDelay: '200ms' }}>
                     <div className="mb-10 flex items-center justify-between">
-                      <h3 className="font-sora text-lg font-extrabold tracking-tight text-slate-900">KYC VERIFICATION</h3>
+                      <h3 className="font-sora text-lg font-extrabold tracking-tight text-slate-900">DOCUMENTS UPLOAD</h3>
                       <span className="rounded-full bg-orange-50 px-4 py-1.5 text-[10px] font-black uppercase tracking-[0.2em] text-orange-600 border border-orange-100">
                         MANDATORY
                       </span>
