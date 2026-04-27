@@ -86,6 +86,20 @@ function LeadActive({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, on
   const followUpPanelRef = useRef(null)
 
   useEffect(() => {
+    const savedLeads = localStorage.getItem('mp_leads_v2')
+    if (savedLeads) {
+      try {
+        const parsed = JSON.parse(savedLeads)
+        // Filter out any seeded leads if they exist
+        const filtered = parsed.filter((l) => typeof l.id === 'string' && !l.id.startsWith('seed-'))
+        if (filtered.length !== parsed.length) {
+          setLeads(filtered)
+          localStorage.setItem('mp_leads_v2', JSON.stringify(filtered))
+        }
+      } catch (e) {
+        console.error('Error filtering leads', e)
+      }
+    }
     localStorage.setItem('mp_leads_v2', JSON.stringify(leads))
   }, [leads])
   const pageRef = useRef(null)
