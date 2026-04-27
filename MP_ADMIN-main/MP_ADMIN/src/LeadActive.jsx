@@ -10,18 +10,7 @@ const exportOptions = ['All Export', 'Active Filter Export']
 const countStatusOptions = ['Pending', 'Count Given', 'No Count']
 const actionOptions = ['Show', 'Add Follow']
 
-const initialLeads = [
-  { id: 1, name: 'John Doe', email: 'john@example.com', phone: '+91 9876543210', sellDoLeadId: 'SDL-100234', project: 'Mountain View Estates', channelPartner: 'Skyline Realty', leadStage: 'Visit Done', leadStatus: 'Active', countStatus: 'Count Given', registeredAt: '2026-04-10', validityPeriod: '2026-05-10' },
-  { id: 2, name: 'Sarah Smith', email: 'sarah.s@example.com', phone: '+1 555-0123', sellDoLeadId: 'SDL-100235', project: 'Ocean Breeze Towers', channelPartner: 'Elite Properties', leadStage: 'Interested', leadStatus: 'Active', countStatus: 'Pending', registeredAt: '2026-04-12', validityPeriod: '2026-05-12' },
-  { id: 3, name: 'Michael Chen', email: 'm.chen@example.com', phone: '+44 7700 900123', sellDoLeadId: 'SDL-100236', project: 'Urban Oasis', channelPartner: 'CityScape Homes', leadStage: 'Fresh', leadStatus: 'Active', countStatus: 'No Count', registeredAt: '2026-04-15', validityPeriod: '2026-05-15' },
-  { id: 4, name: 'Priya Sharma', email: 'priya.sharma@example.com', phone: '+91 9876543211', sellDoLeadId: 'SDL-100237', project: 'Mountain View Estates', channelPartner: 'Skyline Realty', leadStage: 'Enquiry Received', leadStatus: 'Active', countStatus: 'Pending', registeredAt: '2026-04-18', validityPeriod: '2026-05-18' },
-  { id: 5, name: 'David Wilson', email: 'dwilson@example.com', phone: '+1 555-0124', sellDoLeadId: 'SDL-100238', project: 'Pinnacle Heights', channelPartner: 'Prime Realty', leadStage: 'Visit Done', leadStatus: 'Active', countStatus: 'Count Given', registeredAt: '2026-04-19', validityPeriod: '2026-05-19' },
-  { id: 6, name: 'Elena Rodriguez', email: 'elena.r@example.com', phone: '+34 600 12 34 56', sellDoLeadId: 'SDL-100239', project: 'Ocean Breeze Towers', channelPartner: 'Global Estates', leadStage: 'Interested', leadStatus: 'Active', countStatus: 'Count Given', registeredAt: '2026-04-20', validityPeriod: '2026-05-20' },
-  { id: 7, name: 'James Taylor', email: 'jtaylor@example.com', phone: '+61 400 123 456', sellDoLeadId: 'SDL-100240', project: 'Urban Oasis', channelPartner: 'CityScape Homes', leadStage: 'Not Interested', leadStatus: 'Closed', countStatus: 'No Count', registeredAt: '2026-04-21', validityPeriod: '2026-05-21' },
-  { id: 8, name: 'Aisha Patel', email: 'a.patel@example.com', phone: '+91 9876543212', sellDoLeadId: 'SDL-100241', project: 'Mountain View Estates', channelPartner: 'Skyline Realty', leadStage: 'Fresh', leadStatus: 'Active', countStatus: 'Pending', registeredAt: '2026-04-22', validityPeriod: '2026-05-22' },
-  { id: 9, name: 'Robert Johnson', email: 'robert.j@example.com', phone: '+1 555-0125', sellDoLeadId: 'SDL-100242', project: 'Pinnacle Heights', channelPartner: 'Prime Realty', leadStage: 'Visit Done', leadStatus: 'Active', countStatus: 'Count Given', registeredAt: '2026-04-23', validityPeriod: '2026-05-23' },
-  { id: 10, name: 'Wei Lin', email: 'wei.lin@example.com', phone: '+86 130 1234 5678', sellDoLeadId: 'SDL-100243', project: 'Urban Oasis', channelPartner: 'Global Estates', leadStage: 'Enquiry Received', leadStatus: 'Active', countStatus: 'Pending', registeredAt: '2026-04-24', validityPeriod: '2026-05-24' },
-]
+const initialLeads = []
 
 function IconKey() {
   return (
@@ -68,7 +57,7 @@ function LeadActive({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, on
     registeredAt: '',
   })
   const [leads, setLeads] = useState(() => {
-    const saved = localStorage.getItem('mp_leads_v2')
+    const saved = localStorage.getItem('mp_leads_v3')
     if (saved) {
       try {
         const parsed = JSON.parse(saved)

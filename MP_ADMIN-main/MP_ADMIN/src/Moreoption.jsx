@@ -69,18 +69,7 @@ const initialFormValues = {
   zip: '',
 }
 
-const initialChannelPartners = [
-  { id: 1, name: 'John Doe', phonePrefix: '+91', phone: '9876543210', email: 'john@skyline.com', alternatePhonePrefix: '+91', alternateNumber: '', aadhaar: '123456789012', pan: 'ABCDE1234F', occupation: 'Broker', rera: 'RERA/101', companyName: 'Skyline Realty', bankName: 'HDFC', branch: 'Mumbai', accountType: 'Current', ifsc: 'HDFC0001234', accountNumber: '1234567890', uploadDocuments: [], status: 'Active', createdAt: 1682410000000 },
-  { id: 2, name: 'Sarah Smith', phonePrefix: '+1', phone: '5550123', email: 'sarah@elite.com', alternatePhonePrefix: '+1', alternateNumber: '', aadhaar: '234567890123', pan: 'BCDEF2345G', occupation: 'Agent', rera: 'RERA/102', companyName: 'Elite Properties', bankName: 'Chase', branch: 'NY', accountType: 'Savings', ifsc: 'CHAS0002345', accountNumber: '2345678901', uploadDocuments: [], status: 'Active', createdAt: 1682410100000 },
-  { id: 3, name: 'Michael Chen', phonePrefix: '+44', phone: '7700900123', email: 'm.chen@cityscape.co.uk', alternatePhonePrefix: '+44', alternateNumber: '', aadhaar: '345678901234', pan: 'CDEFG3456H', occupation: 'Realtor', rera: 'RERA/103', companyName: 'CityScape Homes', bankName: 'Barclays', branch: 'London', accountType: 'Current', ifsc: 'BARC0003456', accountNumber: '3456789012', uploadDocuments: [], status: 'Active', createdAt: 1682410200000 },
-  { id: 4, name: 'David Wilson', phonePrefix: '+1', phone: '5550124', email: 'dwilson@prime.com', alternatePhonePrefix: '+1', alternateNumber: '', aadhaar: '456789012345', pan: 'DEFGH4567I', occupation: 'Broker', rera: 'RERA/104', companyName: 'Prime Realty', bankName: 'BoA', branch: 'Chicago', accountType: 'Current', ifsc: 'BOFA0004567', accountNumber: '4567890123', uploadDocuments: [], status: 'Active', createdAt: 1682410300000 },
-  { id: 5, name: 'Elena Rodriguez', phonePrefix: '+34', phone: '600123456', email: 'elena@globalestates.es', alternatePhonePrefix: '+34', alternateNumber: '', aadhaar: '567890123456', pan: 'EFGHI5678J', occupation: 'Agent', rera: 'RERA/105', companyName: 'Global Estates', bankName: 'Santander', branch: 'Madrid', accountType: 'Current', ifsc: 'SANT0005678', accountNumber: '5678901234', uploadDocuments: [], status: 'Active', createdAt: 1682410400000 },
-  { id: 6, name: 'James Taylor', phonePrefix: '+61', phone: '400123456', email: 'jtaylor@apex.com.au', alternatePhonePrefix: '+61', alternateNumber: '', aadhaar: '678901234567', pan: 'FGHIJ6789K', occupation: 'Realtor', rera: 'RERA/106', companyName: 'Apex Properties', bankName: 'CBA', branch: 'Sydney', accountType: 'Savings', ifsc: 'CBAN0006789', accountNumber: '6789012345', uploadDocuments: [], status: 'Active', createdAt: 1682410500000 },
-  { id: 7, name: 'Aisha Patel', phonePrefix: '+91', phone: '9876543212', email: 'a.patel@horizon.in', alternatePhonePrefix: '+91', alternateNumber: '', aadhaar: '789012345678', pan: 'GHIJK7890L', occupation: 'Broker', rera: 'RERA/107', companyName: 'Horizon Homes', bankName: 'SBI', branch: 'Delhi', accountType: 'Current', ifsc: 'SBIN0007890', accountNumber: '7890123456', uploadDocuments: [], status: 'Active', createdAt: 1682410600000 },
-  { id: 8, name: 'Robert Johnson', phonePrefix: '+1', phone: '5550125', email: 'robert.j@vanguard.com', alternatePhonePrefix: '+1', alternateNumber: '', aadhaar: '890123456789', pan: 'HIJKL8901M', occupation: 'Agent', rera: 'RERA/108', companyName: 'Vanguard Realty', bankName: 'Wells Fargo', branch: 'LA', accountType: 'Current', ifsc: 'WFAR0008901', accountNumber: '8901234567', uploadDocuments: [], status: 'Active', createdAt: 1682410700000 },
-  { id: 9, name: 'Wei Lin', phonePrefix: '+86', phone: '13012345678', email: 'wei.lin@zenith.cn', alternatePhonePrefix: '+86', alternateNumber: '', aadhaar: '901234567890', pan: 'IJKLM9012N', occupation: 'Broker', rera: 'RERA/109', companyName: 'Zenith Estates', bankName: 'BOC', branch: 'Beijing', accountType: 'Current', ifsc: 'BOCN0009012', accountNumber: '9012345678', uploadDocuments: [], status: 'Active', createdAt: 1682410800000 },
-  { id: 10, name: 'Fatima Ali', phonePrefix: '+971', phone: '501234567', email: 'fatima@oasis.ae', alternatePhonePrefix: '+971', alternateNumber: '', aadhaar: '012345678901', pan: 'JKLMN0123O', occupation: 'Realtor', rera: 'RERA/110', companyName: 'Oasis Properties', bankName: 'ENBD', branch: 'Dubai', accountType: 'Savings', ifsc: 'ENBD0000123', accountNumber: '0123456789', uploadDocuments: [], status: 'Active', createdAt: 1682410900000 },
-]
+const initialChannelPartners = []
 
 function Moreoption({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, onOpenChannelPartners, onOpenEmails, onOpenSms, onSignOut }) {
   const [isExportOpen, setIsExportOpen] = useState(false)
@@ -88,7 +77,7 @@ function Moreoption({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, on
   const [isStatusOpen, setIsStatusOpen] = useState(false)
   const [isAddFormOpen, setIsAddFormOpen] = useState(() => localStorage.getItem('mp_cp_add_form_open') === 'true')
   const [channelPartners, setChannelPartners] = useState(() => {
-    const saved = localStorage.getItem('mp_channel_partners_v2')
+    const saved = localStorage.getItem('mp_channel_partners_v3')
     if (saved) {
       try {
         const parsed = JSON.parse(saved)

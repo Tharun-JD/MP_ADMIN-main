@@ -19,18 +19,7 @@ const addUserOptions = [
   'Add Billing Team',
 ]
 
-const initialAccounts = [
-  { id: 'row-1', name: 'Alice Walker', email: 'alice.walker@example.com', phone: '9876543210', countryCode: '+91', sellDoLeadId: 'SDL-UA-001', payment: '-', role: 'Add Superadmin', status: 'Active', action: '...' },
-  { id: 'row-2', name: 'Bob Smith', email: 'bob.smith@example.com', phone: '555-0123', countryCode: '+1', sellDoLeadId: 'SDL-UA-002', payment: '-', role: 'Add Administrator', status: 'Active', action: '...' },
-  { id: 'row-3', name: 'Charlie Davis', email: 'charlie.d@example.com', phone: '7700 900123', countryCode: '+44', sellDoLeadId: 'SDL-UA-003', payment: '-', role: 'Add CRM User', status: 'Active', action: '...' },
-  { id: 'row-4', name: 'Diana Ross', email: 'diana.ross@example.com', phone: '9876543211', countryCode: '+91', sellDoLeadId: 'SDL-UA-004', payment: '-', role: 'Add Sales Head', status: 'Active', action: '...' },
-  { id: 'row-5', name: 'Ethan Hunt', email: 'ethan.h@example.com', phone: '555-0124', countryCode: '+1', sellDoLeadId: 'SDL-UA-005', payment: '-', role: 'Add Sales User', status: 'Active', action: '...' },
-  { id: 'row-6', name: 'Fiona Gallagher', email: 'fiona.g@example.com', phone: '600 12 34 56', countryCode: '+34', sellDoLeadId: 'SDL-UA-006', payment: '-', role: 'Add Channel Partner Manager', status: 'Active', action: '...' },
-  { id: 'row-7', name: 'George Lucas', email: 'george.l@example.com', phone: '400 123 456', countryCode: '+61', sellDoLeadId: 'SDL-UA-007', payment: '-', role: 'Add Channel Partner Head', status: 'Active', action: '...' },
-  { id: 'row-8', name: 'Hannah Abbott', email: 'hannah.a@example.com', phone: '9876543212', countryCode: '+91', sellDoLeadId: 'SDL-UA-008', payment: '-', role: 'Add GRE or Pre-sales', status: 'Active', action: '...' },
-  { id: 'row-9', name: 'Ian Wright', email: 'ian.w@example.com', phone: '555-0125', countryCode: '+1', sellDoLeadId: 'SDL-UA-009', payment: '-', role: 'Add Billing Team', status: 'Active', action: '...' },
-  { id: 'row-10', name: 'Julia Child', email: 'julia.c@example.com', phone: '130 1234 5678', countryCode: '+86', sellDoLeadId: 'SDL-UA-010', payment: '-', role: 'Add Sales User', status: 'Active', action: '...' },
-]
+const initialAccounts = []
 
 const exportOptions = ['All Export', 'Active Filter Export']
 const confirmationOptions = ['Confirmed', 'Not Confirmed']
@@ -125,7 +114,7 @@ function IconFilter() {
 
 function UserAccount({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, onOpenChannelPartners, onOpenEmails, onOpenSms, onSignOut }) {
   const [accounts, setAccounts] = useState(() => {
-    const saved = localStorage.getItem('mp_user_accounts_v3')
+    const saved = localStorage.getItem('mp_user_accounts_v4')
     if (saved) {
       try {
         const parsed = JSON.parse(saved)
