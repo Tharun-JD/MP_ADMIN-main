@@ -28,6 +28,7 @@ function EmailPage({
   onOpenChannelPartners,
   onOpenEmails,
   onOpenSms,
+  onOpenReports,
   onSignOut,
 }) {
   const emailRows = []
@@ -162,6 +163,7 @@ function EmailPage({
         onOpenChannelPartners={onOpenChannelPartners}
         onOpenEmails={onOpenEmails}
         onOpenSms={onOpenSms}
+        onOpenReports={onOpenReports}
         onSignOut={onSignOut}
       />
 

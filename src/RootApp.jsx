@@ -6,11 +6,12 @@ import Moreoption from './Moreoption.jsx'
 import LeadActive from './LeadActive.jsx'
 import EmailPage from './EmailPage.jsx'
 import SmsPage from './SmsPage.jsx'
+import ReportsPage from './ReportsPage.jsx'
 
 const SIGNED_IN_KEY = 'mp_admin_signed_in'
 const ACTIVE_PAGE_KEY = 'mp_admin_active_page'
 const DEFAULT_PAGE = 'dashboard'
-const VALID_PAGES = new Set(['dashboard', 'user-account', 'lead-active', 'channel-partners', 'emails', 'sms'])
+const VALID_PAGES = new Set(['dashboard', 'user-account', 'lead-active', 'channel-partners', 'emails', 'sms', 'reports'])
 
 const getInitialPage = () => {
   const storedPage = localStorage.getItem(ACTIVE_PAGE_KEY)
@@ -55,6 +56,7 @@ function RootApp() {
         onOpenChannelPartners={() => goToPage('channel-partners')}
         onOpenEmails={() => goToPage('emails')}
         onOpenSms={() => goToPage('sms')}
+        onOpenReports={() => goToPage('reports')}
         onSignOut={handleSignOut}
       />
     )
@@ -69,6 +71,7 @@ function RootApp() {
         onOpenChannelPartners={() => goToPage('channel-partners')}
         onOpenEmails={() => goToPage('emails')}
         onOpenSms={() => goToPage('sms')}
+        onOpenReports={() => goToPage('reports')}
         onSignOut={handleSignOut}
       />
     )
@@ -83,6 +86,7 @@ function RootApp() {
         onOpenChannelPartners={() => goToPage('channel-partners')}
         onOpenEmails={() => goToPage('emails')}
         onOpenSms={() => goToPage('sms')}
+        onOpenReports={() => goToPage('reports')}
         onSignOut={handleSignOut}
       />
     )
@@ -97,6 +101,7 @@ function RootApp() {
         onOpenChannelPartners={() => goToPage('channel-partners')}
         onOpenEmails={() => goToPage('emails')}
         onOpenSms={() => goToPage('sms')}
+        onOpenReports={() => goToPage('reports')}
         onSignOut={handleSignOut}
       />
     )
@@ -111,6 +116,22 @@ function RootApp() {
         onOpenChannelPartners={() => goToPage('channel-partners')}
         onOpenEmails={() => goToPage('emails')}
         onOpenSms={() => goToPage('sms')}
+        onOpenReports={() => goToPage('reports')}
+        onSignOut={handleSignOut}
+      />
+    )
+  }
+
+  if (activePage === 'reports') {
+    return (
+      <ReportsPage
+        onBackToDashboard={() => goToPage('dashboard')}
+        onOpenUserAccount={() => goToPage('user-account')}
+        onOpenLeadActive={() => goToPage('lead-active')}
+        onOpenChannelPartners={() => goToPage('channel-partners')}
+        onOpenEmails={() => goToPage('emails')}
+        onOpenSms={() => goToPage('sms')}
+        onOpenReports={() => goToPage('reports')}
         onSignOut={handleSignOut}
       />
     )
@@ -125,6 +146,7 @@ function RootApp() {
       onOpenChannelPartners={() => goToPage('channel-partners')}
       onOpenEmails={() => goToPage('emails')}
       onOpenSms={() => goToPage('sms')}
+      onOpenReports={() => goToPage('reports')}
     />
   )
 }

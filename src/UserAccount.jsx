@@ -112,7 +112,7 @@ function IconFilter() {
   )
 }
 
-function UserAccount({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, onOpenChannelPartners, onOpenEmails, onOpenSms, onSignOut }) {
+function UserAccount({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, onOpenChannelPartners, onOpenEmails, onOpenSms, onOpenReports, onSignOut }) {
   const [accounts, setAccounts] = useState(() => {
     const saved = localStorage.getItem('mp_user_accounts_v4')
     if (saved) {
@@ -643,6 +643,7 @@ function UserAccount({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, o
         onOpenChannelPartners={onOpenChannelPartners}
         onOpenEmails={onOpenEmails}
         onOpenSms={onOpenSms}
+        onOpenReports={onOpenReports}
         onSignOut={onSignOut}
       />
 

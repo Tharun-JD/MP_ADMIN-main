@@ -28,6 +28,7 @@ function SmsPage({
   onOpenChannelPartners,
   onOpenEmails,
   onOpenSms,
+  onOpenReports,
   onSignOut,
 }) {
   const smsRows = []
@@ -162,6 +163,7 @@ function SmsPage({
         onOpenChannelPartners={onOpenChannelPartners}
         onOpenEmails={onOpenEmails}
         onOpenSms={onOpenSms}
+        onOpenReports={onOpenReports}
         onSignOut={onSignOut}
       />
 

@@ -76,11 +76,12 @@ const navItems = [
       { label: 'Channel Partner Application', icon: 'docs' },
       { label: 'Emails', icon: 'reports' },
       { label: 'SMSs', icon: 'reports' },
+      { label: 'Reports', icon: 'reports' },
     ],
   },
 ]
 
-function Dashbord({ onSignOut, onBackToDashboard, onOpenUserAccount, onOpenLeadActive, onOpenChannelPartners, onOpenEmails, onOpenSms }) {
+function Dashbord({ onSignOut, onBackToDashboard, onOpenUserAccount, onOpenLeadActive, onOpenChannelPartners, onOpenEmails, onOpenSms, onOpenReports }) {
   const [openMenu, setOpenMenu] = useState(null)
   const [openWelcome, setOpenWelcome] = useState(false)
   const [isFilterOpen, setIsFilterOpen] = useState(false)
@@ -562,6 +563,9 @@ function Dashbord({ onSignOut, onBackToDashboard, onOpenUserAccount, onOpenLeadA
                           }
                           if (option.label === 'SMSs') {
                             onOpenSms?.()
+                          }
+                          if (option.label === 'Reports') {
+                            onOpenReports?.()
                           }
                         }}
                         className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-sm text-[#274873] hover:bg-[#eef5ff]"
