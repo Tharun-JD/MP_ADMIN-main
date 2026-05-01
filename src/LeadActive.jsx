@@ -84,6 +84,22 @@ function LeadActive({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, on
     remark: ''
   })
   const followUpPanelRef = useRef(null)
+  
+  // -- Add Lead State --
+  const [isAddLeadOpen, setIsAddLeadOpen] = useState(false)
+  const [newLead, setNewLead] = useState({
+    name: '',
+    email: '',
+    phone: '',
+    sellDoLeadId: '',
+    project: '',
+    channelPartner: '',
+    leadStage: 'Fresh',
+    leadStatus: 'Active',
+    countStatus: 'Pending',
+    validityPeriod: '90 Days'
+  })
+  const addLeadModalRef = useRef(null)
 
   useEffect(() => {
     const savedLeads = localStorage.getItem('mp_leads_v2')
@@ -321,6 +337,31 @@ function LeadActive({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, on
     setEditingLeadIndex(null)
   }
 
+  const handleAddLead = (e) => {
+    e.preventDefault()
+    const leadWithId = {
+      ...newLead,
+      id: `lead-${Date.now()}`,
+      registeredAt: new Date().toLocaleDateString('en-GB')
+    }
+    const updatedLeads = [leadWithId, ...leads]
+    setLeads(updatedLeads)
+    localStorage.setItem('mp_leads_v3', JSON.stringify(updatedLeads))
+    setIsAddLeadOpen(false)
+    setNewLead({
+      name: '',
+      email: '',
+      phone: '',
+      sellDoLeadId: '',
+      project: '',
+      channelPartner: '',
+      leadStage: 'Fresh',
+      leadStatus: 'Active',
+      countStatus: 'Pending',
+      validityPeriod: '90 Days'
+    })
+  }
+
   return (
     <main ref={pageRef} className="relative min-h-screen overflow-x-hidden bg-[#f8fafc] text-[#0f172a]">
       <div className="pointer-events-none absolute inset-0">
@@ -341,358 +382,245 @@ function LeadActive({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, on
       />
 
       <section className="relative z-10 w-full overflow-visible px-4 py-7 lg:px-6">
-        <div ref={headerRef} className="relative z-30 flex flex-wrap items-center justify-between gap-4">
-          <h1 className="flex items-center gap-3 font-sans text-2xl font-bold tracking-tight text-[#0f172a] lg:text-3xl">
-            <span className="text-[#6366f1]"><IconKey /></span>
-            Lead Activities
-          </h1>
-
-          <div ref={controlsRef} className="flex items-center gap-3">
-            <button type="button" className="la-control la-clickable rounded-lg border border-[#e2e8f0] bg-white px-5 py-2.5 text-base font-bold text-[#475569] shadow-sm">
-              Total : {leads.length}
-            </button>
-            <div ref={exportMenuRef} className="relative z-40">
-              <button
-                type="button"
-                onClick={() => setIsExportOpen((prev) => !prev)}
-                className="la-control la-clickable flex items-center gap-1 rounded-lg bg-[#6366f1] px-5 py-2.5 text-base font-bold text-white shadow-md shadow-indigo-100 transition hover:bg-[#4f46e5]"
-              >
-                Exports <IconChevron />
-              </button>
-              {isExportOpen && (
-                <div className="absolute right-0 top-[calc(100%+0.4rem)] z-[320] w-56 rounded-md border border-[#d8ddf3] bg-white p-2 shadow-lg">
-                  {exportOptions.map((option) => (
-                    <button
-                      key={option}
-                      type="button"
-                      onClick={() => setIsExportOpen(false)}
-                      className="la-clickable block w-full rounded-md px-3 py-2 text-left text-sm font-semibold text-[#324765] hover:bg-[#eef2ff]"
-                    >
-                      {option}
-                    </button>
-                  ))}
+        <div className="mx-auto w-full max-w-[1400px]">
+          <div className="relative overflow-hidden rounded-[2.5rem] bg-white shadow-[0_20px_50px_rgba(0,0,0,0.05)] border border-[#f1f5f9]">
+            {/* Header */}
+            <header className="flex flex-wrap items-center justify-between gap-6 px-8 py-8 lg:px-10">
+              <div className="space-y-1">
+                <div className="flex items-center gap-4">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#f0f4ff] text-[#6366f1] shadow-inner">
+                    <svg className="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                      <path d="M12 2v20M2 12h20" strokeDasharray="4 4" className="opacity-20" />
+                      <path d="M4 12h16M12 4v16" className="animate-[pulse_2s_infinite]" />
+                      <circle cx="12" cy="12" r="3" fill="currentColor" fillOpacity="0.1" />
+                    </svg>
+                  </div>
+                  <div>
+                    <h1 className="text-2xl font-black tracking-tight text-[#1e293b]">Lead Activities</h1>
+                    <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#94a3b8]">Transaction Monitoring Portal</p>
+                  </div>
                 </div>
-              )}
+              </div>
+
+              <div className="flex items-center gap-3">
+                <div className="flex items-center gap-1 rounded-full bg-[#f8fafc] p-1.5 border border-[#f1f5f9]">
+                  <span className="px-3 text-[11px] font-bold text-[#94a3b8]">VIEW:</span>
+                  <button className="rounded-full bg-white px-4 py-1.5 text-[11px] font-bold text-[#6366f1] shadow-sm border border-[#f1f5f9]">All Leads</button>
+                </div>
+                
+                <button 
+                  onClick={() => setIsFilterOpen(true)}
+                  className="flex items-center gap-2 rounded-xl bg-[#f8fafc] px-5 py-2.5 text-xs font-bold text-[#64748b] border border-[#f1f5f9] transition hover:bg-white hover:shadow-md"
+                >
+                  <IconFilter />
+                  Filter
+                  <IconChevron />
+                </button>
+
+                <button 
+                  onClick={onBackToDashboard}
+                  className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#f8fafc] text-[#94a3b8] border border-[#f1f5f9] transition hover:text-[#ef4444] hover:bg-red-50"
+                >
+                  <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                    <path d="M18 6L6 18M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+            </header>
+
+            {/* Table Area */}
+            <div className="px-8 pb-4 lg:px-10">
+              <div className="overflow-x-auto no-scrollbar">
+                <table className="w-full min-w-[1100px] border-separate border-spacing-0">
+                  <thead>
+                    <tr className="text-left">
+                      {['Name & Contact', 'Lead ID', 'Project', 'Stage', 'Status', 'Timeline', 'Validity', 'Actions'].map((h) => (
+                        <th key={h} className="pb-6 text-[10px] font-black uppercase tracking-[0.15em] text-[#94a3b8] px-4 first:pl-0">{h}</th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {leads.length === 0 ? (
+                      <tr>
+                        <td colSpan={8} className="py-24">
+                          <div className="flex flex-col items-center justify-center text-center">
+                            <div className="relative mb-6">
+                              <div className="absolute inset-0 scale-150 rounded-full bg-[#6366f1]/5 blur-2xl animate-pulse" />
+                              <div className="relative flex h-24 w-24 items-center justify-center rounded-full bg-[#f0f4ff] text-[#6366f1]">
+                                <svg className="h-12 w-12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                                  <path d="M3 12h3l3-9 4 18 3-9h3" strokeLinecap="round" strokeLinejoin="round" className="animate-[dash_2s_ease-in-out_infinite]" />
+                                </svg>
+                              </div>
+                            </div>
+                            <h3 className="text-xl font-bold text-[#1e293b]">No activities found</h3>
+                            <p className="mt-2 text-sm text-[#94a3b8]">Get started by adding your first lead to the system.</p>
+                            <button 
+                              onClick={() => setIsAddLeadOpen(true)}
+                              className="mt-8 rounded-full bg-[#2549b8] px-8 py-3.5 text-sm font-bold text-white shadow-xl shadow-blue-200 transition hover:bg-[#1e3a8a] active:scale-95"
+                            >
+                              + Add Lead Now
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    ) : (
+                      leads.map((lead, index) => (
+                        <tr key={lead.id || index} className="group transition-colors hover:bg-[#f8fafc]/80">
+                          <td className="py-5 pr-4 pl-0">
+                            <div className="flex items-center gap-3">
+                              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-[#f0f4ff] to-[#e0e7ff] text-sm font-bold text-[#6366f1]">
+                                {lead.name.charAt(0).toUpperCase()}
+                              </div>
+                              <div>
+                                <div className="text-sm font-bold text-[#1e293b]">{lead.name}</div>
+                                <div className="text-[10px] font-medium text-[#94a3b8]">{lead.email}</div>
+                              </div>
+                            </div>
+                          </td>
+                          <td className="py-5 px-4 text-xs font-bold text-[#64748b]">#{lead.sellDoLeadId || '---'}</td>
+                          <td className="py-5 px-4 text-xs font-bold text-[#64748b]">{lead.project}</td>
+                          <td className="py-5 px-4">
+                            <span className="inline-flex rounded-full bg-[#f0fdf4] px-3 py-1 text-[10px] font-bold text-[#16a34a] border border-[#dcfce7]">
+                              {lead.leadStage}
+                            </span>
+                          </td>
+                          <td className="py-5 px-4">
+                            <span className="inline-flex rounded-full bg-[#f8fafc] px-3 py-1 text-[10px] font-bold text-[#64748b] border border-[#f1f5f9]">
+                              {lead.leadStatus}
+                            </span>
+                          </td>
+                          <td className="py-5 px-4 text-xs font-bold text-[#64748b]">{lead.registeredAt}</td>
+                          <td className="py-5 px-4 text-xs font-bold text-[#64748b]">{lead.validityPeriod}</td>
+                          <td className="py-5 px-4">
+                            <button
+                              onClick={(e) => {
+                                const rect = e.currentTarget.getBoundingClientRect()
+                                setMenuAnchorRect({ top: rect.bottom + window.scrollY, left: rect.right + window.scrollX })
+                                setOpenActionIndex(index)
+                              }}
+                              className="la-action-trigger flex h-8 w-8 items-center justify-center rounded-lg text-[#94a3b8] transition hover:bg-[#f1f5f9] hover:text-[#1e293b]"
+                            >
+                              <span className="text-lg font-bold">...</span>
+                            </button>
+                          </td>
+                        </tr>
+                      ))
+                    )}
+                  </tbody>
+                </table>
+              </div>
             </div>
-            <button
-              type="button"
-              onClick={() => {
-                setIsExportOpen(false)
-                setIsFilterOpen(true)
-              }}
-              className="la-control la-clickable rounded-lg border border-[#e2e8f0] bg-white p-2.5 text-[#475569] shadow-sm"
-            >
-              <IconFilter />
-            </button>
+
+            {/* Footer */}
+            <footer className="flex flex-wrap items-center justify-between border-t border-[#f1f5f9] bg-[#f8fafc]/50 px-8 py-6 lg:px-10">
+              <div className="flex items-center gap-8">
+                <div>
+                  <p className="text-[10px] font-black uppercase tracking-[0.15em] text-[#94a3b8]">Viewing</p>
+                  <p className="mt-1 text-xs font-bold text-[#1e293b]">{leads.length} of {leads.length} Leads</p>
+                </div>
+                <div className="h-8 w-px bg-[#e2e8f0]" />
+                <div>
+                  <p className="text-[10px] font-black uppercase tracking-[0.15em] text-[#94a3b8]">Last Sync</p>
+                  <p className="mt-1 text-xs font-bold text-[#1e293b]">Just now</p>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <button className="flex h-10 w-10 items-center justify-center rounded-xl border border-[#f1f5f9] bg-white text-[#94a3b8] transition hover:text-[#1e293b] hover:shadow-sm disabled:opacity-30" disabled>
+                  <IconChevron className="rotate-90" />
+                </button>
+                <button className="flex h-10 w-10 items-center justify-center rounded-xl border border-[#f1f5f9] bg-white text-[#1e293b] shadow-sm transition hover:bg-[#f8fafc]">
+                  <IconChevron className="-rotate-90" />
+                </button>
+              </div>
+            </footer>
           </div>
         </div>
 
-        {isFilterOpen && (
-          <div className="la-filter-overlay fixed inset-0 z-[280] flex items-center justify-center bg-[#0e1730]/30 px-4 py-6 backdrop-blur-[2px]">
-            <div
-              ref={filterPanelRef}
-              className="w-full rounded-2xl border border-[#cfd6f8] bg-[linear-gradient(180deg,#f8faff_0%,#f4f6ff_100%)] shadow-2xl shadow-[#5d68d8]/20 [transform-style:preserve-3d]"
-            >
-              <div className="flex items-center justify-between border-b border-[#d5dcfb] px-6 py-4">
-                <h2 className="text-2xl font-semibold text-[#20365c]">Filter</h2>
-              </div>
+        {/* Add Lead Button (Floating) */}
+        {leads.length > 0 && (
+          <button 
+            onClick={() => setIsAddLeadOpen(true)}
+            className="fixed bottom-8 right-8 z-[100] flex h-14 w-14 items-center justify-center rounded-2xl bg-[#6366f1] text-white shadow-2xl shadow-indigo-300 transition hover:bg-[#4f46e5] hover:scale-105 active:scale-95"
+          >
+            <svg className="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
+              <path d="M12 5v14M5 12h14" />
+            </svg>
+          </button>
+        )}
 
-              <div className="grid gap-6 px-6 py-6 md:grid-cols-2">
-                <div className="la-filter-field space-y-2">
-                  <label className="text-sm font-semibold text-[#2f466c]">Lead</label>
-                  <div className="relative">
-                    <input
-                      type="text"
-                      value={filterValues.lead}
-                      onChange={(event) => setFilterField('lead', event.target.value)}
-                      className="w-full rounded-md border border-[#b8c4e3] bg-white px-4 py-2.5 text-base text-[#1f2f45] outline-none transition focus:border-[#7f8cff] focus:ring-2 focus:ring-[#7f8cff]/20"
-                    />
-                    <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-[#7a879a]">
-                      <IconChevron />
-                    </span>
-                  </div>
-                </div>
-
-                <div className="la-filter-field space-y-2">
-                  <label className="text-sm font-semibold text-[#2f466c]">Sell Do Lead ID</label>
-                  <input
-                    type="text"
-                    value={filterValues.sellDoLeadId}
-                    onChange={(event) => setFilterField('sellDoLeadId', event.target.value)}
-                    className="w-full rounded-md border border-[#b8c4e3] bg-white px-4 py-2.5 text-base text-[#1f2f45] outline-none transition focus:border-[#7f8cff] focus:ring-2 focus:ring-[#7f8cff]/20"
-                  />
-                </div>
-
-                <div className="la-filter-field space-y-2">
-                  <label className="text-sm font-semibold text-[#2f466c]">Lead Stage</label>
-                  <div className="relative">
-                    <input
-                      type="text"
-                      placeholder="Select"
-                      value={filterValues.leadStage}
-                      onChange={(event) => setFilterField('leadStage', event.target.value)}
-                      className="w-full rounded-md border border-[#b8c4e3] bg-white px-4 py-2.5 text-base text-[#1f2f45] outline-none placeholder:text-[#6c7890] transition focus:border-[#7f8cff] focus:ring-2 focus:ring-[#7f8cff]/20"
-                    />
-                    <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-[#7a879a]">
-                      <IconChevron />
-                    </span>
-                  </div>
-                </div>
-
-                <div className="la-filter-field space-y-2">
-                  <label className="text-sm font-semibold text-[#2f466c]">Channel Partner</label>
-                  <div className="relative">
-                    <input
-                      type="text"
-                      value={filterValues.channelPartner}
-                      onChange={(event) => setFilterField('channelPartner', event.target.value)}
-                      className="w-full rounded-md border border-[#b8c4e3] bg-white px-4 py-2.5 text-base text-[#1f2f45] outline-none transition focus:border-[#7f8cff] focus:ring-2 focus:ring-[#7f8cff]/20"
-                    />
-                    <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-[#7a879a]">
-                      <IconChevron />
-                    </span>
-                  </div>
-                </div>
-
-                <div className="la-filter-field space-y-2">
-                  <label className="text-sm font-semibold text-[#2f466c]">Expiry Date</label>
-                  <input
-                    type="text"
-                    placeholder="dd/mm/yyyy - dd/mm/yyyy"
-                    value={filterValues.expiryDate}
-                    onChange={(event) => setFilterField('expiryDate', event.target.value)}
-                    className="w-full rounded-md border border-[#b8c4e3] bg-white px-4 py-2.5 text-base text-[#1f2f45] outline-none placeholder:text-[#6c7890] transition focus:border-[#7f8cff] focus:ring-2 focus:ring-[#7f8cff]/20"
-                  />
-                </div>
-
-                <div className="la-filter-field space-y-2">
-                  <label className="text-sm font-semibold text-[#2f466c]">Project</label>
-                  <div className="relative">
-                    <input
-                      type="text"
-                      placeholder="Select"
-                      value={filterValues.project}
-                      onChange={(event) => setFilterField('project', event.target.value)}
-                      className="w-full rounded-md border border-[#b8c4e3] bg-white px-4 py-2.5 text-base text-[#1f2f45] outline-none placeholder:text-[#6c7890] transition focus:border-[#7f8cff] focus:ring-2 focus:ring-[#7f8cff]/20"
-                    />
-                    <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-[#7a879a]">
-                      <IconChevron />
-                    </span>
-                  </div>
-                </div>
-
-                <div ref={countStatusRef} className="la-filter-field space-y-2">
-                  <label className="text-sm font-semibold text-[#2f466c]">Count Status</label>
-                  <div className="relative">
-                    <button
-                      type="button"
-                      onClick={() => setIsCountStatusOpen((prev) => !prev)}
-                      className="la-clickable flex w-full items-center justify-between rounded-md border border-[#b8c4e3] bg-white px-4 py-2.5 text-left text-base text-[#1f2f45] transition hover:border-[#9fb0cc]"
-                    >
-                      <span className={filterValues.countStatus === 'Select' ? 'text-[#6c7890]' : ''}>{filterValues.countStatus}</span>
-                      <span className={`transition ${isCountStatusOpen ? 'rotate-180' : ''}`}>
-                        <IconChevron />
-                      </span>
-                    </button>
-
-                    {isCountStatusOpen && (
-                      <div className="absolute left-0 top-[calc(100%+0.2rem)] z-[300] w-full rounded-md border border-[#c7d0df] bg-white shadow-lg">
-                        {countStatusOptions.map((option) => (
-                          <button
-                            key={option}
-                            type="button"
-                            onClick={() => {
-                              setFilterField('countStatus', option)
-                              setIsCountStatusOpen(false)
-                            }}
-                            className="la-clickable block w-full px-4 py-2 text-left text-base text-[#1f2f45] hover:bg-[#e7edf5]"
-                          >
-                            {option}
-                          </button>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                </div>
-
-                <div className="la-filter-field space-y-2">
-                  <label className="text-sm font-semibold text-[#2f466c]">Registered At</label>
-                  <input
-                    type="text"
-                    placeholder="dd/mm/yyyy - dd/mm/yyyy"
-                    value={filterValues.registeredAt}
-                    onChange={(event) => setFilterField('registeredAt', event.target.value)}
-                    className="w-full rounded-md border border-[#b8c4e3] bg-white px-4 py-2.5 text-base text-[#1f2f45] outline-none placeholder:text-[#6c7890] transition focus:border-[#7f8cff] focus:ring-2 focus:ring-[#7f8cff]/20"
-                  />
-                </div>
-              </div>
-
-              <div className="flex items-center justify-end gap-3 border-t border-[#d5dcfb] px-6 py-4">
-                <button
-                  type="button"
-                  onClick={resetFilter}
-                  className="la-clickable la-filter-action rounded-lg border border-[#6f73ff] bg-white px-6 py-2 text-xl font-semibold text-[#6f73ff] transition hover:bg-[#eef0ff]"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setIsCountStatusOpen(false)
-                    setIsFilterOpen(false)
-                  }}
-                  className="la-clickable la-filter-action rounded-lg bg-gradient-to-r from-[#6f73ff] to-[#6a6eea] px-7 py-2 text-xl font-semibold text-white transition hover:brightness-105"
-                >
-                  Apply
+        {/* Add Lead Modal */}
+        {isAddLeadOpen && (
+          <div className="fixed inset-0 z-[600] flex items-center justify-center bg-[#0f172a]/40 p-4 backdrop-blur-sm">
+            <div ref={addLeadModalRef} className="w-full max-w-2xl overflow-hidden rounded-[2.5rem] bg-white shadow-2xl animate-elastic-pop">
+              <div className="flex items-center justify-between border-b border-[#f1f5f9] px-8 py-6">
+                <h2 className="text-2xl font-black text-[#1e293b]">Add New Lead</h2>
+                <button onClick={() => setIsAddLeadOpen(false)} className="text-[#94a3b8] hover:text-[#ef4444] transition">
+                  <svg className="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                    <path d="M18 6L6 18M6 6l12 12" />
+                  </svg>
                 </button>
               </div>
+              <form onSubmit={handleAddLead} className="p-8">
+                <div className="grid gap-6 md:grid-cols-2">
+                  <div className="space-y-2">
+                    <label className="text-xs font-bold uppercase tracking-wider text-[#64748b]">Name</label>
+                    <input 
+                      type="text" required value={newLead.name}
+                      onChange={e => setNewLead({...newLead, name: e.target.value})}
+                      className="w-full rounded-xl border border-[#e2e8f0] bg-[#f8fafc] px-4 py-3 text-sm outline-none focus:border-[#6366f1] transition"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-xs font-bold uppercase tracking-wider text-[#64748b]">Email</label>
+                    <input 
+                      type="email" required value={newLead.email}
+                      onChange={e => setNewLead({...newLead, email: e.target.value})}
+                      className="w-full rounded-xl border border-[#e2e8f0] bg-[#f8fafc] px-4 py-3 text-sm outline-none focus:border-[#6366f1] transition"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-xs font-bold uppercase tracking-wider text-[#64748b]">Phone</label>
+                    <input 
+                      type="tel" required value={newLead.phone}
+                      onChange={e => setNewLead({...newLead, phone: e.target.value})}
+                      className="w-full rounded-xl border border-[#e2e8f0] bg-[#f8fafc] px-4 py-3 text-sm outline-none focus:border-[#6366f1] transition"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-xs font-bold uppercase tracking-wider text-[#64748b]">Sell Do Lead ID</label>
+                    <input 
+                      type="text" value={newLead.sellDoLeadId}
+                      onChange={e => setNewLead({...newLead, sellDoLeadId: e.target.value})}
+                      className="w-full rounded-xl border border-[#e2e8f0] bg-[#f8fafc] px-4 py-3 text-sm outline-none focus:border-[#6366f1] transition"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-xs font-bold uppercase tracking-wider text-[#64748b]">Project</label>
+                    <input 
+                      type="text" required value={newLead.project}
+                      onChange={e => setNewLead({...newLead, project: e.target.value})}
+                      className="w-full rounded-xl border border-[#e2e8f0] bg-[#f8fafc] px-4 py-3 text-sm outline-none focus:border-[#6366f1] transition"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-xs font-bold uppercase tracking-wider text-[#64748b]">Channel Partner</label>
+                    <input 
+                      type="text" required value={newLead.channelPartner}
+                      onChange={e => setNewLead({...newLead, channelPartner: e.target.value})}
+                      className="w-full rounded-xl border border-[#e2e8f0] bg-[#f8fafc] px-4 py-3 text-sm outline-none focus:border-[#6366f1] transition"
+                    />
+                  </div>
+                </div>
+                <div className="mt-8 flex justify-end">
+                  <button type="submit" className="rounded-xl bg-[#6366f1] px-10 py-3 text-sm font-bold text-white shadow-lg shadow-indigo-100 transition hover:bg-[#4f46e5]">
+                    Add Lead Now
+                  </button>
+                </div>
+              </form>
             </div>
           </div>
         )}
-
-        <div ref={tableRef} className="relative z-10 mt-6 overflow-x-auto overflow-y-visible no-scrollbar rounded-xl border border-[#e2e8f0] bg-white shadow-xl shadow-slate-200/40">
-          <div className="grid min-w-[1320px] grid-cols-[1.9fr_1.5fr_0.9fr_1.35fr_1.2fr_1.3fr_1.1fr_1.4fr_1.5fr_0.8fr] bg-gradient-to-r from-[#f0f9ff] to-[#e0f2fe] border-b border-[#f1f5f9] text-sm font-bold tracking-wider text-[#475569]">
-            <div className="px-4 py-3">Name/Email/Phone</div>
-            <div className="px-4 py-3">Sell Do Lead ID</div>
-            <div className="px-4 py-3">Project</div>
-            <div className="px-4 py-3">Channel Partner</div>
-            <div className="px-4 py-3">Lead Stage</div>
-            <div className="px-4 py-3">Lead Status</div>
-            <div className="px-4 py-3">Count Status</div>
-            <div className="px-4 py-3">Registered At</div>
-            <div className="px-4 py-3">Lead validity period</div>
-            <div className="px-4 py-3">Actions</div>
-          </div>
-          {leads.length === 0 ? (
-            <div className="px-4 py-6 text-sm text-[#7384a3]">No data available.</div>
-          ) : (
-            leads.map((lead, index) => (
-              <div
-                key={lead.id || index}
-                className="la-row hover:bg-[#f8faff]/50 grid min-w-[1320px] grid-cols-[1.9fr_1.5fr_0.9fr_1.35fr_1.2fr_1.3fr_1.1fr_1.4fr_1.5fr_0.8fr] items-center border-t border-[#f1f5f9] transition-colors"
-              >
-                <div className="flex items-center gap-4 px-4 py-5 text-sm font-medium text-[#2d4568]">
-                  <div className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-full bg-[#eff6ff] text-lg font-bold text-[#3b82f6]">
-                    {lead.name.charAt(0).toLowerCase()}
-                  </div>
-                  <div>
-                    <div className="text-base font-bold text-[#0f172a]">{lead.name}</div>
-                    <div className="text-[11px] text-[#64748b]">
-                      <span className="font-semibold uppercase text-[#94a3b8] mr-1">en:</span>{lead.email}
-                    </div>
-                    <div className="text-[11px] text-[#64748b]">
-                      <span className="font-semibold uppercase text-[#94a3b8] mr-1">ph:</span>{lead.phone}
-                    </div>
-                  </div>
-                </div>
-                <div className="px-4 py-4">
-                  <span className="inline-block rounded bg-[#eff6ff] px-2 py-0.5 text-[11px] font-bold text-[#4f46e5] border border-[#e0e7ff]">
-                    {lead.sellDoLeadId}
-                  </span>
-                </div>
-                <div className="px-4 py-4 text-sm font-semibold text-[#475569]">{lead.project}</div>
-                <div className="px-4 py-4 text-sm font-semibold text-[#475569]">{lead.channelPartner}</div>
-                <div className="px-4 py-4">
-                  <span className={`inline-block rounded-full px-3 py-1 text-[11px] font-bold ${
-                    lead.leadStage === 'Fresh' ? 'bg-[#fff7ed] text-[#ea580c]' : 'bg-[#eff6ff] text-[#2563eb]'
-                  }`}>
-                    {lead.leadStage}
-                  </span>
-                </div>
-                <div className="px-4 py-4">
-                  <span className="inline-block rounded bg-[#f1f5f9] px-3 py-1 text-[11px] font-bold text-[#475569] border border-[#e2e8f0]">
-                    {lead.leadStatus}
-                  </span>
-                </div>
-                <div className="flex items-center gap-2 px-4 py-4 text-sm font-bold text-[#0f172a]">
-                  <span className="h-2 w-2 rounded-full bg-[#10b981]"></span>
-                  {lead.countStatus}
-                </div>
-                <div className="px-4 py-4 text-sm font-semibold text-[#64748b]">{lead.registeredAt}</div>
-                <div className="px-4 py-4 text-sm font-semibold text-[#64748b]">{lead.validityPeriod}</div>
-                <div className="relative px-4 py-4 text-center">
-                  <button
-                    type="button"
-                    onClick={(e) => {
-                      if (openActionIndex === index) {
-                        setOpenActionIndex(null)
-                        setMenuAnchorRect(null)
-                      } else {
-                        const rect = e.currentTarget.getBoundingClientRect()
-                        setMenuAnchorRect({
-                          top: rect.bottom + window.scrollY,
-                          left: rect.right + window.scrollX
-                        })
-                        setOpenActionIndex(index)
-                      }
-                    }}
-                    className={`la-action-trigger la-clickable flex h-10 w-10 items-center justify-center rounded-full transition-all duration-300 ${openActionIndex === index ? 'bg-[#312e81] text-white shadow-lg' : 'bg-[#eff6ff] text-[#312e81] hover:bg-[#312e81] hover:text-white'}`}
-                  >
-                    <span className="text-xl font-bold leading-none mb-1">...</span>
-                  </button>
-                  {openActionIndex === index && menuAnchorRect && createPortal(
-                    <div
-                      ref={actionMenuRef}
-                      className="fixed z-[999] w-72 overflow-hidden rounded-[2.5rem] border border-white bg-white/90 p-4 shadow-[0_25px_70px_rgba(49,46,129,0.25)] backdrop-blur-3xl animate-elastic-pop"
-                      style={{ 
-                        top: `${Math.min(menuAnchorRect.top - window.scrollY + 12, window.innerHeight - 200)}px`, 
-                        left: `${Math.max(20, menuAnchorRect.left - window.scrollX - 260)}px` 
-                      }}
-                    >
-                      <div className="absolute inset-0 bg-gradient-to-br from-[#312e81]/5 to-transparent opacity-50" />
-                      <div className="relative space-y-1.5">
-                        <button
-                          type="button"
-                          onClick={() => {
-                            setOpenActionIndex(null)
-                            setMenuAnchorRect(null)
-                            setViewingLeadIndex(index)
-                            setIsDetailsOpen(true)
-                          }}
-                          className="group flex w-full items-center gap-4 rounded-2xl p-3 text-left transition-all duration-300 hover:bg-[#312e81] hover:text-white hover:shadow-lg hover:shadow-indigo-200"
-                        >
-                          <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-[#eff6ff] text-[#312e81] transition-colors group-hover:bg-white/20 group-hover:text-white">
-                            <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
-                              <circle cx="12" cy="12" r="3" />
-                            </svg>
-                          </div>
-                          <div>
-                            <div className="text-base font-bold">View Details</div>
-                            <div className="text-[10px] opacity-70 font-medium">Full profile & history</div>
-                          </div>
-                        </button>
-                        
-                         <button
-                           type="button"
-                           onClick={() => {
-                             setOpenActionIndex(null)
-                             setMenuAnchorRect(null)
-                             handleOpenFollowUp(index)
-                           }}
-                           className="group flex w-full items-center gap-4 rounded-2xl p-3 text-left transition-all duration-300 hover:bg-[#ea580c] hover:text-white hover:shadow-lg hover:shadow-orange-200"
-                         >
-                           <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-[#fff7ed] text-[#ea580c] transition-colors group-hover:bg-white/20 group-hover:text-white">
-                             <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                               <line x1="12" y1="5" x2="12" y2="19" />
-                               <line x1="5" y1="12" x2="19" y2="12" />
-                             </svg>
-                           </div>
-                           <div>
-                             <div className="text-base font-bold">Add Follow-up</div>
-                             <div className="text-[10px] opacity-70 font-medium">Schedule next activity</div>
-                           </div>
-                         </button>
-                         
-                        </div>
-                    </div>,
-                    document.body
-                  )}
-                </div>
-              </div>
-            ))
-          )}
-        </div>
 
         {isDetailsOpen && viewingLeadIndex !== null && (
           <div className="fixed inset-0 z-[500] flex items-center justify-center bg-[#0f172a]/10 p-4 backdrop-blur-sm">
