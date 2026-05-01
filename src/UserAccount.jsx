@@ -628,12 +628,11 @@ function UserAccount({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, o
   }, [accounts.length])
 
   return (
-    <main ref={pageRef} className="relative min-h-screen overflow-hidden bg-[#f8fafc] text-[#0f172a] [perspective:1300px]">
+    <main ref={pageRef} className="relative min-h-screen overflow-x-hidden bg-[#f8fafc] text-[#0f172a]">
       <div className="pointer-events-none absolute inset-0">
-        <div className="absolute inset-0 bg-[linear-gradient(transparent_31px,rgba(47,63,169,0.05)_32px),linear-gradient(90deg,transparent_31px,rgba(47,63,169,0.05)_32px)] bg-[size:32px_32px]" />
-        <div ref={(n) => (glowRefs.current[0] = n)} className="absolute -left-16 top-8 h-64 w-64 rounded-full bg-[#2f3fa9]/20 blur-3xl" />
-        <div ref={(n) => (glowRefs.current[1] = n)} className="absolute right-0 top-20 h-72 w-72 rounded-full bg-[#7f5de6]/16 blur-3xl" />
-        <div ref={beamRef} className="absolute left-0 top-12 h-40 w-[38rem] rotate-[-8deg] bg-gradient-to-r from-transparent via-[#2f3fa9]/28 to-transparent blur-2xl" />
+        <div className="absolute inset-0 bg-[linear-gradient(transparent_36px,rgba(129,144,177,0.08)_37px),linear-gradient(90deg,transparent_36px,rgba(129,144,177,0.08)_37px)] bg-[size:37px_37px]" />
+        <div ref={(n) => (glowRefs.current[0] = n)} className="absolute -left-14 top-12 h-56 w-56 rounded-full bg-[#6e70ff]/15 blur-3xl" />
+        <div ref={(n) => (glowRefs.current[1] = n)} className="absolute right-0 top-16 h-64 w-64 rounded-full bg-[#8f6ce0]/15 blur-3xl" />
       </div>
 
       <Navbar
@@ -647,464 +646,342 @@ function UserAccount({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, o
         onSignOut={onSignOut}
       />
 
-      <section className="relative z-10 w-full px-3 py-8 lg:px-6">
-        <div ref={headerRef} className="relative z-40 flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-white/70 bg-white/75 px-4 py-4 shadow-xl shadow-[#2f3fa9]/10 backdrop-blur-xl">
-          <h1 className="flex items-center gap-3 text-2xl font-bold tracking-tight text-[#0f172a] lg:text-3xl">
-            <span className="text-[#6366f1]"><IconUsers /></span>
-            {'Users Accounts'.split('').map((ch, idx) => (
-              <span key={`${ch}-${idx}`} className="ua-title-char inline-block">
-                {ch === ' ' ? '\u00A0' : ch}
-              </span>
-            ))}
-          </h1>
+      <section className="relative z-10 w-full overflow-visible px-4 py-7 lg:px-6">
+        <div className="mx-auto w-full max-w-[1400px]">
+          <div className="relative overflow-hidden rounded-[2.5rem] bg-white shadow-[0_20px_50px_rgba(0,0,0,0.05)] border border-[#f1f5f9]">
+            {/* Header */}
+            <header className="flex flex-wrap items-center justify-between gap-6 px-8 py-8 lg:px-10">
+              <div className="space-y-1">
+                <div className="flex items-center gap-4">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#f0f4ff] text-[#6366f1] shadow-inner">
+                    <IconUsers />
+                  </div>
+                  <div>
+                    <h1 className="text-2xl font-black tracking-tight text-[#1e293b]">User Accounts</h1>
+                    <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#94a3b8]">Transaction Monitoring Portal</p>
+                  </div>
+                </div>
+              </div>
 
-          <div ref={controlsRef} className="flex flex-wrap items-center gap-3">
-            <button type="button" className="ua-control ua-clickable rounded-lg border border-[#e2e8f0] bg-white px-5 py-2 text-base font-bold text-[#6366f1] shadow-sm lg:text-lg">
-              Total : {accounts.length}
-            </button>
-            <div ref={addUserMenuRef} className="relative">
-              <button
-                type="button"
-                onClick={() => setIsAddUserOpen((prev) => !prev)}
-                className="ua-control ua-clickable flex items-center gap-1 rounded-lg bg-[#6366f1] px-5 py-2.5 text-base font-bold text-white shadow-md shadow-indigo-100 transition hover:bg-[#4f46e5]"
-              >
-                Add User <IconChevron />
-              </button>
-              {isAddUserOpen && (
-                <div className="ua-add-user-menu absolute left-0 top-12 z-[70] w-72 rounded-xl border border-[#d4e3f8] bg-[#f8fbff] p-2 shadow-2xl shadow-[#1e78c8]/25">
-                  {addUserOptions.map((option) => (
-                    <button
-                      key={option}
-                      type="button"
-                      onClick={() => {
-                        setIsAddUserOpen(false)
-                        setSelectedAddUserRole(option)
-                        resetAddUserForm()
-                        setIsAddUserFormOpen(true)
-                      }}
-                      className="ua-clickable block w-full rounded-lg px-3 py-2 text-left text-sm font-medium text-[#2f3e57] transition hover:bg-[#e8f1ff] hover:text-[#124785]"
-                    >
-                      {option}
-                    </button>
-                  ))}
+              <div className="flex items-center gap-3">
+                <div className="flex items-center gap-1 rounded-full bg-[#f8fafc] p-1.5 border border-[#f1f5f9]">
+                  <span className="px-3 text-[11px] font-bold text-[#94a3b8]">VIEW:</span>
+                  <button className="rounded-full bg-white px-4 py-1.5 text-[11px] font-bold text-[#6366f1] shadow-sm border border-[#f1f5f9]">All Users</button>
                 </div>
-              )}
-            </div>
-            <div ref={exportMenuRef} className="relative">
-              <button
-                type="button"
-                onClick={() => setIsExportOpen((prev) => !prev)}
-                className="ua-control ua-clickable flex items-center gap-1 rounded-lg border border-[#e2e8f0] bg-white px-5 py-2 text-base font-bold text-[#475569] shadow-sm transition hover:border-[#6366f1]/50 hover:text-[#6366f1] lg:text-lg"
-              >
-                Exports <IconChevron />
-              </button>
-              {isExportOpen && (
-                <div className="absolute left-0 top-12 z-[70] w-64 rounded-xl border border-[#d4e3f8] bg-[#f8fbff] p-2 shadow-2xl shadow-[#1e78c8]/25">
-                  {exportOptions.map((option) => (
-                    <button
-                      key={option}
-                      type="button"
-                      onClick={() => setIsExportOpen(false)}
-                      className="ua-clickable block w-full rounded-lg px-3 py-2 text-left text-sm font-medium text-[#2f3e57] transition hover:bg-[#e8f1ff] hover:text-[#124785]"
-                    >
-                      {option}
-                    </button>
-                  ))}
+                
+                <div ref={addUserMenuRef} className="relative">
+                  <button 
+                    onClick={() => setIsAddUserOpen((prev) => !prev)}
+                    className="flex items-center gap-2 rounded-xl bg-[#6366f1] px-5 py-2.5 text-xs font-bold text-white shadow-lg shadow-indigo-100 transition hover:bg-[#4f46e5] active:scale-95"
+                  >
+                    <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
+                      <path d="M12 5v14M5 12h14" />
+                    </svg>
+                    Add User
+                  </button>
+                  {isAddUserOpen && (
+                    <div className="ua-add-user-menu absolute right-0 top-[calc(100%+0.5rem)] z-[100] w-64 overflow-hidden rounded-2xl border border-[#f1f5f9] bg-white p-2 shadow-2xl animate-elastic-pop">
+                      {addUserOptions.map((option) => (
+                        <button
+                          key={option}
+                          type="button"
+                          onClick={() => {
+                            setIsAddUserOpen(false)
+                            setSelectedAddUserRole(option)
+                            resetAddUserForm()
+                            setIsAddUserFormOpen(true)
+                          }}
+                          className="flex w-full items-center rounded-xl px-4 py-2.5 text-left text-xs font-bold text-[#64748b] transition hover:bg-[#f0f4ff] hover:text-[#6366f1]"
+                        >
+                          {option}
+                        </button>
+                      ))}
+                    </div>
+                  )}
                 </div>
-              )}
+
+                <button 
+                  onClick={() => setIsFilterOpen(true)}
+                  className="flex items-center gap-2 rounded-xl bg-[#f8fafc] px-5 py-2.5 text-xs font-bold text-[#64748b] border border-[#f1f5f9] transition hover:bg-white hover:shadow-md"
+                >
+                  <IconFilter />
+                  Filter
+                  <IconChevron />
+                </button>
+
+                <button 
+                  onClick={onBackToDashboard}
+                  className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#f8fafc] text-[#94a3b8] border border-[#f1f5f9] transition hover:text-[#ef4444] hover:bg-red-50"
+                >
+                  <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                    <path d="M18 6L6 18M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+            </header>
+
+            {/* Table Area */}
+            <div className="px-8 pb-4 lg:px-10">
+              <div className="overflow-x-auto no-scrollbar">
+                <table className="w-full min-w-[1100px] border-separate border-spacing-0">
+                  <thead>
+                    <tr className="text-left">
+                      {['Name / Email / Phone', 'Sell.Do Lead ID', 'Payment', 'Role', 'Status', 'Actions'].map((h) => (
+                        <th key={h} className="pb-6 text-[10px] font-black uppercase tracking-[0.15em] text-[#94a3b8] px-4 first:pl-0">{h}</th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {accounts.length === 0 ? (
+                      <tr>
+                        <td colSpan={6} className="py-24">
+                          <div className="flex flex-col items-center justify-center text-center">
+                            <div className="relative mb-6">
+                              <div className="absolute inset-0 scale-150 rounded-full bg-[#6366f1]/5 blur-2xl animate-pulse" />
+                              <div className="relative flex h-24 w-24 items-center justify-center rounded-full bg-[#f0f4ff] text-[#6366f1]">
+                                <svg className="h-12 w-12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                                  <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" />
+                                  <circle cx="9" cy="7" r="4" />
+                                  <path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75" />
+                                </svg>
+                              </div>
+                            </div>
+                            <h3 className="text-xl font-bold text-[#1e293b]">No users found</h3>
+                            <p className="mt-2 text-sm text-[#94a3b8]">Get started by adding your first administrative user.</p>
+                            <button 
+                              onClick={() => setIsAddUserOpen(true)}
+                              className="mt-8 rounded-full bg-[#2549b8] px-8 py-3.5 text-sm font-bold text-white shadow-xl shadow-blue-200 transition hover:bg-[#1e3a8a] active:scale-95"
+                            >
+                              + Add User Now
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    ) : (
+                      accounts.map((row, index) => (
+                        <tr key={row.id || index} className="group transition-colors hover:bg-[#f8fafc]/80">
+                          <td className="py-5 pr-4 pl-0">
+                            <div className="flex items-center gap-3">
+                              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-[#f0f4ff] to-[#e0e7ff] text-sm font-bold text-[#6366f1]">
+                                {row.name.charAt(0).toUpperCase()}
+                              </div>
+                              <div>
+                                <div className="text-sm font-bold text-[#1e293b]">{row.name}</div>
+                                <div className="text-[10px] font-medium text-[#94a3b8]">{row.email}</div>
+                              </div>
+                            </div>
+                          </td>
+                          <td className="py-5 px-4 text-xs font-bold text-[#64748b]">#{row.sellDoLeadId || '---'}</td>
+                          <td className="py-5 px-4 text-xs font-bold text-[#64748b]">{row.payment}</td>
+                          <td className="py-5 px-4">
+                            <span className="inline-flex rounded-full bg-[#eff6ff] px-3 py-1 text-[10px] font-bold text-[#2563eb] border border-[#dbeafe]">
+                              {row.role}
+                            </span>
+                          </td>
+                          <td className="py-5 px-4">
+                            <span className="inline-flex rounded-full bg-[#f8fafc] px-3 py-1 text-[10px] font-bold text-[#64748b] border border-[#f1f5f9]">
+                              {row.status}
+                            </span>
+                          </td>
+                          <td className="py-5 px-4">
+                            <button
+                              onClick={(e) => {
+                                const rect = e.currentTarget.getBoundingClientRect()
+                                setMenuAnchorRect({ top: rect.bottom + window.scrollY, left: rect.right + window.scrollX })
+                                setOpenActionIndex(index)
+                              }}
+                              className="ua-action-trigger flex h-8 w-8 items-center justify-center rounded-lg text-[#94a3b8] transition hover:bg-[#f1f5f9] hover:text-[#1e293b]"
+                            >
+                              <span className="text-lg font-bold">...</span>
+                            </button>
+                          </td>
+                        </tr>
+                      ))
+                    )}
+                  </tbody>
+                </table>
+              </div>
             </div>
-            <button
-              type="button"
-              onClick={() => {
-                setIsAddUserOpen(false)
-                setIsExportOpen(false)
-                setIsFilterOpen(true)
-              }}
-              className="ua-control ua-clickable rounded-lg border border-[#e2e8f0] bg-white p-2.5 text-[#475569] shadow-sm transition hover:border-[#6366f1]/50 hover:text-[#6366f1]"
-            >
-              <IconFilter />
-            </button>
+
+            {/* Footer */}
+            <footer className="flex flex-wrap items-center justify-between border-t border-[#f1f5f9] bg-[#f8fafc]/50 px-8 py-6 lg:px-10">
+              <div className="flex items-center gap-8">
+                <div>
+                  <p className="text-[10px] font-black uppercase tracking-[0.15em] text-[#94a3b8]">Viewing</p>
+                  <p className="mt-1 text-xs font-bold text-[#1e293b]">{accounts.length} of {accounts.length} Users</p>
+                </div>
+                <div className="h-8 w-px bg-[#e2e8f0]" />
+                <div>
+                  <p className="text-[10px] font-black uppercase tracking-[0.15em] text-[#94a3b8]">Last Sync</p>
+                  <p className="mt-1 text-xs font-bold text-[#1e293b]">Just now</p>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <button className="flex h-10 w-10 items-center justify-center rounded-xl border border-[#f1f5f9] bg-white text-[#94a3b8] transition hover:text-[#1e293b] hover:shadow-sm disabled:opacity-30" disabled>
+                  <IconChevron className="rotate-90" />
+                </button>
+                <button className="flex h-10 w-10 items-center justify-center rounded-xl border border-[#f1f5f9] bg-white text-[#1e293b] shadow-sm transition hover:bg-[#f8fafc]">
+                  <IconChevron className="-rotate-90" />
+                </button>
+              </div>
+            </footer>
           </div>
         </div>
 
-        {isFilterOpen && (
-          <div className="ua-filter-overlay fixed inset-0 z-[260] flex items-center justify-center bg-[#0f2244]/22 px-4 py-6 backdrop-blur-[2px]">
-            <div ref={filterPanelRef} className="w-full max-w-4xl overflow-visible rounded-2xl border border-[#e2e8f0] bg-white shadow-2xl shadow-slate-200/50">
-              <div className="flex items-center justify-between border-b border-[#e2e8f0] bg-gradient-to-r from-[#f0f9ff] to-[#e0f2fe] px-6 py-5">
-                <h2 className="text-2xl font-bold tracking-tight text-[#0f172a]">Filter</h2>
+        {/* Floating Add Button */}
+        {accounts.length > 0 && (
+          <div className="fixed bottom-8 right-8 z-[100] group">
+            <button 
+              onClick={() => setIsAddUserOpen((prev) => !prev)}
+              className="flex h-14 w-14 items-center justify-center rounded-2xl bg-[#6366f1] text-white shadow-2xl shadow-indigo-300 transition hover:bg-[#4f46e5] hover:scale-105 active:scale-95"
+            >
+              <svg className="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
+                <path d="M12 5v14M5 12h14" />
+              </svg>
+            </button>
+            {isAddUserOpen && (
+              <div className="absolute bottom-[calc(100%+1rem)] right-0 w-64 overflow-hidden rounded-2xl border border-[#f1f5f9] bg-white p-2 shadow-2xl animate-elastic-pop">
+                {addUserOptions.map((option) => (
+                  <button
+                    key={option}
+                    type="button"
+                    onClick={() => {
+                      setIsAddUserOpen(false)
+                      setSelectedAddUserRole(option)
+                      resetAddUserForm()
+                      setIsAddUserFormOpen(true)
+                    }}
+                    className="flex w-full items-center rounded-xl px-4 py-2.5 text-left text-xs font-bold text-[#64748b] transition hover:bg-[#f0f4ff] hover:text-[#6366f1]"
+                  >
+                    {option}
+                  </button>
+                ))}
               </div>
-
-              <div className="grid gap-6 px-6 py-6 md:grid-cols-2">
-                <div className="ua-filter-field space-y-2">
-                  <label className="text-sm font-semibold text-[#1f3558]">Name/Email/Phone</label>
-                  <div className="relative">
-                    <input
-                      type="text"
-                      value={filterValues.nameEmailPhone}
-                      onChange={(event) => setFilterField('nameEmailPhone', event.target.value)}
-                      className="w-full rounded-md border border-[#b8c4d8] bg-white px-4 py-2.5 text-base text-[#1f2f45] outline-none transition focus:border-[#7f8cff] focus:ring-2 focus:ring-[#7f8cff]/20"
-                    />
-                    <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-[#7a879a]">
-                      <IconChevron />
-                    </span>
-                  </div>
-                </div>
-
-                <div className="ua-filter-field space-y-2">
-                  <label className="text-sm font-semibold text-[#1f3558]">Sell.Do Lead ID</label>
-                  <input
-                    type="text"
-                    value={filterValues.sellDoLeadId}
-                    onChange={(event) => setFilterField('sellDoLeadId', event.target.value)}
-                    className="w-full rounded-md border border-[#b8c4d8] bg-white px-4 py-2.5 text-base text-[#1f2f45] outline-none transition focus:border-[#7f8cff] focus:ring-2 focus:ring-[#7f8cff]/20"
-                  />
-                </div>
-
-                <div className="ua-filter-field space-y-2">
-                  <label className="text-sm font-semibold text-[#1f3558]">Role</label>
-                  <div className="relative">
-                    <input
-                      type="text"
-                      placeholder="Select"
-                      value={filterValues.role}
-                      onChange={(event) => setFilterField('role', event.target.value)}
-                      className="w-full rounded-md border border-[#b8c4d8] bg-white px-4 py-2.5 text-base text-[#1f2f45] outline-none placeholder:text-[#6c7890] transition focus:border-[#7f8cff] focus:ring-2 focus:ring-[#7f8cff]/20"
-                    />
-                  </div>
-                </div>
-
-                <div ref={confirmationMenuRef} className="ua-filter-field space-y-2">
-                  <label className="text-sm font-semibold text-[#1f3558]">Confirmation</label>
-                  <div className="relative">
-                    <button
-                      ref={confirmationButtonRef}
-                      type="button"
-                      onClick={() => setIsConfirmationOpen((prev) => !prev)}
-                      className="ua-clickable flex w-full items-center justify-between rounded-md border border-[#b8c4d8] bg-white px-4 py-2.5 text-left text-base text-[#1f2f45] transition hover:border-[#9fb0cc] focus:border-[#7f8cff]"
-                    >
-                      <span className={filterValues.confirmation === 'Select' ? 'text-[#5f6d82]' : ''}>{filterValues.confirmation}</span>
-                      <span className={`transition ${isConfirmationOpen ? 'rotate-180' : ''}`}>
-                        <IconChevron />
-                      </span>
-                    </button>
-                  </div>
-                </div>
-
-                <div className="ua-filter-field space-y-2 md:col-span-2">
-                  <label className="text-sm font-semibold text-[#1f3558]">Registered At</label>
-                  <input
-                    type="text"
-                    placeholder="dd/mm/yyyy - dd/mm/yyyy"
-                    value={filterValues.registeredAt}
-                    onChange={(event) => setFilterField('registeredAt', event.target.value)}
-                    className="w-full rounded-md border border-[#b8c4d8] bg-white px-4 py-2.5 text-base text-[#1f2f45] outline-none placeholder:text-[#6c7890] transition focus:border-[#7f8cff] focus:ring-2 focus:ring-[#7f8cff]/20 md:max-w-[52%]"
-                  />
-                </div>
-              </div>
-
-              <div className="flex items-center justify-end gap-4 border-t border-[#e2e8f0] bg-[#f8fafc] px-6 py-5">
-                <button
-                  type="button"
-                  onClick={() => setIsFilterOpen(false)}
-                  className="rounded-xl border border-[#e2e8f0] bg-white px-6 py-2.5 text-base font-bold text-[#475569] shadow-sm transition hover:bg-[#f1f5f9]"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setIsConfirmationOpen(false)
-                    setIsFilterOpen(false)
-                  }}
-                  className="ua-clickable ua-filter-action rounded-lg bg-gradient-to-r from-[#6f73ff] to-[#6a6eea] px-7 py-2 text-xl font-semibold text-white transition hover:brightness-105"
-                >
-                  Apply
-                </button>
-              </div>
-            </div>
+            )}
           </div>
         )}
 
-        {isFilterOpen && isConfirmationOpen && (
-          <div
-            ref={confirmationDropdownRef}
-            style={{ top: confirmationDropdownPos.top, left: confirmationDropdownPos.left, width: confirmationDropdownPos.width }}
-            className="fixed z-[1000] max-h-56 overflow-y-auto rounded-md border border-[#c7d0df] bg-white shadow-2xl"
-          >
-            {confirmationOptions.map((option) => (
-              <button
-                key={option}
-                type="button"
-                onClick={() => {
-                  setFilterField('confirmation', option)
-                  setIsConfirmationOpen(false)
-                }}
-                className="ua-clickable block w-full px-4 py-2 text-left text-base text-[#1f2f45] hover:bg-[#e7edf5]"
-              >
-                {option}
-              </button>
-            ))}
+        {/* Modals & Overlays */}
+        {isFilterOpen && (
+          <div className="ua-filter-overlay fixed inset-0 z-[260] flex items-center justify-center bg-[#0f172a]/20 px-4 py-6 backdrop-blur-sm">
+            <div ref={filterPanelRef} className="w-full max-w-4xl overflow-hidden rounded-[2.5rem] bg-white shadow-2xl animate-elastic-pop">
+              <div className="flex items-center justify-between border-b border-[#f1f5f9] px-8 py-6">
+                <h2 className="text-2xl font-black text-[#1e293b]">Filter Users</h2>
+                <button onClick={() => setIsFilterOpen(false)} className="text-[#94a3b8] hover:text-[#ef4444]">
+                  <svg className="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                    <path d="M18 6L6 18M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+              <div className="grid gap-6 p-8 md:grid-cols-2">
+                <div className="ua-filter-field space-y-2">
+                  <label className="text-xs font-bold uppercase tracking-wider text-[#64748b]">Name/Email/Phone</label>
+                  <input
+                    type="text"
+                    value={filterValues.nameEmailPhone}
+                    onChange={(e) => setFilterField('nameEmailPhone', e.target.value)}
+                    className="w-full rounded-xl border border-[#e2e8f0] bg-[#f8fafc] px-4 py-3 text-sm outline-none focus:border-[#6366f1]"
+                  />
+                </div>
+                <div className="ua-filter-field space-y-2">
+                  <label className="text-xs font-bold uppercase tracking-wider text-[#64748b]">Role</label>
+                  <input
+                    type="text"
+                    value={filterValues.role}
+                    onChange={(e) => setFilterField('role', e.target.value)}
+                    className="w-full rounded-xl border border-[#e2e8f0] bg-[#f8fafc] px-4 py-3 text-sm outline-none focus:border-[#6366f1]"
+                  />
+                </div>
+              </div>
+              <div className="flex items-center justify-end gap-3 border-t border-[#f1f5f9] bg-[#f8fafc]/50 px-8 py-6">
+                <button onClick={resetFilter} className="rounded-xl px-6 py-2.5 text-sm font-bold text-[#64748b] hover:text-[#1e293b]">Reset</button>
+                <button onClick={() => setIsFilterOpen(false)} className="rounded-xl bg-[#6366f1] px-8 py-2.5 text-sm font-bold text-white shadow-lg shadow-indigo-100 hover:bg-[#4f46e5]">Apply Filters</button>
+              </div>
+            </div>
           </div>
         )}
 
         {isAddUserFormOpen && (
-          <div className="ua-add-user-overlay fixed inset-0 z-[290] flex items-center justify-center bg-[#0f172a]/10 px-4 py-6 backdrop-blur-sm">
-            <div ref={addUserFormRef} className="max-h-[92vh] w-full max-w-4xl overflow-hidden rounded-2xl border border-[#e2e8f0] bg-white shadow-2xl shadow-slate-200/50">
-              <div className="flex items-center justify-between border-b border-[#e2e8f0] bg-gradient-to-r from-[#f0f9ff] to-[#e0f2fe] px-6 py-5">
-                <h2 className="text-3xl font-bold tracking-tight text-[#0f172a]">{selectedAddUserRole}</h2>
-                <button
-                  type="button"
-                  onClick={() => setIsAddUserFormOpen(false)}
-                  className="ua-clickable text-3xl font-bold leading-none text-[#64748b] transition hover:text-[#0f172a]"
-                >
-                  &times;
+          <div className="ua-add-user-overlay fixed inset-0 z-[290] flex items-center justify-center bg-[#0f172a]/40 px-4 py-6 backdrop-blur-sm">
+            <div ref={addUserFormRef} className="w-full max-w-4xl overflow-hidden rounded-[2.5rem] bg-white shadow-2xl animate-elastic-pop">
+              <div className="flex items-center justify-between border-b border-[#f1f5f9] px-8 py-6">
+                <div>
+                  <h2 className="text-2xl font-black text-[#1e293b]">Add New User</h2>
+                  <p className="text-xs font-bold text-[#6366f1] uppercase tracking-wider">{selectedAddUserRole}</p>
+                </div>
+                <button onClick={() => setIsAddUserFormOpen(false)} className="text-[#94a3b8] hover:text-[#ef4444]">
+                  <svg className="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                    <path d="M18 6L6 18M6 6l12 12" />
+                  </svg>
                 </button>
               </div>
-
-              <div className="grid gap-5 p-5 md:grid-cols-2">
+              <div className="grid gap-6 p-8 md:grid-cols-2">
                 <div className="ua-add-user-field space-y-2">
-                  <label className="text-base font-semibold text-[#1f3557]">First name <span className="text-[#e54848]">*</span></label>
+                  <label className="text-xs font-bold uppercase tracking-wider text-[#64748b]">First Name</label>
                   <input
                     type="text"
                     value={addUserFormValues.firstName}
-                    onChange={(event) => setAddUserField('firstName', event.target.value)}
-                    className="w-full rounded-md border border-[#c6d4ea] bg-white px-4 py-2.5 text-lg text-[#2d4568] outline-none transition focus:border-[#7d88ff] focus:ring-2 focus:ring-[#7d88ff]/25"
+                    onChange={(e) => setAddUserField('firstName', e.target.value)}
+                    className="w-full rounded-xl border border-[#e2e8f0] bg-[#f8fafc] px-4 py-3 text-sm outline-none focus:border-[#6366f1]"
                   />
                 </div>
-
                 <div className="ua-add-user-field space-y-2">
-                  <label className="text-base font-semibold text-[#1f3557]">Last name <span className="text-[#e54848]">*</span></label>
+                  <label className="text-xs font-bold uppercase tracking-wider text-[#64748b]">Last Name</label>
                   <input
                     type="text"
                     value={addUserFormValues.lastName}
-                    onChange={(event) => setAddUserField('lastName', event.target.value)}
-                    className="w-full rounded-md border border-[#c6d4ea] bg-white px-4 py-2.5 text-lg text-[#2d4568] outline-none transition focus:border-[#7d88ff] focus:ring-2 focus:ring-[#7d88ff]/25"
+                    onChange={(e) => setAddUserField('lastName', e.target.value)}
+                    className="w-full rounded-xl border border-[#e2e8f0] bg-[#f8fafc] px-4 py-3 text-sm outline-none focus:border-[#6366f1]"
                   />
                 </div>
-
                 <div className="ua-add-user-field space-y-2">
-                  <label className="text-base font-semibold text-[#1f3557]">Email <span className="text-[#e54848]">*</span></label>
+                  <label className="text-xs font-bold uppercase tracking-wider text-[#64748b]">Email Address</label>
                   <input
                     type="email"
                     value={addUserFormValues.email}
-                    onChange={(event) => setAddUserField('email', event.target.value)}
-                    className="w-full rounded-md border border-[#c6d4ea] bg-white px-4 py-2.5 text-lg text-[#2d4568] outline-none transition focus:border-[#7d88ff] focus:ring-2 focus:ring-[#7d88ff]/25"
+                    onChange={(e) => setAddUserField('email', e.target.value)}
+                    className="w-full rounded-xl border border-[#e2e8f0] bg-[#f8fafc] px-4 py-3 text-sm outline-none focus:border-[#6366f1]"
                   />
                 </div>
-
                 <div className="ua-add-user-field space-y-2">
-                  <label className="text-base font-semibold text-[#1f3557]">Phone <span className="text-[#e54848]">*</span></label>
-                  <div className="flex items-center rounded-md border border-[#c6d4ea] bg-white px-3 py-2.5">
+                  <label className="text-xs font-bold uppercase tracking-wider text-[#64748b]">Phone Number</label>
+                  <div className="flex gap-2">
                     <select
                       value={addUserFormValues.countryCode}
-                      onChange={(event) => setAddUserField('countryCode', event.target.value)}
-                      className="max-w-[170px] border-0 bg-transparent pr-2 text-base text-[#2d4568] outline-none"
+                      onChange={(e) => setAddUserField('countryCode', e.target.value)}
+                      className="rounded-xl border border-[#e2e8f0] bg-[#f8fafc] px-3 py-3 text-sm outline-none focus:border-[#6366f1]"
                     >
-                      {countryPhoneOptions.map((option) => (
-                        <option key={`${option.country}-${option.code}`} value={option.code}>
-                          {option.flag} {option.country} ({option.code})
-                        </option>
-                      ))}
+                      {countryPhoneOptions.map(opt => <option key={opt.code} value={opt.code}>{opt.flag} {opt.code}</option>)}
                     </select>
                     <input
-                      type="text"
+                      type="tel"
                       value={addUserFormValues.phone}
-                      onChange={(event) => setAddUserField('phone', event.target.value)}
-                      className="w-full border-0 bg-transparent text-lg text-[#2d4568] outline-none"
+                      onChange={(e) => setAddUserField('phone', e.target.value)}
+                      className="w-full rounded-xl border border-[#e2e8f0] bg-[#f8fafc] px-4 py-3 text-sm outline-none focus:border-[#6366f1]"
                     />
                   </div>
                 </div>
-
-                <div className="ua-add-user-field space-y-2">
-                  <label className="text-base font-semibold text-[#1f3557]">Sell.Do Lead ID</label>
-                  <input
-                    type="text"
-                    value={addUserFormValues.sellDoLeadId || ''}
-                    onChange={(event) => setAddUserField('sellDoLeadId', event.target.value)}
-                    placeholder="e.g. SDL-UA-123"
-                    className="w-full rounded-md border border-[#c6d4ea] bg-white px-4 py-2.5 text-lg text-[#2d4568] outline-none transition focus:border-[#7d88ff] focus:ring-2 focus:ring-[#7d88ff]/25"
-                  />
-                </div>
-
-                <div className="ua-add-user-field space-y-2">
-                  <label className="text-base font-semibold text-[#1f3557]">User&apos;s Time Zone</label>
-                  <select
-                    value={addUserFormValues.timeZone}
-                    onChange={(event) => setAddUserField('timeZone', event.target.value)}
-                    className="w-full rounded-md border border-[#c6d4ea] bg-white px-4 py-2.5 text-lg text-[#2d4568] outline-none transition focus:border-[#7d88ff] focus:ring-2 focus:ring-[#7d88ff]/25"
-                  >
-                    <option>(GMT+05:30) Mumbai</option>
-                    <option>(GMT+00:00) London</option>
-                    <option>(GMT-05:00) New York</option>
-                  </select>
-                </div>
               </div>
-
-              <div className="flex justify-end border-t border-[#e2e8f0] bg-gradient-to-r from-[#f0f9ff] to-[#e0f2fe] px-6 py-5">
-                <button
-                  type="button"
-                  onClick={handleSaveUser}
-                  className="ua-clickable rounded-xl bg-[#6366f1] px-8 py-2.5 text-base font-bold text-white shadow-lg shadow-indigo-100 transition hover:bg-[#4f46e5]"
-                >
-                  Save
-                </button>
+              <div className="flex justify-end border-t border-[#f1f5f9] bg-[#f8fafc]/50 px-8 py-6">
+                <button onClick={handleSaveUser} className="rounded-xl bg-[#6366f1] px-10 py-3 text-sm font-bold text-white shadow-lg shadow-indigo-100 hover:bg-[#4f46e5]">Create Account</button>
               </div>
             </div>
           </div>
         )}
 
-        <div ref={tableRef} className="mt-6 overflow-x-auto overflow-y-visible no-scrollbar rounded-2xl border border-[#e2e8f0] bg-white shadow-xl shadow-slate-200/40 backdrop-blur-xl">
-          <div className="grid min-w-[980px] grid-cols-[2fr_1.4fr_1fr_1fr_0.8fr_0.6fr] bg-gradient-to-r from-[#f0f9ff] to-[#e0f2fe] border-b border-[#f1f5f9] text-sm font-bold tracking-wider text-[#475569] lg:text-base">
-            <div className="px-6 py-5">Name/Email/Phone</div>
-            <div className="px-6 py-5">Sell.Do Lead ID</div>
-            <div className="px-6 py-5">Payment</div>
-            <div className="px-6 py-5">Role</div>
-            <div className="px-6 py-5">Status</div>
-            <div className="px-6 py-5 text-center">Actions</div>
-          </div>
-
-          <div className="divide-y divide-[#dbe4f7] bg-white/90">
-            {accounts.length === 0 ? (
-              <div className="ua-row grid min-w-[980px] grid-cols-[2fr_1.4fr_1fr_1fr_0.8fr_0.6fr] px-2 py-4">
-                <div className="col-span-6 px-4 py-3 text-center text-sm font-semibold text-[#6e83a6]">No users added yet.</div>
-              </div>
-            ) : (
-              accounts.map((row, index) => (
-                <div
-                  key={row.id}
-                  ref={(node) => {
-                    rowRefs.current[index] = node
-                  }}
-                  className="ua-row grid min-w-[980px] grid-cols-[2fr_1.4fr_1fr_1fr_0.8fr_0.6fr] items-center px-2 py-2 [transform-style:preserve-3d]"
-                >
-                  <div className="flex items-center gap-4 px-4 py-5 text-sm font-medium text-[#2d4568]">
-                    <div className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-full bg-[#eff6ff] text-lg font-bold text-[#3b82f6]">
-                      {row.name.charAt(0).toLowerCase()}
-                    </div>
-                    <div>
-                      <div className="text-base font-bold text-[#0f172a]">{row.name}</div>
-                      <div className="text-[11px] text-[#64748b]">
-                        <span className="font-semibold uppercase text-[#94a3b8] mr-1">en:</span>{row.email}
-                      </div>
-                      <div className="text-[11px] text-[#64748b]">
-                        <span className="font-semibold uppercase text-[#94a3b8] mr-1">ph:</span>{row.phone}
-                      </div>
-                    </div>
-                  </div>
-                  <div className="px-4 py-4">
-                    <span className="inline-block rounded bg-[#eff6ff] px-2 py-0.5 text-[11px] font-bold text-[#4f46e5] border border-[#e0e7ff]">
-                      {row.sellDoLeadId}
-                    </span>
-                  </div>
-                  <div className="px-4 py-4 text-sm font-semibold text-[#475569]">{row.payment}</div>
-                  <div className="px-4 py-4">
-                    <span className="inline-block rounded-full bg-[#eff6ff] px-3 py-1 text-[11px] font-bold text-[#2563eb]">
-                      {row.role}
-                    </span>
-                  </div>
-                  <div className="px-4 py-4">
-                    <span className="inline-block rounded bg-[#f1f5f9] px-3 py-1 text-[11px] font-bold text-[#475569] border border-[#e2e8f0]">
-                      {row.status}
-                    </span>
-                  </div>
-                  <div className="relative px-4 py-4 text-center">
-                    <button
-                      type="button"
-                      onClick={(e) => {
-                        if (openActionIndex === index) {
-                          setOpenActionIndex(null)
-                          setMenuAnchorRect(null)
-                        } else {
-                          const rect = e.currentTarget.getBoundingClientRect()
-                          setMenuAnchorRect({
-                            top: rect.bottom + window.scrollY,
-                            left: rect.right + window.scrollX
-                          })
-                          setOpenActionIndex(index)
-                        }
-                      }}
-                      className={`ua-action-trigger ua-clickable flex h-10 w-10 items-center justify-center rounded-full transition-all duration-300 ${openActionIndex === index ? 'bg-[#312e81] text-white shadow-lg' : 'bg-[#eff6ff] text-[#312e81] hover:bg-[#312e81] hover:text-white'}`}
-                    >
-                      <span className="text-xl font-bold leading-none mb-1">...</span>
-                    </button>
-                    {openActionIndex === index && menuAnchorRect && createPortal(
-                      <div 
-                        ref={actionMenuRef}
-                        className="fixed z-[999] w-72 overflow-hidden rounded-[2.5rem] border border-white bg-white/90 p-4 shadow-[0_25px_70px_rgba(49,46,129,0.25)] backdrop-blur-3xl animate-elastic-pop"
-                        style={{ 
-                          top: `${menuAnchorRect.top - window.scrollY + 12}px`, 
-                          left: `${menuAnchorRect.left - window.scrollX - 260}px` 
-                        }}
-                      >
-                        <div className="absolute inset-0 bg-gradient-to-br from-[#312e81]/5 to-transparent opacity-50" />
-                        <div className="relative space-y-1.5">
-                          <button
-                            type="button"
-                            onClick={() => {
-                              setOpenActionIndex(null)
-                              setMenuAnchorRect(null)
-                              setViewingAccountIndex(index)
-                              setIsDetailsOpen(true)
-                            }}
-                            className="group flex w-full items-center gap-4 rounded-2xl p-3 text-left transition-all duration-300 hover:bg-[#312e81] hover:text-white hover:shadow-lg hover:shadow-indigo-200"
-                          >
-                            <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-[#eff6ff] text-[#312e81] transition-colors group-hover:bg-white/20 group-hover:text-white">
-                              <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
-                                <circle cx="12" cy="12" r="3" />
-                              </svg>
-                            </div>
-                            <div>
-                              <div className="text-base font-bold">View Details</div>
-                              <div className="text-[10px] opacity-70 font-medium">Full profile & history</div>
-                            </div>
-                          </button>
-                          
-                          <button
-                            type="button"
-                            onClick={() => {
-                              setOpenActionIndex(null)
-                              setMenuAnchorRect(null)
-                              handleOpenFollowUp(row)
-                            }}
-                            className="group flex w-full items-center gap-4 rounded-2xl p-3 text-left transition-all duration-300 hover:bg-[#ea580c] hover:text-white hover:shadow-lg hover:shadow-orange-200"
-                          >
-                            <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-[#fff7ed] text-[#ea580c] transition-colors group-hover:bg-white/20 group-hover:text-white">
-                              <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                                <line x1="12" y1="5" x2="12" y2="19" />
-                                <line x1="5" y1="12" x2="19" y2="12" />
-                              </svg>
-                            </div>
-                            <div>
-                              <div className="text-base font-bold">Add Follow-up</div>
-                              <div className="text-[10px] opacity-70 font-medium">Schedule next activity</div>
-                            </div>
-                          </button>
-                        </div>
-                      </div>,
-                      document.body
-                    )}
-                  </div>
-                </div>
-              ))
-            )}
-          </div>
-        </div>
-
         {isDetailsOpen && viewingAccountIndex !== null && (
-          <div className="fixed inset-0 z-[500] flex items-center justify-center bg-[#0a1222]/45 p-4 backdrop-blur-sm">
-            <div className="w-full max-w-4xl overflow-hidden rounded-2xl border border-[#c9d3f8] bg-[#f4f6fb] shadow-2xl shadow-[#1a1f5f]/35">
-              <div className="flex items-center justify-between bg-gradient-to-r from-[#124785] to-[#1e78c8] px-6 py-4">
-                <h2 className="text-2xl font-bold text-white">User Account Details</h2>
-                <button
-                  type="button"
-                  onClick={() => setIsDetailsOpen(false)}
-                  className="ua-clickable text-3xl font-bold text-white/80 transition hover:text-white"
-                >
-                  &times;
+          <div className="fixed inset-0 z-[500] flex items-center justify-center bg-[#0f172a]/40 p-4 backdrop-blur-sm">
+            <div className="w-full max-w-2xl overflow-hidden rounded-[2.5rem] bg-white shadow-2xl animate-elastic-pop">
+              <div className="flex items-center justify-between border-b border-[#f1f5f9] px-8 py-6">
+                <h2 className="text-2xl font-black text-[#1e293b]">User Details</h2>
+                <button onClick={() => setIsDetailsOpen(false)} className="text-[#94a3b8] hover:text-[#ef4444]">
+                  <svg className="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                    <path d="M18 6L6 18M6 6l12 12" />
+                  </svg>
                 </button>
               </div>
-              <div className="max-h-[75vh] overflow-y-auto p-6">
+              <div className="p-8">
                 <div className="grid gap-6 md:grid-cols-2">
                   {[
                     { label: 'Name', value: accounts[viewingAccountIndex].name },
@@ -1112,133 +989,132 @@ function UserAccount({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, o
                     { label: 'Phone', value: `${accounts[viewingAccountIndex].countryCode || ''} ${accounts[viewingAccountIndex].phone}`.trim() },
                     { label: 'Sell.Do Lead ID', value: accounts[viewingAccountIndex].sellDoLeadId },
                     { label: 'Role', value: accounts[viewingAccountIndex].role },
-                    { label: 'Payment Status', value: accounts[viewingAccountIndex].payment },
                     { label: 'Status', value: accounts[viewingAccountIndex].status },
                   ].map((item) => (
-                    <div key={item.label} className="border-b border-[#dbe4f7] pb-2">
-                      <div className="text-xs font-semibold uppercase tracking-wider text-[#6e83a6]">{item.label}</div>
-                      <div className="mt-1 text-lg font-semibold text-[#213a64]">{item.value || '-'}</div>
+                    <div key={item.label} className="space-y-1">
+                      <p className="text-[10px] font-black uppercase tracking-wider text-[#94a3b8]">{item.label}</p>
+                      <p className="text-sm font-bold text-[#1e293b]">{item.value || '---'}</p>
                     </div>
                   ))}
                 </div>
-              </div>
-              <div className="border-t border-[#d2dbee] bg-white/75 px-6 py-4 text-right">
-                <button
-                  type="button"
-                  onClick={() => setIsDetailsOpen(false)}
-                  className="ua-clickable rounded-lg bg-[#1d73ce] px-6 py-2 font-bold text-white shadow-lg transition hover:brightness-110"
-                >
-                  Close
-                </button>
+                <div className="mt-8 flex justify-end">
+                  <button onClick={() => setIsDetailsOpen(false)} className="rounded-xl bg-[#f1f5f9] px-8 py-2.5 text-sm font-bold text-[#64748b] hover:bg-[#e2e8f0]">Close</button>
+                </div>
               </div>
             </div>
           </div>
         )}
 
         {isFollowUpFormOpen && (
-          <div className="ua-followup-overlay fixed inset-0 z-[295] flex items-center justify-center bg-[#0f172a]/10 px-4 py-6 backdrop-blur-sm">
-            <div ref={followUpFormRef} className="max-h-[92vh] w-full max-w-4xl overflow-hidden rounded-2xl border border-[#e2e8f0] bg-white shadow-2xl shadow-slate-200/50">
-              <div className="flex items-center justify-between border-b border-[#e2e8f0] bg-gradient-to-r from-[#fff7ed] to-[#ffedd5] px-6 py-5">
-                <h2 className="ua-followup-field text-3xl font-bold tracking-tight text-[#c2410c]">Add Follow-up</h2>
-                <button
-                  type="button"
-                  onClick={() => setIsFollowUpFormOpen(false)}
-                  className="ua-clickable ua-followup-field text-3xl font-bold leading-none text-[#9a3412]/60 transition hover:text-[#9a3412]"
-                >
-                  &times;
+          <div className="ua-followup-overlay fixed inset-0 z-[295] flex items-center justify-center bg-[#0f172a]/40 px-4 py-6 backdrop-blur-sm">
+            <div ref={followUpFormRef} className="w-full max-w-2xl overflow-hidden rounded-[2.5rem] bg-white shadow-2xl animate-elastic-pop">
+              <div className="flex items-center justify-between border-b border-[#f1f5f9] px-8 py-6">
+                <h2 className="text-2xl font-black text-[#1e293b]">Add Follow-up</h2>
+                <button onClick={() => setIsFollowUpFormOpen(false)} className="text-[#94a3b8] hover:text-[#ef4444]">
+                  <svg className="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                    <path d="M18 6L6 18M6 6l12 12" />
+                  </svg>
                 </button>
               </div>
-
-              <div className="space-y-6 p-6">
-                <div className="ua-followup-field space-y-2">
-                  <label className="text-sm font-semibold text-[#1f3557]">Name</label>
-                  <input
-                    type="text"
-                    disabled
-                    value={followUpFormValues.name}
-                    className="w-full rounded-md border border-[#c6d4ea] bg-[#e1e8f5] px-4 py-2 text-base text-[#566579] outline-none"
-                  />
+              <div className="space-y-6 p-8">
+                <div className="grid gap-6 md:grid-cols-2">
+                  <div className="space-y-2">
+                    <label className="text-xs font-bold uppercase tracking-wider text-[#64748b]">Lead Stage</label>
+                    <select
+                      value={followUpFormValues.leadStage}
+                      onChange={(e) => setFollowUpFormValues({...followUpFormValues, leadStage: e.target.value})}
+                      className="w-full rounded-xl border border-[#e2e8f0] bg-[#f8fafc] px-4 py-3 text-sm outline-none focus:border-[#6366f1]"
+                    >
+                      <option>Fresh</option>
+                      <option>Enquiry Received</option>
+                      <option>Visit Done</option>
+                      <option>Interested</option>
+                    </select>
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-xs font-bold uppercase tracking-wider text-[#64748b]">Project</label>
+                    <input
+                      type="text"
+                      value={followUpFormValues.project}
+                      onChange={(e) => setFollowUpFormValues({...followUpFormValues, project: e.target.value})}
+                      className="w-full rounded-xl border border-[#e2e8f0] bg-[#f8fafc] px-4 py-3 text-sm outline-none focus:border-[#6366f1]"
+                    />
+                  </div>
                 </div>
-
-                <div className="ua-followup-field space-y-2">
-                  <label className="text-sm font-semibold text-[#1f3557]">Email</label>
-                  <input
-                    type="text"
-                    disabled
-                    value={followUpFormValues.email}
-                    className="w-full rounded-md border border-[#c6d4ea] bg-[#e1e8f5] px-4 py-2 text-base text-[#566579] outline-none"
-                  />
-                </div>
-
-                <div className="ua-followup-field space-y-2">
-                  <label className="text-sm font-semibold text-[#1f3557]">Phone</label>
-                  <input
-                    type="text"
-                    disabled
-                    value={followUpFormValues.phone}
-                    className="w-full rounded-md border border-[#c6d4ea] bg-[#e1e8f5] px-4 py-2 text-base text-[#566579] outline-none"
-                  />
-                </div>
-
-                <div className="ua-followup-field space-y-2">
-                  <label className="text-sm font-semibold text-[#1f3557]">Sell.Do Lead ID</label>
-                  <input
-                    type="text"
-                    value={followUpFormValues.sellDoLeadId}
-                    onChange={(e) => setFollowUpFormValues({...followUpFormValues, sellDoLeadId: e.target.value})}
-                    className="w-full rounded-md border border-[#c6d4ea] bg-white px-4 py-2 text-base text-[#2d4568] outline-none focus:border-[#7d88ff]"
-                  />
-                </div>
-
-                <div className="ua-followup-field space-y-2">
-                  <label className="text-sm font-semibold text-[#1f3557]">Project</label>
-                  <input
-                    type="text"
-                    value={followUpFormValues.project}
-                    onChange={(e) => setFollowUpFormValues({...followUpFormValues, project: e.target.value})}
-                    placeholder="e.g. Mountain View Estates"
-                    className="w-full rounded-md border border-[#c6d4ea] bg-white px-4 py-2 text-base text-[#2d4568] outline-none focus:border-[#7d88ff]"
-                  />
-                </div>
-
-                <div className="ua-followup-field space-y-2">
-                  <label className="text-sm font-semibold text-[#1f3557]">Lead Stage</label>
-                  <select
-                    value={followUpFormValues.leadStage}
-                    onChange={(e) => setFollowUpFormValues({...followUpFormValues, leadStage: e.target.value})}
-                    className="w-full rounded-md border border-[#c6d4ea] bg-white px-4 py-2 text-base text-[#2d4568] outline-none focus:border-[#7d88ff]"
-                  >
-                    <option>Fresh</option>
-                    <option>Enquiry Received</option>
-                    <option>Visit Done</option>
-                    <option>Interested</option>
-                    <option>Not Interested</option>
-                  </select>
-                </div>
-
-                <div className="ua-followup-field space-y-2">
-                  <label className="text-sm font-semibold text-[#1f3557]">Remarks</label>
+                <div className="space-y-2">
+                  <label className="text-xs font-bold uppercase tracking-wider text-[#64748b]">Remarks</label>
                   <textarea
+                    rows={3}
                     value={followUpFormValues.remark}
                     onChange={(e) => setFollowUpFormValues({...followUpFormValues, remark: e.target.value})}
-                    placeholder="Add notes about this follow-up..."
-                    rows={3}
-                    className="w-full rounded-md border border-[#c6d4ea] bg-white px-4 py-2 text-base text-[#2d4568] outline-none focus:border-[#7d88ff]"
+                    className="w-full rounded-xl border border-[#e2e8f0] bg-[#f8fafc] px-4 py-3 text-sm outline-none focus:border-[#6366f1] resize-none"
                   />
                 </div>
-              </div>
-
-              <div className="flex justify-end border-t border-[#d2dbee] bg-white/75 px-5 py-4">
-                <button
-                  type="button"
-                  onClick={handleSaveFollowUp}
-                  className="ua-clickable ua-followup-action rounded-md bg-[#1d73ce] px-6 py-2 text-lg font-semibold text-white transition hover:brightness-110"
-                >
-                  Save to Leads
-                </button>
+                <div className="flex justify-end pt-4">
+                  <button onClick={handleSaveFollowUp} className="rounded-xl bg-[#6366f1] px-10 py-3 text-sm font-bold text-white shadow-lg shadow-indigo-100 hover:bg-[#4f46e5]">Save to Leads</button>
+                </div>
               </div>
             </div>
           </div>
+        )}
+
+        {/* Action Menu Portal */}
+        {openActionIndex !== null && menuAnchorRect && createPortal(
+          <div 
+            ref={actionMenuRef}
+            className="fixed z-[999] w-72 overflow-hidden rounded-[2.5rem] border border-white bg-white/90 p-4 shadow-[0_25px_70px_rgba(49,46,129,0.25)] backdrop-blur-3xl animate-elastic-pop"
+            style={{ 
+              top: `${Math.min(menuAnchorRect.top - window.scrollY + 12, window.innerHeight - 200)}px`, 
+              left: `${Math.max(20, menuAnchorRect.left - window.scrollX - 260)}px` 
+            }}
+          >
+            <div className="absolute inset-0 bg-gradient-to-br from-[#312e81]/5 to-transparent opacity-50" />
+            <div className="relative space-y-1.5">
+              <button
+                type="button"
+                onClick={() => {
+                  setOpenActionIndex(null)
+                  setMenuAnchorRect(null)
+                  setViewingAccountIndex(openActionIndex)
+                  setIsDetailsOpen(true)
+                }}
+                className="group flex w-full items-center gap-4 rounded-2xl p-3 text-left transition-all duration-300 hover:bg-[#312e81] hover:text-white hover:shadow-lg hover:shadow-indigo-200"
+              >
+                <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-[#eff6ff] text-[#312e81] transition-colors group-hover:bg-white/20 group-hover:text-white">
+                  <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                    <circle cx="12" cy="12" r="3" />
+                  </svg>
+                </div>
+                <div>
+                  <div className="text-base font-bold">View Details</div>
+                  <div className="text-[10px] opacity-70 font-medium">Full profile & history</div>
+                </div>
+              </button>
+              
+              <button
+                type="button"
+                onClick={() => {
+                  setOpenActionIndex(null)
+                  setMenuAnchorRect(null)
+                  handleOpenFollowUp(accounts[openActionIndex])
+                }}
+                className="group flex w-full items-center gap-4 rounded-2xl p-3 text-left transition-all duration-300 hover:bg-[#ea580c] hover:text-white hover:shadow-lg hover:shadow-orange-200"
+              >
+                <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-[#fff7ed] text-[#ea580c] transition-colors group-hover:bg-white/20 group-hover:text-white">
+                  <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <line x1="12" y1="5" x2="12" y2="19" />
+                    <line x1="5" y1="12" x2="19" y2="12" />
+                  </svg>
+                </div>
+                <div>
+                  <div className="text-base font-bold">Add Follow-up</div>
+                  <div className="text-[10px] opacity-70 font-medium">Schedule next activity</div>
+                </div>
+              </button>
+            </div>
+          </div>,
+          document.body
         )}
       </section>
     </main>
