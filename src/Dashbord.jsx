@@ -519,18 +519,18 @@ function Dashbord({ onSignOut, onBackToDashboard, onOpenUserAccount, onOpenLeadA
             className="absolute left-1/3 top-0 h-full w-[22rem] rotate-[1deg] bg-gradient-to-r from-transparent via-[#eb7a26]/16 to-transparent blur-xl"
           />
         </div>
-        <div className="relative flex w-full items-center justify-between gap-8 overflow-visible px-6 py-5 lg:px-10">
+        <div className="relative flex w-full items-center justify-between gap-8 overflow-visible px-6 py-4 lg:px-10">
           {/* Brand Logo - Left */}
           <div className="flex shrink-0 items-center gap-3">
-            <div className="text-3xl font-black tracking-tighter text-[#2b45ba]">MP</div>
+            <div className="text-[1.75rem] font-black tracking-tighter text-[#2b45ba]">MP</div>
             <div className="flex flex-col -space-y-1">
-              <div className="text-[1.1rem] font-bold tracking-tight text-[#2b45ba]">Developers</div>
-              <div className="text-[9px] font-black uppercase tracking-[0.22em] text-[#f18a3a]">Trust Forever</div>
+              <div className="text-[1rem] font-bold tracking-tight text-[#2b45ba]">Developers</div>
+              <div className="text-[8.5px] font-black uppercase tracking-[0.2em] text-[#f18a3a]">Trust Forever</div>
             </div>
           </div>
 
           {/* Centered Premium Navigation Hub */}
-          <nav className="absolute left-1/2 top-1/2 flex -translate-x-1/2 -translate-y-1/2 items-center gap-1.5 rounded-[2.5rem] border border-[#f1f5f9] bg-white/40 p-1.5 shadow-sm backdrop-blur-xl">
+          <nav className="absolute left-1/2 top-1/2 flex -translate-x-1/2 -translate-y-1/2 items-center gap-1 rounded-[2.5rem] border border-[#f1f5f9] bg-white/40 p-1 shadow-sm backdrop-blur-xl">
             {navItems.map((item) => (
               <div key={item.label} className="relative">
                 <button
@@ -547,7 +547,7 @@ function Dashbord({ onSignOut, onBackToDashboard, onOpenUserAccount, onOpenLeadA
                       if (item.label === 'Lead Activity') onOpenLeadActive?.()
                     }
                   }}
-                  className={`group relative flex items-center gap-2 rounded-full px-6 py-2.5 text-[11px] font-black uppercase tracking-wider transition-all duration-300 ${
+                  className={`group relative flex items-center gap-2 rounded-full px-6 py-2 text-[10.5px] font-black uppercase tracking-wider transition-all duration-300 ${
                     item.label === 'Dashbord'
                       ? 'bg-white text-[#6366f1] shadow-[0_12px_25px_rgba(99,102,241,0.12)] ring-1 ring-[#6366f1]/20'
                       : 'text-slate-500 hover:bg-white/80 hover:text-[#0f172a]'
@@ -602,7 +602,7 @@ function Dashbord({ onSignOut, onBackToDashboard, onOpenUserAccount, onOpenLeadA
                 setOpenMenu(null)
                 setOpenWelcome((current) => !current)
               }}
-              className={`group flex items-center gap-3 rounded-2xl px-6 py-2.5 text-[11px] font-black uppercase tracking-widest transition-all duration-300 hover:shadow-[0_12px_25px_rgba(0,0,0,0.08)] active:scale-95 ${
+              className={`group flex items-center gap-3 rounded-2xl px-6 py-2 text-[10.5px] font-black uppercase tracking-widest transition-all duration-300 hover:shadow-[0_12px_25px_rgba(0,0,0,0.08)] active:scale-95 ${
                 openWelcome ? 'bg-white text-[#6366f1] ring-1 ring-[#6366f1]/20' : 'bg-slate-50 text-slate-600 hover:bg-white'
               }`}
             >
