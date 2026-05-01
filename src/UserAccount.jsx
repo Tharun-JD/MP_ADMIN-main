@@ -675,9 +675,9 @@ function UserAccount({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, o
                   <span className="px-3 text-[11px] font-bold text-[#94a3b8]">VIEW:</span>
                   <button className="rounded-full bg-white px-4 py-1.5 text-[11px] font-bold text-[#6366f1] shadow-sm border border-[#f1f5f9]">All Users</button>
                 </div>
-                
+
                 <div ref={addUserMenuRef} className="relative">
-                  <button 
+                  <button
                     onClick={() => setIsAddUserOpen((prev) => !prev)}
                     className="flex items-center gap-2 rounded-xl bg-[#6366f1] px-5 py-2.5 text-xs font-bold text-white shadow-lg shadow-indigo-100 transition hover:bg-[#4f46e5] active:scale-95"
                   >
@@ -707,7 +707,7 @@ function UserAccount({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, o
                   )}
                 </div>
 
-                <button 
+                <button
                   onClick={() => setIsFilterOpen(true)}
                   className="flex items-center gap-2 rounded-xl bg-[#f8fafc] px-5 py-2.5 text-xs font-bold text-[#64748b] border border-[#f1f5f9] transition hover:bg-white hover:shadow-md"
                 >
@@ -716,7 +716,7 @@ function UserAccount({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, o
                   <IconChevron />
                 </button>
 
-                <button 
+                <button
                   onClick={onBackToDashboard}
                   className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#f8fafc] text-[#94a3b8] border border-[#f1f5f9] transition hover:text-[#ef4444] hover:bg-red-50"
                 >
@@ -755,7 +755,7 @@ function UserAccount({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, o
                             </div>
                             <h3 className="text-xl font-bold text-[#1e293b]">No users found</h3>
                             <p className="mt-2 text-sm text-[#94a3b8]">Get started by adding your first administrative user.</p>
-                            <button 
+                            <button
                               onClick={() => setIsAddUserOpen(true)}
                               className="mt-8 rounded-full bg-[#2549b8] px-8 py-3.5 text-sm font-bold text-white shadow-xl shadow-blue-200 transition hover:bg-[#1e3a8a] active:scale-95"
                             >
@@ -839,7 +839,7 @@ function UserAccount({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, o
         {/* Floating Add Button */}
         {accounts.length > 0 && (
           <div className="fixed top-28 right-8 z-[100] group">
-            <button 
+            <button
               onClick={() => setIsAddUserOpen((prev) => !prev)}
               className="flex h-14 w-14 items-center justify-center rounded-2xl bg-[#6366f1] text-white shadow-2xl shadow-indigo-300 transition hover:bg-[#4f46e5] hover:scale-105 active:scale-95"
             >
@@ -873,7 +873,7 @@ function UserAccount({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, o
         {isFilterOpen && (
           <div className="ua-filter-overlay fixed inset-0 z-[260] flex items-center justify-center bg-[#0f172a]/20 px-4 py-6 backdrop-blur-sm">
             <div ref={filterPanelRef} className="w-full max-w-4xl overflow-hidden rounded-[2.5rem] bg-white shadow-2xl animate-elastic-pop">
-              <div className="flex items-center justify-between border-b border-[#f1f5f9] px-8 py-6">
+              <div className="flex items-center justify-between border-b border-[#f1f5f9] px-8 py-6 rounded-t-[2.5rem]">
                 <h2 className="text-2xl font-black text-[#1e293b]">Filter Users</h2>
                 <button onClick={() => setIsFilterOpen(false)} className="text-[#94a3b8] hover:text-[#ef4444]">
                   <svg className="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
@@ -901,7 +901,7 @@ function UserAccount({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, o
                   />
                 </div>
               </div>
-              <div className="flex items-center justify-end gap-3 border-t border-[#f1f5f9] bg-[#f8fafc]/50 px-8 py-6">
+              <div className="flex items-center justify-end gap-3 border-t border-[#e2e8f0] bg-[#f8fafc]/50 px-8 py-6 rounded-b-[2.5rem]">
                 <button onClick={resetFilter} className="rounded-xl px-6 py-2.5 text-sm font-bold text-[#64748b] hover:text-[#1e293b]">Reset</button>
                 <button onClick={() => setIsFilterOpen(false)} className="rounded-xl bg-[#6366f1] px-8 py-2.5 text-sm font-bold text-white shadow-lg shadow-indigo-100 hover:bg-[#4f46e5]">Apply Filters</button>
               </div>
@@ -911,8 +911,8 @@ function UserAccount({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, o
 
         {isAddUserFormOpen && (
           <div className="ua-add-user-overlay fixed inset-0 z-[290] flex items-center justify-center bg-[#0f172a]/40 px-4 py-6 backdrop-blur-sm">
-            <div ref={addUserFormRef} className="w-full max-w-4xl overflow-hidden rounded-[2.5rem] bg-white shadow-2xl animate-elastic-pop">
-              <div className="flex items-center justify-between border-b border-[#f1f5f9] px-8 py-6">
+            <div ref={addUserFormRef} className="w-full max-w-5xl rounded-[2.5rem] bg-white shadow-2xl animate-elastic-pop">
+              <div className="flex items-center justify-between border-b border-[#f1f5f9] px-8 py-6 rounded-t-[2.5rem]">
                 <div>
                   <h2 className="text-2xl font-black text-[#1e293b]">Add New User</h2>
                   <p className="text-xs font-bold text-[#6366f1] uppercase tracking-wider">{selectedAddUserRole}</p>
@@ -930,7 +930,8 @@ function UserAccount({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, o
                     type="text"
                     value={addUserFormValues.firstName}
                     onChange={(e) => setAddUserField('firstName', e.target.value)}
-                    className="w-full rounded-xl border border-[#e2e8f0] bg-[#f8fafc] px-4 py-3 text-sm outline-none focus:border-[#6366f1]"
+                    placeholder="Enter first name"
+                    className="w-full rounded-xl border border-[#e2e8f0] bg-[#f8fafc] px-5 py-4 text-base font-semibold text-[#1e293b] outline-none transition-all focus:border-[#6366f1] focus:bg-white"
                   />
                 </div>
                 <div className="ua-add-user-field space-y-2">
@@ -939,7 +940,8 @@ function UserAccount({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, o
                     type="text"
                     value={addUserFormValues.lastName}
                     onChange={(e) => setAddUserField('lastName', e.target.value)}
-                    className="w-full rounded-xl border border-[#e2e8f0] bg-[#f8fafc] px-4 py-3 text-sm outline-none focus:border-[#6366f1]"
+                    placeholder="Enter last name"
+                    className="w-full rounded-xl border border-[#e2e8f0] bg-[#f8fafc] px-5 py-4 text-base font-semibold text-[#1e293b] outline-none transition-all focus:border-[#6366f1] focus:bg-white"
                   />
                 </div>
                 <div className="ua-add-user-field space-y-2">
@@ -948,7 +950,8 @@ function UserAccount({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, o
                     type="email"
                     value={addUserFormValues.email}
                     onChange={(e) => setAddUserField('email', e.target.value)}
-                    className="w-full rounded-xl border border-[#e2e8f0] bg-[#f8fafc] px-4 py-3 text-sm outline-none focus:border-[#6366f1]"
+                    placeholder="email@example.com"
+                    className="w-full rounded-xl border border-[#e2e8f0] bg-[#f8fafc] px-5 py-4 text-base font-semibold text-[#1e293b] outline-none transition-all focus:border-[#6366f1] focus:bg-white"
                   />
                 </div>
                 <div className="ua-add-user-field space-y-2">
@@ -958,31 +961,32 @@ function UserAccount({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, o
                       <button
                         type="button"
                         onClick={() => setIsCountryCodeOpen(!isCountryCodeOpen)}
-                        className="ua-cc-trigger flex items-center gap-2 rounded-xl border border-[#e2e8f0] bg-[#f8fafc] px-4 py-3 text-sm font-bold text-[#1e293b] outline-none transition-all hover:bg-white focus:border-[#6366f1]"
+                        className="ua-cc-trigger flex items-center gap-3 rounded-xl border border-[#e2e8f0] bg-[#f8fafc] px-5 py-4 text-sm font-bold text-[#1e293b] outline-none transition-all hover:bg-white focus:border-[#6366f1]"
+                        style={{ minWidth: '130px' }}
                       >
-                        <span>{countryPhoneOptions.find(opt => opt.code === addUserFormValues.countryCode)?.flag}</span>
-                        <span>{addUserFormValues.countryCode}</span>
-                        <IconChevron className={`transition-transform duration-300 ${isCountryCodeOpen ? 'rotate-180' : ''}`} />
+                        <span className="text-[11px] font-black uppercase tracking-widest text-[#64748b]">{countryPhoneOptions.find(opt => opt.code === addUserFormValues.countryCode)?.iso}</span>
+                        <span className="text-lg font-black">{addUserFormValues.countryCode}</span>
+                        <IconChevron className={`h-4 w-4 transition-transform duration-300 ${isCountryCodeOpen ? 'rotate-180' : ''}`} />
                       </button>
 
                       {isCountryCodeOpen && (
-                        <div 
+                        <div
                           ref={countryCodeDropdownRef}
-                          className="absolute left-0 top-full z-[300] mt-2 w-64 overflow-hidden rounded-2xl border border-[#f1f5f9] bg-white p-2 shadow-2xl animate-fall"
+                          className="absolute left-0 top-full z-[300] mt-2 w-80 overflow-hidden rounded-2xl border border-[#f1f5f9] bg-white p-2 shadow-2xl animate-fall"
                         >
                           <div className="mb-2 px-2 pt-1">
-                            <input 
+                            <input
                               type="text"
-                              placeholder="Search code..."
+                              placeholder="Search country or code..."
                               autoFocus
                               value={countryCodeSearch}
                               onChange={(e) => setCountryCodeSearch(e.target.value)}
-                              className="w-full rounded-xl border border-[#f1f5f9] bg-[#f8fafc] px-3 py-2 text-xs font-bold text-[#0f172a] outline-none focus:border-[#6366f1]"
+                              className="w-full rounded-xl border border-[#f1f5f9] bg-[#f8fafc] px-4 py-3 text-sm font-bold text-[#0f172a] outline-none focus:border-[#6366f1]"
                             />
                           </div>
-                          <div className="max-h-60 overflow-y-auto no-scrollbar">
+                          <div className="max-h-80 overflow-y-auto no-scrollbar">
                             {countryPhoneOptions
-                              .filter(opt => opt.country.toLowerCase().includes(countryCodeSearch.toLowerCase()) || opt.code.includes(countryCodeSearch))
+                              .filter(opt => opt.country.toLowerCase().includes(countryCodeSearch.toLowerCase()) || opt.code.includes(countryCodeSearch) || opt.iso.toLowerCase().includes(countryCodeSearch.toLowerCase()))
                               .map(opt => (
                                 <button
                                   key={`${opt.country}-${opt.code}`}
@@ -992,11 +996,12 @@ function UserAccount({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, o
                                     setIsCountryCodeOpen(false)
                                     setCountryCodeSearch('')
                                   }}
-                                  className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left text-xs font-bold text-[#64748b] transition hover:bg-[#f0f4ff] hover:text-[#6366f1]"
+                                  className="flex w-full items-center gap-3 rounded-lg px-3 py-3 text-left text-sm font-bold text-[#475569] transition hover:bg-[#f0f4ff] hover:text-[#6366f1]"
                                 >
-                                  <span className="text-base">{opt.flag}</span>
-                                  <span className="flex-1">{opt.country}</span>
-                                  <span className="text-[#94a3b8]">{opt.code}</span>
+                                  <span className="text-xl">{opt.flag}</span>
+                                  <span className="flex-1 font-bold text-[#1e293b]">{opt.country}</span>
+                                  <span className="rounded bg-slate-100 px-2 py-0.5 text-[10px] font-black text-[#94a3b8] uppercase">{opt.iso}</span>
+                                  <span className="font-black text-[#0f172a]">{opt.code}</span>
                                 </button>
                               ))
                             }
@@ -1009,12 +1014,12 @@ function UserAccount({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, o
                       value={addUserFormValues.phone}
                       onChange={(e) => setAddUserField('phone', e.target.value)}
                       placeholder="Enter phone number"
-                      className="w-full rounded-xl border border-[#e2e8f0] bg-[#f8fafc] px-4 py-3 text-sm outline-none transition-all focus:border-[#6366f1] focus:bg-white"
+                      className="w-full rounded-xl border border-[#e2e8f0] bg-[#f8fafc] px-5 py-4 text-base font-semibold text-[#1e293b] outline-none transition-all focus:border-[#6366f1] focus:bg-white"
                     />
                   </div>
                 </div>
               </div>
-              <div className="flex justify-end border-t border-[#f1f5f9] bg-[#f8fafc]/50 px-8 py-6">
+              <div className="flex justify-end border-t border-[#f1f5f9] bg-[#f8fafc]/50 px-8 py-6 rounded-b-[2.5rem]">
                 <button onClick={handleSaveUser} className="rounded-xl bg-[#6366f1] px-10 py-3 text-sm font-bold text-white shadow-lg shadow-indigo-100 hover:bg-[#4f46e5]">Create Account</button>
               </div>
             </div>
@@ -1023,8 +1028,8 @@ function UserAccount({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, o
 
         {isDetailsOpen && viewingAccountIndex !== null && (
           <div className="fixed inset-0 z-[500] flex items-center justify-center bg-[#0f172a]/40 p-4 backdrop-blur-sm">
-            <div className="w-full max-w-2xl overflow-hidden rounded-[2.5rem] bg-white shadow-2xl animate-elastic-pop">
-              <div className="flex items-center justify-between border-b border-[#f1f5f9] px-8 py-6">
+            <div className="w-full max-w-2xl rounded-[2.5rem] bg-white shadow-2xl animate-elastic-pop">
+              <div className="flex items-center justify-between border-b border-[#f1f5f9] px-8 py-6 rounded-t-[2.5rem]">
                 <h2 className="text-2xl font-black text-[#1e293b]">User Details</h2>
                 <button onClick={() => setIsDetailsOpen(false)} className="text-[#94a3b8] hover:text-[#ef4444]">
                   <svg className="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
@@ -1048,7 +1053,7 @@ function UserAccount({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, o
                     </div>
                   ))}
                 </div>
-                <div className="mt-8 flex justify-end">
+                <div className="mt-8 flex justify-end border-t border-[#f1f5f9] bg-[#f8fafc]/50 px-8 py-6 rounded-b-[2.5rem]">
                   <button onClick={() => setIsDetailsOpen(false)} className="rounded-xl bg-[#f1f5f9] px-8 py-2.5 text-sm font-bold text-[#64748b] hover:bg-[#e2e8f0]">Close</button>
                 </div>
               </div>
@@ -1059,7 +1064,7 @@ function UserAccount({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, o
         {isFollowUpFormOpen && (
           <div className="ua-followup-overlay fixed inset-0 z-[295] flex items-center justify-center bg-[#0f172a]/40 px-4 py-6 backdrop-blur-sm">
             <div ref={followUpFormRef} className="w-full max-w-2xl overflow-hidden rounded-[2.5rem] bg-white shadow-2xl animate-elastic-pop">
-              <div className="flex items-center justify-between border-b border-[#f1f5f9] px-8 py-6">
+              <div className="flex items-center justify-between border-b border-[#f1f5f9] px-8 py-6 rounded-t-[2.5rem]">
                 <h2 className="text-2xl font-black text-[#1e293b]">Add Follow-up</h2>
                 <button onClick={() => setIsFollowUpFormOpen(false)} className="text-[#94a3b8] hover:text-[#ef4444]">
                   <svg className="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
@@ -1073,7 +1078,7 @@ function UserAccount({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, o
                     <label className="text-xs font-bold uppercase tracking-wider text-[#64748b]">Lead Stage</label>
                     <select
                       value={followUpFormValues.leadStage}
-                      onChange={(e) => setFollowUpFormValues({...followUpFormValues, leadStage: e.target.value})}
+                      onChange={(e) => setFollowUpFormValues({ ...followUpFormValues, leadStage: e.target.value })}
                       className="w-full rounded-xl border border-[#e2e8f0] bg-[#f8fafc] px-4 py-3 text-sm outline-none focus:border-[#6366f1]"
                     >
                       <option>Fresh</option>
@@ -1087,7 +1092,7 @@ function UserAccount({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, o
                     <input
                       type="text"
                       value={followUpFormValues.project}
-                      onChange={(e) => setFollowUpFormValues({...followUpFormValues, project: e.target.value})}
+                      onChange={(e) => setFollowUpFormValues({ ...followUpFormValues, project: e.target.value })}
                       className="w-full rounded-xl border border-[#e2e8f0] bg-[#f8fafc] px-4 py-3 text-sm outline-none focus:border-[#6366f1]"
                     />
                   </div>
@@ -1097,11 +1102,11 @@ function UserAccount({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, o
                   <textarea
                     rows={3}
                     value={followUpFormValues.remark}
-                    onChange={(e) => setFollowUpFormValues({...followUpFormValues, remark: e.target.value})}
+                    onChange={(e) => setFollowUpFormValues({ ...followUpFormValues, remark: e.target.value })}
                     className="w-full rounded-xl border border-[#e2e8f0] bg-[#f8fafc] px-4 py-3 text-sm outline-none focus:border-[#6366f1] resize-none"
                   />
                 </div>
-                <div className="flex justify-end pt-4">
+                <div className="flex justify-end border-t border-[#f1f5f9] bg-[#f8fafc]/50 px-8 py-6 rounded-b-[2.5rem]">
                   <button onClick={handleSaveFollowUp} className="rounded-xl bg-[#6366f1] px-10 py-3 text-sm font-bold text-white shadow-lg shadow-indigo-100 hover:bg-[#4f46e5]">Save to Leads</button>
                 </div>
               </div>
@@ -1111,14 +1116,14 @@ function UserAccount({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, o
 
         {/* Action Menu Portal */}
         {openActionIndex !== null && menuAnchorRect && createPortal(
-          <div 
+          <div
             ref={actionMenuRef}
             className="fixed z-[999] w-72 overflow-hidden rounded-[2.5rem] border border-white bg-white/90 p-4 shadow-[0_25px_70px_rgba(49,46,129,0.25)] backdrop-blur-3xl animate-elastic-pop"
-            style={{ 
-              top: `${(menuAnchorRect.top - window.scrollY) + 180 > window.innerHeight 
-                ? menuAnchorRect.top - window.scrollY - 190 
-                : menuAnchorRect.top - window.scrollY + 12}px`, 
-              left: `${Math.max(20, menuAnchorRect.left - window.scrollX - 260)}px` 
+            style={{
+              top: `${(menuAnchorRect.top - window.scrollY) + 180 > window.innerHeight
+                ? menuAnchorRect.top - window.scrollY - 190
+                : menuAnchorRect.top - window.scrollY + 12}px`,
+              left: `${Math.max(20, menuAnchorRect.left - window.scrollX - 260)}px`
             }}
           >
             <div className="absolute inset-0 bg-gradient-to-br from-[#312e81]/5 to-transparent opacity-50" />
@@ -1144,7 +1149,7 @@ function UserAccount({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, o
                   <div className="text-[10px] opacity-70 font-medium">Full profile & history</div>
                 </div>
               </button>
-              
+
               <button
                 type="button"
                 onClick={() => {

@@ -149,7 +149,7 @@ function LeadActive({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, on
     remark: ''
   })
   const followUpPanelRef = useRef(null)
-  
+
   // -- Add Lead State --
   const [isAddLeadOpen, setIsAddLeadOpen] = useState(false)
   const [newLead, setNewLead] = useState({
@@ -226,7 +226,7 @@ function LeadActive({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, on
 
   useEffect(() => {
     if (!isFollowUpOpen || !followUpPanelRef.current) return
-    
+
     gsap.fromTo(followUpPanelRef.current,
       { y: 20, opacity: 0, scale: 0.95 },
       { y: 0, opacity: 1, scale: 1, duration: 0.3, ease: 'power2.out' }
@@ -394,7 +394,7 @@ function LeadActive({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, on
 
   const handleSaveFollowUp = () => {
     if (editingLeadIndex === null) return
-    
+
     const updatedLeads = [...leads]
     updatedLeads[editingLeadIndex] = {
       ...updatedLeads[editingLeadIndex],
@@ -403,7 +403,7 @@ function LeadActive({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, on
       countStatus: followUpValues.countStatus,
       remark: followUpValues.remark,
     }
-    
+
     setLeads(updatedLeads)
     setIsFollowUpOpen(false)
     setEditingLeadIndex(null)
@@ -481,8 +481,8 @@ function LeadActive({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, on
                   <span className="px-3 text-[11px] font-bold text-[#94a3b8]">VIEW:</span>
                   <button className="rounded-full bg-white px-4 py-1.5 text-[11px] font-bold text-[#6366f1] shadow-sm border border-[#f1f5f9]">All Leads</button>
                 </div>
-                
-                <button 
+
+                <button
                   onClick={() => setIsAddLeadOpen(true)}
                   className="flex items-center gap-2 rounded-xl bg-[#6366f1] px-5 py-2.5 text-xs font-bold text-white shadow-lg shadow-indigo-100 transition hover:bg-[#4f46e5] active:scale-95"
                 >
@@ -492,7 +492,7 @@ function LeadActive({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, on
                   Add Lead
                 </button>
 
-                <button 
+                <button
                   onClick={() => setIsFilterOpen(true)}
                   className="flex items-center gap-2 rounded-xl bg-[#f8fafc] px-5 py-2.5 text-xs font-bold text-[#64748b] border border-[#f1f5f9] transition hover:bg-white hover:shadow-md"
                 >
@@ -501,7 +501,7 @@ function LeadActive({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, on
                   <IconChevron />
                 </button>
 
-                <button 
+                <button
                   onClick={onBackToDashboard}
                   className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#f8fafc] text-[#94a3b8] border border-[#f1f5f9] transition hover:text-[#ef4444] hover:bg-red-50"
                 >
@@ -538,7 +538,7 @@ function LeadActive({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, on
                             </div>
                             <h3 className="text-xl font-bold text-[#1e293b]">No activities found</h3>
                             <p className="mt-2 text-sm text-[#94a3b8]">Get started by adding your first lead to the system.</p>
-                            <button 
+                            <button
                               onClick={() => setIsAddLeadOpen(true)}
                               className="mt-8 rounded-full bg-[#2549b8] px-8 py-3.5 text-sm font-bold text-white shadow-xl shadow-blue-200 transition hover:bg-[#1e3a8a] active:scale-95"
                             >
@@ -623,7 +623,7 @@ function LeadActive({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, on
 
         {/* Add Lead Button (Floating) */}
         {leads.length > 0 && (
-          <button 
+          <button
             onClick={() => setIsAddLeadOpen(true)}
             className="fixed top-28 right-8 z-[100] flex h-14 w-14 items-center justify-center rounded-2xl bg-[#6366f1] text-white shadow-2xl shadow-indigo-300 transition hover:bg-[#4f46e5] hover:scale-105 active:scale-95"
           >
@@ -633,11 +633,34 @@ function LeadActive({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, on
           </button>
         )}
 
+        {/* Filter Modal */}
+        {isFilterOpen && (
+          <div className="fixed inset-0 z-[200] flex items-center justify-center bg-[#0f172a]/40 px-4 py-6 backdrop-blur-sm">
+            <div ref={filterRef} className="w-full max-w-2xl rounded-[2.5rem] bg-white shadow-2xl animate-elastic-pop">
+              <div className="flex items-center justify-between border-b border-[#f1f5f9] px-8 py-6 rounded-t-[2.5rem]">
+                <h2 className="text-xl font-black text-[#1e293b]">Filter Leads</h2>
+                <button onClick={() => setIsFilterOpen(false)} className="text-[#94a3b8] hover:text-[#ef4444]">
+                  <svg className="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                    <path d="M18 6L6 18M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+              <div className="p-8">
+                {/* Filter content here */}
+              </div>
+              <div className="flex items-center justify-end gap-3 border-t border-[#f1f5f9] bg-[#f8fafc]/50 px-8 py-6 rounded-b-[2.5rem]">
+                <button onClick={() => setIsFilterOpen(false)} className="px-6 py-3 text-sm font-bold text-[#64748b]">Clear</button>
+                <button className="rounded-xl bg-[#6366f1] px-8 py-3 text-sm font-bold text-white shadow-lg shadow-indigo-100">Apply Filter</button>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Add Lead Modal */}
         {isAddLeadOpen && (
-          <div className="fixed inset-0 z-[600] flex items-center justify-center bg-[#0f172a]/40 p-4 backdrop-blur-sm">
-            <div ref={addLeadModalRef} className="w-full max-w-2xl overflow-hidden rounded-[2.5rem] bg-white shadow-2xl animate-elastic-pop">
-              <div className="flex items-center justify-between border-b border-[#f1f5f9] px-8 py-6">
+          <div className="la-modal-overlay fixed inset-0 z-[600] flex items-center justify-center bg-[#0f172a]/40 p-4 backdrop-blur-sm">
+            <div ref={addLeadModalRef} className="w-full max-w-5xl rounded-[2.5rem] bg-white shadow-2xl animate-elastic-pop">
+              <div className="flex items-center justify-between border-b border-[#f1f5f9] px-8 py-6 rounded-t-[2.5rem]">
                 <h2 className="text-2xl font-black text-[#1e293b]">Add New Lead</h2>
                 <button onClick={() => setIsAddLeadOpen(false)} className="text-[#94a3b8] hover:text-[#ef4444] transition">
                   <svg className="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
@@ -649,17 +672,17 @@ function LeadActive({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, on
                 <div className="grid gap-6 md:grid-cols-2">
                   <div className="space-y-2">
                     <label className="text-xs font-bold uppercase tracking-wider text-[#64748b]">Name</label>
-                    <input 
+                    <input
                       type="text" required value={newLead.name}
-                      onChange={e => setNewLead({...newLead, name: e.target.value})}
+                      onChange={e => setNewLead({ ...newLead, name: e.target.value })}
                       className="w-full rounded-xl border border-[#e2e8f0] bg-[#f8fafc] px-4 py-3 text-sm outline-none focus:border-[#6366f1] transition"
                     />
                   </div>
                   <div className="space-y-2">
                     <label className="text-xs font-bold uppercase tracking-wider text-[#64748b]">Email</label>
-                    <input 
+                    <input
                       type="email" required value={newLead.email}
-                      onChange={e => setNewLead({...newLead, email: e.target.value})}
+                      onChange={e => setNewLead({ ...newLead, email: e.target.value })}
                       className="w-full rounded-xl border border-[#e2e8f0] bg-[#f8fafc] px-4 py-3 text-sm outline-none focus:border-[#6366f1] transition"
                     />
                   </div>
@@ -670,29 +693,30 @@ function LeadActive({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, on
                         <button
                           type="button"
                           onClick={() => setIsCountryCodeOpen(!isCountryCodeOpen)}
-                          className="la-cc-trigger flex items-center gap-2 rounded-xl border border-[#e2e8f0] bg-[#f8fafc] px-4 py-3 text-sm font-bold text-[#1e293b] outline-none transition-all hover:bg-white focus:border-[#6366f1]"
+                          className="la-cc-trigger flex items-center gap-3 rounded-xl border border-[#e2e8f0] bg-[#f8fafc] px-5 py-4 text-sm font-bold text-[#1e293b] outline-none transition-all hover:bg-white focus:border-[#6366f1]"
+                          style={{ minWidth: '130px' }}
                         >
-                          <span className="text-base">{countryPhoneOptions.find(opt => opt.code === (newLead.countryCode || '+91'))?.flag}</span>
-                          <span className="text-sm">{newLead.countryCode || '+91'}</span>
-                          <IconChevron className={`transition-transform duration-300 ${isCountryCodeOpen ? 'rotate-180' : ''}`} />
+                          <span className="text-[11px] font-black uppercase tracking-widest text-[#64748b]">{countryPhoneOptions.find(opt => opt.code === (newLead.countryCode || '+91'))?.iso}</span>
+                          <span className="text-lg font-black">{newLead.countryCode || '+91'}</span>
+                          <IconChevron className={`h-4 w-4 transition-transform duration-300 ${isCountryCodeOpen ? 'rotate-180' : ''}`} />
                         </button>
 
                         {isCountryCodeOpen && (
-                          <div 
+                          <div
                             ref={countryCodeDropdownRef}
-                            className="absolute left-0 top-full z-[700] mt-2 w-64 overflow-hidden rounded-2xl border border-[#f1f5f9] bg-white p-2 shadow-2xl animate-fall"
+                            className="absolute left-0 top-full z-[700] mt-2 w-80 overflow-hidden rounded-2xl border border-[#f1f5f9] bg-white p-2 shadow-2xl animate-fall"
                           >
                             <div className="mb-2 px-2 pt-1">
-                              <input 
+                              <input
                                 type="text"
-                                placeholder="Search code..."
+                                placeholder="Search country or code..."
                                 autoFocus
                                 value={countryCodeSearch}
                                 onChange={(e) => setCountryCodeSearch(e.target.value)}
-                                className="w-full rounded-xl border border-[#f1f5f9] bg-[#f8fafc] px-3 py-2 text-xs font-bold text-[#0f172a] outline-none focus:border-[#6366f1]"
+                                className="w-full rounded-xl border border-[#f1f5f9] bg-[#f8fafc] px-4 py-3 text-sm font-bold text-[#0f172a] outline-none focus:border-[#6366f1]"
                               />
                             </div>
-                            <div className="max-h-60 overflow-y-auto no-scrollbar">
+                            <div className="max-h-80 overflow-y-auto no-scrollbar">
                               {countryPhoneOptions
                                 .filter(opt => opt.country.toLowerCase().includes(countryCodeSearch.toLowerCase()) || opt.code.includes(countryCodeSearch))
                                 .map(opt => (
@@ -700,15 +724,16 @@ function LeadActive({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, on
                                     key={`${opt.country}-${opt.code}`}
                                     type="button"
                                     onClick={() => {
-                                      setNewLead({...newLead, countryCode: opt.code})
+                                      setNewLead({ ...newLead, countryCode: opt.code })
                                       setIsCountryCodeOpen(false)
                                       setCountryCodeSearch('')
                                     }}
-                                    className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left text-xs font-bold text-[#64748b] transition hover:bg-[#f0f4ff] hover:text-[#6366f1]"
+                                    className="flex w-full items-center gap-3 rounded-lg px-3 py-3 text-left text-sm font-bold text-[#475569] transition hover:bg-[#f0f4ff] hover:text-[#6366f1]"
                                   >
-                                    <span className="text-base">{opt.flag}</span>
-                                    <span className="flex-1">{opt.country}</span>
-                                    <span className="text-[#94a3b8]">{opt.code}</span>
+                                    <span className="text-xl">{opt.flag}</span>
+                                    <span className="flex-1 font-bold text-[#1e293b]">{opt.country}</span>
+                                    <span className="rounded bg-slate-100 px-2 py-0.5 text-[10px] font-black text-[#94a3b8] uppercase">{opt.iso}</span>
+                                    <span className="font-black text-[#0f172a]">{opt.code}</span>
                                   </button>
                                 ))
                               }
@@ -716,40 +741,40 @@ function LeadActive({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, on
                           </div>
                         )}
                       </div>
-                      <input 
+                      <input
                         type="tel" required value={newLead.phone}
-                        onChange={e => setNewLead({...newLead, phone: e.target.value})}
+                        onChange={e => setNewLead({ ...newLead, phone: e.target.value })}
                         placeholder="Enter phone number"
-                        className="w-full rounded-xl border border-[#e2e8f0] bg-[#f8fafc] px-4 py-3 text-sm outline-none focus:border-[#6366f1] transition focus:bg-white"
+                        className="w-full rounded-xl border border-[#e2e8f0] bg-[#f8fafc] px-5 py-4 text-base font-semibold text-[#1e293b] outline-none transition-all focus:border-[#6366f1] focus:bg-white"
                       />
                     </div>
                   </div>
                   <div className="space-y-2">
                     <label className="text-xs font-bold uppercase tracking-wider text-[#64748b]">Sell Do Lead ID</label>
-                    <input 
+                    <input
                       type="text" value={newLead.sellDoLeadId}
-                      onChange={e => setNewLead({...newLead, sellDoLeadId: e.target.value})}
+                      onChange={e => setNewLead({ ...newLead, sellDoLeadId: e.target.value })}
                       className="w-full rounded-xl border border-[#e2e8f0] bg-[#f8fafc] px-4 py-3 text-sm outline-none focus:border-[#6366f1] transition"
                     />
                   </div>
                   <div className="space-y-2">
                     <label className="text-xs font-bold uppercase tracking-wider text-[#64748b]">Project</label>
-                    <input 
+                    <input
                       type="text" required value={newLead.project}
-                      onChange={e => setNewLead({...newLead, project: e.target.value})}
+                      onChange={e => setNewLead({ ...newLead, project: e.target.value })}
                       className="w-full rounded-xl border border-[#e2e8f0] bg-[#f8fafc] px-4 py-3 text-sm outline-none focus:border-[#6366f1] transition"
                     />
                   </div>
                   <div className="space-y-2">
                     <label className="text-xs font-bold uppercase tracking-wider text-[#64748b]">Channel Partner</label>
-                    <input 
+                    <input
                       type="text" required value={newLead.channelPartner}
-                      onChange={e => setNewLead({...newLead, channelPartner: e.target.value})}
+                      onChange={e => setNewLead({ ...newLead, channelPartner: e.target.value })}
                       className="w-full rounded-xl border border-[#e2e8f0] bg-[#f8fafc] px-4 py-3 text-sm outline-none focus:border-[#6366f1] transition"
                     />
                   </div>
                 </div>
-                <div className="mt-8 flex justify-end">
+                <div className="flex items-center justify-end gap-3 border-t border-[#f1f5f9] bg-[#f8fafc]/50 px-8 py-6 rounded-b-[2.5rem]">
                   <button type="submit" className="rounded-xl bg-[#6366f1] px-10 py-3 text-sm font-bold text-white shadow-lg shadow-indigo-100 transition hover:bg-[#4f46e5]">
                     Add Lead Now
                   </button>
@@ -764,116 +789,116 @@ function LeadActive({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, on
             {/* Header */}
             <header className="flex h-16 items-center justify-between border-b border-slate-200 bg-white/80 px-6 backdrop-blur-md">
               <div className="flex items-center gap-3">
-                 <button onClick={() => setIsDetailsOpen(false)} className="group flex h-8 w-8 items-center justify-center rounded-lg transition hover:bg-slate-100">
-                    <svg className="h-5 w-5 text-slate-400 group-hover:text-brand-blue" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="m15 18-6-6 6-6" /></svg>
-                 </button>
-                 <h1 className="text-lg font-black text-slate-800 tracking-tight flex items-center gap-2">
-                    <span className="h-2 w-2 rounded-full bg-brand-blue" />
-                    Customer Detail
-                 </h1>
+                <button onClick={() => setIsDetailsOpen(false)} className="group flex h-8 w-8 items-center justify-center rounded-lg transition hover:bg-slate-100">
+                  <svg className="h-5 w-5 text-slate-400 group-hover:text-brand-blue" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="m15 18-6-6 6-6" /></svg>
+                </button>
+                <h1 className="text-lg font-black text-slate-800 tracking-tight flex items-center gap-2">
+                  <span className="h-2 w-2 rounded-full bg-brand-blue" />
+                  Customer Detail
+                </h1>
               </div>
               <div className="flex items-center gap-3">
-                 <button onClick={() => setIsDetailsOpen(false)} className="rounded-xl border border-slate-200 bg-white px-4 py-1.5 text-xs font-bold text-slate-600 transition hover:bg-slate-50">Back to Lead Activities</button>
-                 <button className="flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-400 transition hover:bg-slate-50"><span className="text-xl font-bold">...</span></button>
-                 <button onClick={() => setIsDetailsOpen(false)} className="flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-400 transition hover:text-rose-500 hover:bg-rose-50">&times;</button>
+                <button onClick={() => setIsDetailsOpen(false)} className="rounded-xl border border-slate-200 bg-white px-4 py-1.5 text-xs font-bold text-slate-600 transition hover:bg-slate-50">Back to Lead Activities</button>
+                <button className="flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-400 transition hover:bg-slate-50"><span className="text-xl font-bold">...</span></button>
+                <button onClick={() => setIsDetailsOpen(false)} className="flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-400 transition hover:text-rose-500 hover:bg-rose-50">&times;</button>
               </div>
             </header>
 
             <div className="flex-1 overflow-y-auto p-6 lg:p-8 no-scrollbar">
               <div className="mx-auto max-w-[1600px] space-y-6">
-                
+
                 {/* Section 1: Customer Detail */}
                 <section className="rounded-3xl border border-white bg-white/70 p-8 shadow-[0_15px_40px_-15px_rgba(0,0,0,0.04)] backdrop-blur-xl">
-                   <h2 className="mb-8 text-xl font-black text-slate-800 tracking-tight">Customer Detail</h2>
-                   <div className="grid gap-x-12 gap-y-6 md:grid-cols-2">
-                      {[
-                        { label: 'First Name', value: leads[viewingLeadIndex].name.split(' ')[0] },
-                        { label: 'Last Name', value: leads[viewingLeadIndex].name.split(' ')[1] || '---' },
-                        { label: 'Name', value: leads[viewingLeadIndex].name },
-                        { label: 'Email', value: leads[viewingLeadIndex].email },
-                        { label: 'Phone', value: leads[viewingLeadIndex].phone || '+91 1234567890' },
-                        { label: 'Sell Do Lead ID', value: leads[viewingLeadIndex].sellDoLeadId || 'SD-0959818' },
-                        { label: 'Project', value: leads[viewingLeadIndex].project || 'MP Amber' },
-                        { label: 'Lead Stage', value: leads[viewingLeadIndex].leadStage || 'Fresh' },
-                        { label: 'Lead Status', value: leads[viewingLeadIndex].leadStatus || 'Already Exists' },
-                        { label: 'Count Status', value: leads[viewingLeadIndex].countStatus || 'Pending' },
-                        { label: 'Registered At', value: leads[viewingLeadIndex].registeredAt || '24/04/2026' },
-                        { label: 'Lead Validity Period', value: leads[viewingLeadIndex].validityPeriod || '90 Days' },
-                        { label: 'Budget', value: leads[viewingLeadIndex].budget || 'INR 50 Lakh' },
-                        { label: 'Location', value: leads[viewingLeadIndex].location || 'Chn' },
-                        { label: 'Configuration', value: leads[viewingLeadIndex].configuration || '1 BHK' },
-                        { label: 'Property Type', value: leads[viewingLeadIndex].propertyType || 'Apartment' },
-                      ].map((item, idx) => (
-                        <div key={idx} className="flex justify-between border-b border-slate-50 py-3">
-                           <span className="text-xs font-bold uppercase tracking-wider text-slate-400">{item.label}:</span>
-                           <span className="text-sm font-black text-slate-800">{item.value}</span>
-                        </div>
-                      ))}
-                   </div>
+                  <h2 className="mb-8 text-xl font-black text-slate-800 tracking-tight">Customer Detail</h2>
+                  <div className="grid gap-x-12 gap-y-6 md:grid-cols-2">
+                    {[
+                      { label: 'First Name', value: leads[viewingLeadIndex].name.split(' ')[0] },
+                      { label: 'Last Name', value: leads[viewingLeadIndex].name.split(' ')[1] || '---' },
+                      { label: 'Name', value: leads[viewingLeadIndex].name },
+                      { label: 'Email', value: leads[viewingLeadIndex].email },
+                      { label: 'Phone', value: leads[viewingLeadIndex].phone || '+91 1234567890' },
+                      { label: 'Sell Do Lead ID', value: leads[viewingLeadIndex].sellDoLeadId || 'SD-0959818' },
+                      { label: 'Project', value: leads[viewingLeadIndex].project || 'MP Amber' },
+                      { label: 'Lead Stage', value: leads[viewingLeadIndex].leadStage || 'Fresh' },
+                      { label: 'Lead Status', value: leads[viewingLeadIndex].leadStatus || 'Already Exists' },
+                      { label: 'Count Status', value: leads[viewingLeadIndex].countStatus || 'Pending' },
+                      { label: 'Registered At', value: leads[viewingLeadIndex].registeredAt || '24/04/2026' },
+                      { label: 'Lead Validity Period', value: leads[viewingLeadIndex].validityPeriod || '90 Days' },
+                      { label: 'Budget', value: leads[viewingLeadIndex].budget || 'INR 50 Lakh' },
+                      { label: 'Location', value: leads[viewingLeadIndex].location || 'Chn' },
+                      { label: 'Configuration', value: leads[viewingLeadIndex].configuration || '1 BHK' },
+                      { label: 'Property Type', value: leads[viewingLeadIndex].propertyType || 'Apartment' },
+                    ].map((item, idx) => (
+                      <div key={idx} className="flex justify-between border-b border-slate-50 py-3">
+                        <span className="text-xs font-bold uppercase tracking-wider text-slate-400">{item.label}:</span>
+                        <span className="text-sm font-black text-slate-800">{item.value}</span>
+                      </div>
+                    ))}
+                  </div>
                 </section>
 
                 {/* Section 2: Sell Do Lead Site Visit */}
                 <section className="rounded-3xl border border-white bg-white/70 p-8 shadow-[0_15px_40px_-15px_rgba(0,0,0,0.04)] backdrop-blur-xl">
-                   <h2 className="mb-8 text-xl font-black text-slate-800 tracking-tight">Sell Do Lead Site Visit</h2>
-                   <div className="grid gap-x-12 gap-y-6 md:grid-cols-2">
-                      {[
-                        { label: 'Lead ID', value: leads[viewingLeadIndex].sellDoLeadId || 'SD-0959818' },
-                        { label: 'Project', value: leads[viewingLeadIndex].project || 'MP Amber' },
-                        { label: 'Visit Date', value: 'Not scheduled' },
-                        { label: 'Visit Status', value: 'Pending' },
-                        { label: 'Assigned Executive', value: 'Not assigned' },
-                        { label: 'Remarks', value: 'No site visit remark yet.' },
-                      ].map((item, idx) => (
-                        <div key={idx} className="flex justify-between border-b border-slate-50 py-3">
-                           <span className="text-xs font-bold uppercase tracking-wider text-slate-400">{item.label}:</span>
-                           <span className="text-sm font-black text-slate-800">{item.value}</span>
-                        </div>
-                      ))}
-                   </div>
+                  <h2 className="mb-8 text-xl font-black text-slate-800 tracking-tight">Sell Do Lead Site Visit</h2>
+                  <div className="grid gap-x-12 gap-y-6 md:grid-cols-2">
+                    {[
+                      { label: 'Lead ID', value: leads[viewingLeadIndex].sellDoLeadId || 'SD-0959818' },
+                      { label: 'Project', value: leads[viewingLeadIndex].project || 'MP Amber' },
+                      { label: 'Visit Date', value: 'Not scheduled' },
+                      { label: 'Visit Status', value: 'Pending' },
+                      { label: 'Assigned Executive', value: 'Not assigned' },
+                      { label: 'Remarks', value: 'No site visit remark yet.' },
+                    ].map((item, idx) => (
+                      <div key={idx} className="flex justify-between border-b border-slate-50 py-3">
+                        <span className="text-xs font-bold uppercase tracking-wider text-slate-400">{item.label}:</span>
+                        <span className="text-sm font-black text-slate-800">{item.value}</span>
+                      </div>
+                    ))}
+                  </div>
                 </section>
 
                 {/* Section 3: Remark from Selldo */}
                 <section className="rounded-3xl border border-white bg-white/70 p-8 shadow-[0_15px_40px_-15px_rgba(0,0,0,0.04)] backdrop-blur-xl">
-                   <h2 className="mb-6 text-xl font-black text-slate-800 tracking-tight">Remark from Selldo</h2>
-                   <div className="space-y-3">
-                      {[
-                        'Initial lead captured from panel.',
-                        'Current status: Already Exists'
-                      ].map((remark, idx) => (
-                        <div key={idx} className="rounded-xl border border-slate-100 bg-[#f8fafc] px-5 py-3 text-sm font-medium text-slate-600">
-                           {remark}
-                        </div>
-                      ))}
-                   </div>
+                  <h2 className="mb-6 text-xl font-black text-slate-800 tracking-tight">Remark from Selldo</h2>
+                  <div className="space-y-3">
+                    {[
+                      'Initial lead captured from panel.',
+                      'Current status: Already Exists'
+                    ].map((remark, idx) => (
+                      <div key={idx} className="rounded-xl border border-slate-100 bg-[#f8fafc] px-5 py-3 text-sm font-medium text-slate-600">
+                        {remark}
+                      </div>
+                    ))}
+                  </div>
                 </section>
 
                 {/* Section 4: Notes */}
                 <section className="rounded-3xl border border-white bg-white/70 p-8 shadow-[0_15px_40px_-15px_rgba(0,0,0,0.04)] backdrop-blur-xl">
-                   <div className="mb-6 flex items-center justify-between">
-                      <h2 className="text-xl font-black text-slate-800 tracking-tight">Notes</h2>
-                      <button className="text-slate-400 transition hover:text-brand-blue">
-                         <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" /><path d="M18.5 2.5a2.121 2.121 0 1 1 3 3L12 15l-4 1-1-4 9.5-9.5z" /></svg>
-                      </button>
-                   </div>
-                   <div className="min-h-[100px] rounded-2xl border border-slate-100 bg-[#f8fafc] px-6 py-5 text-sm font-medium text-slate-400 italic">
-                      No additional notes available for this customer.
-                   </div>
+                  <div className="mb-6 flex items-center justify-between">
+                    <h2 className="text-xl font-black text-slate-800 tracking-tight">Notes</h2>
+                    <button className="text-slate-400 transition hover:text-brand-blue">
+                      <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" /><path d="M18.5 2.5a2.121 2.121 0 1 1 3 3L12 15l-4 1-1-4 9.5-9.5z" /></svg>
+                    </button>
+                  </div>
+                  <div className="min-h-[100px] rounded-2xl border border-slate-100 bg-[#f8fafc] px-6 py-5 text-sm font-medium text-slate-400 italic">
+                    No additional notes available for this customer.
+                  </div>
                 </section>
 
                 {/* Section 5: Follow Up */}
                 <section className="rounded-3xl border border-white bg-white/70 p-8 shadow-[0_15px_40px_-15px_rgba(0,0,0,0.04)] backdrop-blur-xl">
-                   <h2 className="mb-6 text-xl font-black text-slate-800 tracking-tight">Follow Up</h2>
-                   <div className="flex justify-end">
-                      <div className="relative">
-                         <button className="flex items-center gap-10 rounded-xl border border-slate-100 bg-white px-6 py-3 shadow-sm transition hover:shadow-md">
-                            <div className="text-left">
-                               <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 leading-none">Follow Up</p>
-                               <p className="mt-1 text-xs font-bold text-slate-700">Update Follow Up Status</p>
-                            </div>
-                            <svg className="h-4 w-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5"><path d="m6 9 6 6 6-6" /></svg>
-                         </button>
-                      </div>
-                   </div>
+                  <h2 className="mb-6 text-xl font-black text-slate-800 tracking-tight">Follow Up</h2>
+                  <div className="flex justify-end">
+                    <div className="relative">
+                      <button className="flex items-center gap-10 rounded-xl border border-slate-100 bg-white px-6 py-3 shadow-sm transition hover:shadow-md">
+                        <div className="text-left">
+                          <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 leading-none">Follow Up</p>
+                          <p className="mt-1 text-xs font-bold text-slate-700">Update Follow Up Status</p>
+                        </div>
+                        <svg className="h-4 w-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5"><path d="m6 9 6 6 6-6" /></svg>
+                      </button>
+                    </div>
+                  </div>
                 </section>
 
               </div>
@@ -899,7 +924,7 @@ function LeadActive({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, on
                   <label className="text-sm font-semibold text-[#2f466c]">Lead Stage</label>
                   <select
                     value={followUpValues.leadStage}
-                    onChange={(e) => setFollowUpValues({...followUpValues, leadStage: e.target.value})}
+                    onChange={(e) => setFollowUpValues({ ...followUpValues, leadStage: e.target.value })}
                     className="w-full rounded-md border border-[#b8c4e3] bg-white px-4 py-2.5 text-base text-[#1f2f45] outline-none focus:border-[#7f8cff]"
                   >
                     <option>Fresh</option>
@@ -914,7 +939,7 @@ function LeadActive({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, on
                   <label className="text-sm font-semibold text-[#2f466c]">Lead Status</label>
                   <select
                     value={followUpValues.leadStatus}
-                    onChange={(e) => setFollowUpValues({...followUpValues, leadStatus: e.target.value})}
+                    onChange={(e) => setFollowUpValues({ ...followUpValues, leadStatus: e.target.value })}
                     className="w-full rounded-md border border-[#b8c4e3] bg-white px-4 py-2.5 text-base text-[#1f2f45] outline-none focus:border-[#7f8cff]"
                   >
                     <option>Active</option>
@@ -927,7 +952,7 @@ function LeadActive({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, on
                   <label className="text-sm font-semibold text-[#2f466c]">Count Status</label>
                   <select
                     value={followUpValues.countStatus}
-                    onChange={(e) => setFollowUpValues({...followUpValues, countStatus: e.target.value})}
+                    onChange={(e) => setFollowUpValues({ ...followUpValues, countStatus: e.target.value })}
                     className="w-full rounded-md border border-[#b8c4e3] bg-white px-4 py-2.5 text-base text-[#1f2f45] outline-none focus:border-[#7f8cff]"
                   >
                     <option>Pending</option>
@@ -940,7 +965,7 @@ function LeadActive({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, on
                   <label className="text-sm font-semibold text-[#2f466c]">Remarks</label>
                   <textarea
                     value={followUpValues.remark}
-                    onChange={(e) => setFollowUpValues({...followUpValues, remark: e.target.value})}
+                    onChange={(e) => setFollowUpValues({ ...followUpValues, remark: e.target.value })}
                     placeholder="Enter follow-up details..."
                     className="w-full h-24 rounded-md border border-[#b8c4e3] bg-white px-4 py-2.5 text-base text-[#1f2f45] outline-none focus:border-[#7f8cff] resize-none"
                   />
@@ -961,14 +986,14 @@ function LeadActive({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, on
 
         {/* Action Menu Portal */}
         {openActionIndex !== null && menuAnchorRect && createPortal(
-          <div 
+          <div
             ref={actionMenuRef}
             className="fixed z-[999] w-72 overflow-hidden rounded-[2.5rem] border border-white bg-white/90 p-4 shadow-[0_25px_70px_rgba(49,46,129,0.25)] backdrop-blur-3xl animate-elastic-pop"
-            style={{ 
-              top: `${(menuAnchorRect.top - window.scrollY) + 180 > window.innerHeight 
-                ? menuAnchorRect.top - window.scrollY - 190 
-                : menuAnchorRect.top - window.scrollY + 12}px`, 
-              left: `${Math.max(20, menuAnchorRect.left - window.scrollX - 260)}px` 
+            style={{
+              top: `${(menuAnchorRect.top - window.scrollY) + 180 > window.innerHeight
+                ? menuAnchorRect.top - window.scrollY - 190
+                : menuAnchorRect.top - window.scrollY + 12}px`,
+              left: `${Math.max(20, menuAnchorRect.left - window.scrollX - 260)}px`
             }}
           >
             <div className="absolute inset-0 bg-gradient-to-br from-[#6366f1]/5 to-transparent opacity-50" />
@@ -994,7 +1019,7 @@ function LeadActive({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, on
                   <div className="text-[10px] opacity-70 font-medium">View full activity logs</div>
                 </div>
               </button>
-              
+
               <button
                 type="button"
                 onClick={() => {

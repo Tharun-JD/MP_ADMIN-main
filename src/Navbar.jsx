@@ -195,7 +195,7 @@ function Navbar({
           <div className="absolute -left-16 top-0 h-full w-[26rem] rotate-[4deg] bg-gradient-to-r from-transparent via-[#2f3fa9]/18 to-transparent blur-xl" />
           <div className="absolute right-0 top-0 h-full w-[22rem] rotate-[-3deg] bg-gradient-to-r from-transparent via-[#1a79d1]/14 to-transparent blur-xl" />
         </div>
-        <div className="relative flex w-full items-center justify-between gap-8 overflow-visible px-6 py-4 lg:px-10">
+        <div className="relative flex w-full items-center justify-between gap-8 overflow-visible px-6 py-5 lg:px-10">
           {/* Brand Logo - Left */}
           <div className="flex shrink-0 items-center gap-3">
             <div className="text-[1.75rem] font-black tracking-tighter text-[#2b45ba]">MP</div>
@@ -353,9 +353,9 @@ function Navbar({
       </header>
 
       {isProfileOpen && (
-        <div className="cmp-overlay fixed inset-0 z-[360] flex items-center justify-center bg-[#0f172a]/10 p-3 backdrop-blur-sm">
-          <div ref={profilePanelRef} className="relative max-h-[90vh] w-full max-w-4xl overflow-hidden rounded-2xl border border-[#e2e8f0] bg-white shadow-2xl shadow-slate-200/50">
-            <div className="flex items-center justify-between border-b border-[#e2e8f0] bg-gradient-to-r from-[#f0f9ff] to-[#e0f2fe] px-6 py-5">
+        <div className="cmp-overlay fixed inset-0 z-[360] flex items-center justify-center bg-[#0f172a]/20 p-4 backdrop-blur-sm">
+          <div ref={profilePanelRef} className="relative max-h-[90vh] w-full max-w-5xl overflow-hidden rounded-[2.5rem] border border-[#f1f5f9] bg-white shadow-2xl">
+            <div className="flex items-center justify-between border-b border-[#e2e8f0] bg-gradient-to-r from-[#f0f9ff] to-[#e0f2fe] px-6 py-5 rounded-t-[2.5rem]">
               <h2 className="cmp-field text-2xl font-bold tracking-tight text-[#0f172a]">Edit Channel Partner Manager</h2>
               <button
                 type="button"
@@ -373,7 +373,7 @@ function Navbar({
                   type="text"
                   value={profileValues.firstName}
                   onChange={(event) => setProfileField('firstName', event.target.value)}
-                  className="w-full rounded-md border border-[#c6d4ea] bg-white px-4 py-2.5 text-xl text-[#2d4568] outline-none transition focus:border-[#7d88ff] focus:ring-2 focus:ring-[#7d88ff]/25"
+                  className="w-full rounded-2xl border border-[#e2e8f0] bg-[#f8fafc] px-6 py-4 text-lg font-semibold text-[#0f172a] outline-none transition focus:border-[#6366f1] focus:bg-white"
                 />
               </div>
 
@@ -383,7 +383,7 @@ function Navbar({
                   type="text"
                   value={profileValues.lastName}
                   onChange={(event) => setProfileField('lastName', event.target.value)}
-                  className="w-full rounded-md border border-[#c6d4ea] bg-white px-4 py-2.5 text-xl text-[#2d4568] outline-none transition focus:border-[#7d88ff] focus:ring-2 focus:ring-[#7d88ff]/25"
+                  className="w-full rounded-2xl border border-[#e2e8f0] bg-[#f8fafc] px-6 py-4 text-lg font-semibold text-[#0f172a] outline-none transition focus:border-[#6366f1] focus:bg-white"
                 />
               </div>
 
@@ -393,7 +393,7 @@ function Navbar({
                   type="email"
                   value={profileValues.email}
                   onChange={(event) => setProfileField('email', event.target.value)}
-                  className="w-full rounded-md border border-[#c6d4ea] bg-white px-4 py-2.5 text-xl text-[#2d4568] outline-none transition focus:border-[#7d88ff] focus:ring-2 focus:ring-[#7d88ff]/25"
+                  className="w-full rounded-2xl border border-[#e2e8f0] bg-[#f8fafc] px-6 py-4 text-lg font-semibold text-[#0f172a] outline-none transition focus:border-[#6366f1] focus:bg-white"
                 />
               </div>
 
@@ -426,7 +426,7 @@ function Navbar({
               </div>
             </div>
 
-            <div className="flex justify-end border-t border-[#f1f5f9] bg-[#f8fafc] px-6 py-5">
+            <div className="flex justify-end border-t border-[#f1f5f9] bg-[#f8fafc]/50 px-6 py-5 rounded-b-[2.5rem]">
               <button
                 type="button"
                 onClick={() => setIsProfileOpen(false)}
@@ -441,8 +441,8 @@ function Navbar({
 
       {isPasswordOpen && (
         <div className="cpp-overlay fixed inset-0 z-[365] flex items-center justify-center bg-[#0f172a]/10 p-3 backdrop-blur-sm">
-          <div ref={passwordPanelRef} className="relative max-h-[88vh] w-full max-w-4xl overflow-hidden rounded-2xl border border-[#e2e8f0] bg-white shadow-2xl shadow-slate-200/50">
-            <div className="flex items-center justify-between border-b border-[#e2e8f0] bg-gradient-to-r from-[#f0f9ff] to-[#e0f2fe] px-6 py-5">
+          <div ref={passwordPanelRef} className="relative max-h-[88vh] w-full max-w-4xl overflow-hidden rounded-[2.5rem] border border-[#e2e8f0] bg-white shadow-2xl">
+            <div className="flex items-center justify-between border-b border-[#e2e8f0] bg-gradient-to-r from-[#f0f9ff] to-[#e0f2fe] px-6 py-5 rounded-t-[2.5rem]">
               <h2 className="cpp-field text-2xl font-bold tracking-tight text-[#0f172a]">Change Password</h2>
               <button
                 type="button"
@@ -475,7 +475,7 @@ function Navbar({
               </div>
             </div>
 
-            <div className="flex justify-end border-t border-[#f1f5f9] bg-[#f8fafc] px-6 py-5">
+            <div className="flex items-center justify-end gap-3 border-t border-[#e2e8f0] bg-[#f8fafc]/50 px-6 py-5 rounded-b-[2.5rem]">
               <button
                 type="button"
                 onClick={handleChangePassword}
