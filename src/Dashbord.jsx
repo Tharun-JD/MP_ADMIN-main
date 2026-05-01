@@ -547,7 +547,7 @@ function Dashbord({ onSignOut, onBackToDashboard, onOpenUserAccount, onOpenLeadA
                 </button>
 
                 {item.label === 'More' && openMenu === item.label && (
-                  <div className="absolute left-0 top-12 z-30 min-w-44 rounded-xl border border-[#d5e3f7] bg-white p-2 shadow-xl">
+                  <div className="absolute left-0 top-full z-30 mt-2 min-w-44 rounded-xl border border-[#d5e3f7] bg-white p-2 shadow-xl">
                     {item.options.map((option) => (
                       <button
                         key={option.label}
@@ -596,7 +596,7 @@ function Dashbord({ onSignOut, onBackToDashboard, onOpenUserAccount, onOpenLeadA
             </button>
 
             {openWelcome && (
-              <div className="absolute right-0 top-12 z-30 min-w-48 rounded-xl border border-[#d5e3f7] bg-white p-2 shadow-xl">
+              <div className="absolute right-0 top-full z-30 mt-2 min-w-48 rounded-xl border border-[#d5e3f7] bg-white p-2 shadow-xl">
                 <button type="button" className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-sm text-[#274873] hover:bg-[#eef5ff]">
                   <Icon name="profile" className="h-4 w-4 text-[#1a79d1]" />
                   Channel Manager Profile

@@ -227,7 +227,7 @@ function Navbar({
                 </button>
 
                 {item.label === 'More' && openMenu === item.label && (
-                  <div className="absolute left-0 top-12 z-[260] min-w-44 rounded-xl border border-[#d5e3f7] bg-white p-2 shadow-xl">
+                  <div className="absolute left-0 top-full z-[260] mt-2 min-w-44 rounded-xl border border-[#d5e3f7] bg-white p-2 shadow-xl">
                     {item.options.map((option) => (
                       <button
                         key={option.label}
@@ -274,7 +274,7 @@ function Navbar({
             </button>
 
             {openWelcome && (
-              <div className="absolute right-0 top-12 z-[260] min-w-48 rounded-xl border border-[#d5e3f7] bg-white p-2 shadow-xl">
+              <div className="absolute right-0 top-full z-[260] mt-2 min-w-48 rounded-xl border border-[#d5e3f7] bg-white p-2 shadow-xl">
                 <button
                   type="button"
                   onClick={() => {

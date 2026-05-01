@@ -832,7 +832,7 @@ function UserAccount({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, o
 
         {/* Floating Add Button */}
         {accounts.length > 0 && (
-          <div className="fixed bottom-8 right-8 z-[100] group">
+          <div className="fixed top-28 right-8 z-[100] group">
             <button 
               onClick={() => setIsAddUserOpen((prev) => !prev)}
               className="flex h-14 w-14 items-center justify-center rounded-2xl bg-[#6366f1] text-white shadow-2xl shadow-indigo-300 transition hover:bg-[#4f46e5] hover:scale-105 active:scale-95"
@@ -842,7 +842,7 @@ function UserAccount({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, o
               </svg>
             </button>
             {isAddUserOpen && (
-              <div className="absolute bottom-[calc(100%+1rem)] right-0 w-64 overflow-hidden rounded-2xl border border-[#f1f5f9] bg-white p-2 shadow-2xl animate-elastic-pop">
+              <div className="absolute top-[calc(100%+0.5rem)] right-0 w-64 overflow-hidden rounded-2xl border border-[#f1f5f9] bg-white p-2 shadow-2xl animate-elastic-pop">
                 {addUserOptions.map((option) => (
                   <button
                     key={option}
