@@ -155,9 +155,20 @@ function Moreoption({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, on
   const [countryAnchor, setCountryAnchor] = useState(null)
   const [stateAnchor, setStateAnchor] = useState(null)
 
+  useEffect(() => {
+    fetch('http://localhost:3000/partners')
+      .then(res => res.json())
+      .then(data => {
+        if (Array.isArray(data)) {
+          setChannelPartners(data)
+        }
+      })
+      .catch(err => console.error('Error fetching partners from API:', err))
+  }, [])
+
   // Persistent storage for channel partners and form drafts
   useEffect(() => {
-    const savedPartners = localStorage.getItem('mp_channel_partners_v2')
+    const savedPartners = localStorage.getItem('mp_channel_partners_v3')
     if (savedPartners) {
       try {
         const parsed = JSON.parse(savedPartners)
@@ -165,13 +176,13 @@ function Moreoption({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, on
         const filtered = parsed.filter((p) => typeof p.id === 'string' && !p.id.startsWith('seed-'))
         if (filtered.length !== parsed.length) {
           setChannelPartners(filtered)
-          localStorage.setItem('mp_channel_partners_v2', JSON.stringify(filtered))
+          localStorage.setItem('mp_channel_partners_v3', JSON.stringify(filtered))
         }
       } catch (e) {
         console.error('Error filtering partners', e)
       }
     }
-    localStorage.setItem('mp_channel_partners_v2', JSON.stringify(channelPartners))
+    localStorage.setItem('mp_channel_partners_v3', JSON.stringify(channelPartners))
   }, [channelPartners])
 
   useEffect(() => {
@@ -493,25 +504,26 @@ function Moreoption({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, on
     }
 
     if (editingPartnerIndex !== null) {
-      setChannelPartners((prev) =>
-        prev.map((partner, index) =>
-          index === editingPartnerIndex
-            ? {
-              ...partner,
-              ...formValues,
-            }
-            : partner,
-        ),
+      const updatedPartners = channelPartners.map((partner, index) =>
+        index === editingPartnerIndex ? { ...partner, ...formValues } : partner
       )
+      setChannelPartners(updatedPartners)
+      // Note: Ideally PATCH to API here
     } else {
-      setChannelPartners((prev) => [
-        {
-          ...formValues,
-          status: 'Active',
-          createdAt: Date.now(),
-        },
-        ...prev,
-      ])
+      const newPartner = {
+        ...formValues,
+        id: `cp-${Date.now()}`,
+        status: 'Active',
+        createdAt: Date.now(),
+      }
+      
+      setChannelPartners((prev) => [newPartner, ...prev])
+
+      fetch('http://localhost:3000/partners', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(newPartner)
+      }).catch(err => console.error('Error saving partner to API:', err))
     }
     setFormValues(initialFormValues)
     setEditingPartnerIndex(null)

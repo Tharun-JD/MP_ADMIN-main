@@ -4,7 +4,7 @@
 }
 
 html {
-  font-size: 94%;
+  font-size: 88%; /* Reduced from 94% to zoom out */
 }
 
 @media (min-width: 1536px) {
