@@ -528,8 +528,9 @@ function Moreoption({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, on
   return (
     <main ref={pageRef} className="relative min-h-screen bg-[#f8fafc] text-[#0f172a]">
       <div className="pointer-events-none absolute inset-0">
-        <div ref={(n) => (bgGlowRefs.current[0] = n)} className="absolute -left-16 top-10 h-64 w-64 rounded-full bg-[#6366f1]/05 blur-3xl" />
-        <div ref={(n) => (bgGlowRefs.current[1] = n)} className="absolute right-0 top-20 h-72 w-72 rounded-full bg-[#3b82f6]/05 blur-3xl" />
+        <div className="absolute inset-0 bg-[linear-gradient(transparent_36px,rgba(129,144,177,0.08)_37px),linear-gradient(90deg,transparent_36px,rgba(129,144,177,0.08)_37px)] bg-[size:37px_37px]" />
+        <div ref={(n) => (bgGlowRefs.current[0] = n)} className="absolute -left-16 top-10 h-64 w-64 rounded-full bg-[#6366f1]/15 blur-3xl" />
+        <div ref={(n) => (bgGlowRefs.current[1] = n)} className="absolute right-0 top-20 h-72 w-72 rounded-full bg-[#3b82f6]/15 blur-3xl" />
       </div>
       <Navbar
         activePage="channel-partners"
@@ -543,41 +544,44 @@ function Moreoption({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, on
         onSignOut={onSignOut}
       />
 
-      <section className="relative z-10 w-full px-4 py-12 lg:px-6">
-        <div className="mb-4">
-          {/* <button
-            type="button"
-            onClick={onBackToDashboard}
-            className="rounded-md border border-[#8a86ff] bg-white px-4 py-2 text-sm font-semibold text-[#6b66ff]"
-          >
-            Back
-          </button> */}
-        </div>
+      <section className="relative z-10 w-full overflow-visible px-4 py-7 lg:px-6">
+        <div className="mx-auto w-full max-w-[1400px]">
+          <div className="relative overflow-hidden rounded-[2.5rem] bg-white shadow-[0_20px_50px_rgba(0,0,0,0.05)] border border-[#f1f5f9]">
+            {/* Header */}
+            <header ref={headerRef} className="flex flex-wrap items-center justify-between gap-6 px-8 py-8 lg:px-10">
+              <div className="space-y-1">
+                <div className="flex items-center gap-4">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#f0f4ff] text-[#6366f1] shadow-inner">
+                    <IconUsers />
+                  </div>
+                  <div>
+                    <h1 className="text-2xl font-black tracking-tight text-[#1e293b]">Channel Partners</h1>
+                    <p className="text-[10px] font-black uppercase tracking-[0.2em] text-[#6366f1]/60">Network Management</p>
+                  </div>
+                </div>
+              </div>
 
-        <div ref={headerRef} className="flex flex-wrap items-center justify-between gap-4">
-          <h1 className="flex items-center gap-3 text-2xl font-bold text-[#0f172a] lg:text-3xl">
-            <span className="text-[#6366f1]"><IconUsers /></span>
-            Channel Partners
-          </h1>
+              <div ref={controlsRef} className="flex flex-wrap items-center gap-3">
+                <button type="button" className="cp-control cp-clickable rounded-xl border border-[#f1f5f9] bg-[#f8fafc] px-6 py-2.5 text-xs font-bold text-[#64748b] transition hover:bg-white hover:shadow-md">
+                  TOTAL : {channelPartners.length}
+                </button>
+                
+                <button
+                  type="button"
+                  onClick={() => {
+                    setIsExportOpen(false)
+                    setIsFilterOpen(false)
+                    setEditingPartnerIndex(null)
+                    setFormValues(initialFormValues)
+                    setIsAddFormOpen(true)
+                  }}
+                  className="cp-control cp-clickable flex items-center gap-2 rounded-xl bg-[#6366f1] px-6 py-2.5 text-xs font-black uppercase tracking-widest text-white shadow-lg shadow-indigo-100 transition hover:bg-[#4f46e5] hover:-translate-y-0.5 active:translate-y-0"
+                >
+                  <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="3"><path d="M12 5v14M5 12h14"/></svg>
+                  Add Partner
+                </button>
 
-          <div ref={controlsRef} className="flex flex-wrap items-center gap-3">
-            <button type="button" className="cp-control cp-clickable rounded-lg border border-[#e2e8f0] bg-white px-5 py-2 text-base font-semibold text-[#475569] shadow-sm">
-              Total : {channelPartners.length}
-            </button>
-            <button
-              type="button"
-              onClick={() => {
-                setIsExportOpen(false)
-                setIsFilterOpen(false)
-                setEditingPartnerIndex(null)
-                setFormValues(initialFormValues)
-                setIsAddFormOpen(true)
-              }}
-              className="cp-control cp-clickable rounded-lg bg-[#6366f1] px-6 py-2 text-base font-bold text-white shadow-md shadow-indigo-200 transition hover:bg-[#4f46e5]"
-            >
-              Add New
-            </button>
-            <div className="relative">
+                <div className="relative">
               <button
                 type="button"
                 onClick={(e) => {
@@ -630,103 +634,99 @@ function Moreoption({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, on
                 document.body
               )}
             </div>
-            <button
-              type="button"
-              onClick={() => {
-                setIsExportOpen(false)
-                setIsFilterOpen(true)
-              }}
-              className="cp-control cp-clickable rounded-md border border-[#8a86ff] bg-white p-2.5 text-[#6b66ff]"
-            >
-              <IconFilter />
-            </button>
-          </div>
-        </div>
-
-        {isFilterOpen && (
-          <div className="cp-filter-overlay fixed inset-0 z-[280] flex items-center justify-center bg-[#0f2244]/22 px-4 py-6 backdrop-blur-[2px]">
-            <div ref={filterPanelRef} className="w-full max-w-4xl rounded-xl border border-[#c9d3e8] bg-[#f7f9fd] shadow-2xl shadow-[#1f365d]/15">
-              <div className="flex items-center justify-between border-b border-[#d5dcfb] px-6 py-4">
-                <h2 className="text-2xl font-semibold text-[#20385f]">Filter</h2>
-              </div>
-
-              <div className="grid gap-6 px-6 py-6 md:grid-cols-2">
-                <div className="cp-filter-field space-y-2">
-                  <label className="text-sm font-semibold text-[#2f466c]">Name/Email/Phone</label>
-                  <div className="relative">
-                    <input
-                      type="text"
-                      value={filterValues.nameEmailPhone}
-                      onChange={(event) => setFilterField('nameEmailPhone', event.target.value)}
-                      className="w-full rounded-md border border-[#b8c4e3] bg-white px-4 py-2.5 text-base text-[#1f2f45] outline-none transition focus:border-[#7f8cff] focus:ring-2 focus:ring-[#7f8cff]/20"
-                    />
-                    <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-[#7a879a]">
-                      <IconChevron />
-                    </span>
-                  </div>
-                </div>
-
-                <div className="cp-filter-field space-y-2">
-                  <label className="text-sm font-semibold text-[#2f466c]">RERA Registration Number</label>
-                  <input
-                    type="text"
-                    value={filterValues.reraRegistrationNumber}
-                    onChange={(event) => setFilterField('reraRegistrationNumber', event.target.value)}
-                    className="w-full rounded-md border border-[#b8c4e3] bg-white px-4 py-2.5 text-base text-[#1f2f45] outline-none transition focus:border-[#7f8cff] focus:ring-2 focus:ring-[#7f8cff]/20"
-                  />
-                </div>
-
-                <div ref={statusMenuRef} className="cp-filter-field space-y-2">
-                  <label className="text-sm font-semibold text-[#2f466c]">Status</label>
-                  <div className="relative">
-                    <button
-                      type="button"
-                      onClick={() => setIsStatusOpen((prev) => !prev)}
-                      className="cp-clickable flex w-full items-center justify-between rounded-md border border-[#b8c4e3] bg-white px-4 py-2.5 text-left text-base text-[#1f2f45] transition hover:border-[#9fb0cc]"
-                    >
-                      <span className={filterValues.status === 'Select' ? 'text-[#6c7890]' : ''}>{filterValues.status}</span>
-                      <span className={`transition ${isStatusOpen ? 'rotate-180' : ''}`}>
-                        <IconChevron />
-                      </span>
-                    </button>
-                    {isStatusOpen && (
-                      <div className="absolute left-0 top-[calc(100%+0.2rem)] z-[300] w-full rounded-md border border-[#c7d0df] bg-white shadow-lg">
-                        {statusOptions.map((option) => (
-                          <button
-                            key={option}
-                            type="button"
-                            onClick={() => {
-                              setFilterField('status', option)
-                              setIsStatusOpen(false)
-                            }}
-                            className="cp-clickable block w-full px-4 py-2 text-left text-base text-[#1f2f45] hover:bg-[#e7edf5]"
-                          >
-                            {option}
-                          </button>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </div>
-
-              <div className="flex items-center justify-end gap-3 border-t border-[#d5dcfb] px-6 py-4">
-                <button
-                  type="button"
-                  onClick={resetFilter}
-                  className="cp-clickable cp-filter-action rounded-lg border border-[#6f73ff] bg-white px-6 py-2 text-xl font-semibold text-[#6f73ff] transition hover:bg-[#eef0ff]"
-                >
-                  Cancel
-                </button>
                 <button
                   type="button"
                   onClick={() => {
-                    setIsStatusOpen(false)
-                    setIsFilterOpen(false)
+                    setIsExportOpen(false)
+                    setIsFilterOpen(true)
                   }}
-                  className="cp-clickable cp-filter-action rounded-lg bg-gradient-to-r from-[#6f73ff] to-[#6a6eea] px-7 py-2 text-xl font-semibold text-white transition hover:brightness-105"
+                  className={`cp-control cp-clickable flex h-10 w-10 items-center justify-center rounded-xl transition-all duration-300 ${isFilterOpen ? 'bg-[#6366f1] text-white shadow-lg' : 'bg-[#f8fafc] text-[#64748b] border border-[#f1f5f9] hover:text-[#6366f1] hover:bg-white hover:shadow-md'}`}
                 >
-                  Apply
+                  <IconFilter />
+                </button>
+              </div>
+            </header>
+
+        {isFilterOpen && (
+          <div className="fixed inset-0 z-[280] flex items-center justify-center px-4 py-6">
+            <div 
+              className="cp-filter-overlay absolute inset-0 bg-[#0f172a]/20 backdrop-blur-sm"
+              onClick={() => setIsFilterOpen(false)}
+            />
+            <div 
+              ref={filterPanelRef} 
+              className="relative w-full max-w-2xl overflow-hidden rounded-[2.5rem] border border-white bg-white/90 p-8 shadow-[0_40px_100px_rgba(0,0,0,0.15)] backdrop-blur-2xl animate-elastic-pop"
+            >
+              <div className="absolute inset-0 bg-gradient-to-br from-[#6366f1]/5 to-transparent" />
+              
+              <div className="relative mb-8 flex items-center justify-between">
+                <div>
+                  <h2 className="text-2xl font-black tracking-tight text-[#1e293b]">Filter Partners</h2>
+                  <p className="text-[10px] font-black uppercase tracking-[0.2em] text-[#6366f1]/60">Refine your view</p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setIsFilterOpen(false)}
+                  className="flex h-10 w-10 items-center justify-center rounded-full bg-[#f8fafc] text-[#94a3b8] transition hover:text-[#1e293b]"
+                >
+                  <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><path d="M18 6L6 18M6 6l12 12"/></svg>
+                </button>
+              </div>
+
+              <div className="relative grid gap-6 md:grid-cols-2">
+                <div className="cp-filter-field space-y-2">
+                  <label className="ml-1 text-[11px] font-black uppercase tracking-widest text-[#64748b]">Name/Email/Phone</label>
+                  <input
+                    type="text"
+                    placeholder="Search anything..."
+                    value={filterValues.nameEmailPhone}
+                    onChange={(event) => setFilterField('nameEmailPhone', event.target.value)}
+                    className="w-full rounded-2xl border border-[#e2e8f0] bg-white/50 px-5 py-3.5 text-sm font-bold text-[#1e293b] outline-none transition focus:border-[#6366f1] focus:ring-4 focus:ring-[#6366f1]/10"
+                  />
+                </div>
+
+                <div className="cp-filter-field space-y-2">
+                  <label className="ml-1 text-[11px] font-black uppercase tracking-widest text-[#64748b]">RERA Number</label>
+                  <input
+                    type="text"
+                    placeholder="Reference code"
+                    value={filterValues.reraRegistrationNumber}
+                    onChange={(event) => setFilterField('reraRegistrationNumber', event.target.value)}
+                    className="w-full rounded-2xl border border-[#e2e8f0] bg-white/50 px-5 py-3.5 text-sm font-bold text-[#1e293b] outline-none transition focus:border-[#6366f1] focus:ring-4 focus:ring-[#6366f1]/10"
+                  />
+                </div>
+
+                <div ref={statusMenuRef} className="cp-filter-field space-y-2 md:col-span-2">
+                  <label className="ml-1 text-[11px] font-black uppercase tracking-widest text-[#64748b]">Registration Status</label>
+                  <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+                    {['Active', 'Inactive', 'Pending', 'Rejected'].map((option) => (
+                      <button
+                        key={option}
+                        type="button"
+                        onClick={() => setFilterField('status', option)}
+                        className={`rounded-xl border py-2.5 text-[11px] font-black uppercase tracking-widest transition-all duration-300 ${filterValues.status === option ? 'border-[#6366f1] bg-[#6366f1] text-white shadow-lg shadow-indigo-100' : 'border-[#e2e8f0] bg-white text-[#64748b] hover:border-[#6366f1] hover:text-[#6366f1]'}`}
+                      >
+                        {option}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              <div className="relative mt-10 flex items-center justify-end gap-3">
+                <button
+                  type="button"
+                  onClick={resetFilter}
+                  className="rounded-xl px-6 py-3 text-xs font-black uppercase tracking-widest text-[#64748b] transition hover:text-[#1e293b]"
+                >
+                  Reset
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setIsFilterOpen(false)}
+                  className="rounded-xl bg-[#0f172a] px-8 py-3 text-xs font-black uppercase tracking-widest text-white shadow-xl shadow-slate-200 transition hover:bg-[#1e293b] hover:-translate-y-0.5 active:translate-y-0"
+                >
+                  Apply Filter
                 </button>
               </div>
             </div>
@@ -1504,15 +1504,15 @@ function Moreoption({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, on
           </div>
         )}
 
-        <div ref={tableRef} className="relative z-10 mt-10 overflow-hidden rounded-[2.5rem] border border-[#e2e8f0] bg-white shadow-[0_40px_100px_rgba(15,23,42,0.08)]">
-          <div className="grid min-w-[1000px] grid-cols-[1.8fr_1.2fr_1.3fr_0.9fr_1.3fr_0.7fr] bg-[#0f172a] text-[11px] font-black uppercase tracking-[0.2em] text-white/70">
-            <div className="px-8 py-6">Partner Identity</div>
-            <div className="px-6 py-6 text-center">Reference</div>
-            <div className="px-6 py-6">RERA License</div>
-            <div className="px-6 py-6 text-center">Status</div>
-            <div className="px-6 py-6 text-center">Primary Contact</div>
-            <div className="px-6 py-6 text-right">Actions</div>
-          </div>
+          <div ref={tableRef} className="overflow-hidden border-t border-[#f1f5f9]">
+            <div className="grid min-w-[1000px] grid-cols-[1.8fr_1.2fr_1.3fr_0.9fr_1.3fr_0.7fr] bg-gradient-to-r from-[#f8fafc] to-[#f1f5f9] text-[10px] font-black uppercase tracking-[0.2em] text-[#64748b] border-b border-[#f1f5f9]">
+              <div className="px-8 py-5">Partner Identity</div>
+              <div className="px-6 py-5 text-center">Reference</div>
+              <div className="px-6 py-5">RERA License</div>
+              <div className="px-6 py-5 text-center">Status</div>
+              <div className="px-6 py-5 text-center">Associated User</div>
+              <div className="px-8 py-5 text-right">Actions</div>
+            </div>
           {channelPartners.length === 0 ? (
             <div className="flex min-w-[1000px] flex-col items-center justify-center border-t border-[#f1f5f9] bg-[#f8fafc] py-20 text-center">
               <div className="mb-4 flex h-20 w-20 items-center justify-center rounded-3xl bg-white shadow-xl shadow-slate-200/50">
@@ -1568,8 +1568,8 @@ function Moreoption({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, on
                     </span>
                   </div>
                   <div className="px-6 py-6 text-center">
-                    <div className="text-sm font-black text-[#0f172a]">{partner.name}</div>
-                    <div className="mt-1 text-[10px] font-bold uppercase tracking-widest text-[#94a3b8]">Associated User</div>
+                    <div className="text-sm font-bold text-[#1e293b]">{partner.name}</div>
+                    <div className="mt-1 text-[10px] font-black uppercase tracking-widest text-[#6366f1]/50">Primary Contact</div>
                   </div>
                   <div className="relative px-8 py-6 text-right">
                     <button
@@ -1655,6 +1655,8 @@ function Moreoption({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, on
               ))}
             </div>
           )}
+        </div>
+          </div>
         </div>
       </section>
     </main>
