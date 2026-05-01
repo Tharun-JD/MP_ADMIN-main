@@ -521,8 +521,12 @@ function Dashbord({ onSignOut, onBackToDashboard, onOpenUserAccount, onOpenLeadA
         </div>
         <div className="relative flex w-full items-center justify-between gap-8 overflow-visible px-6 py-5 lg:px-10">
           {/* Brand Logo - Left */}
-          <div className="flex shrink-0 items-center">
-            <div className="text-xl font-black tracking-tight text-[#6366f1]">MP Developers</div>
+          <div className="flex shrink-0 items-center gap-3">
+            <div className="text-3xl font-black tracking-tighter text-[#2b45ba]">MP</div>
+            <div className="flex flex-col -space-y-1">
+              <div className="text-[1.1rem] font-bold tracking-tight text-[#2b45ba]">Developers</div>
+              <div className="text-[9px] font-black uppercase tracking-[0.22em] text-[#f18a3a]">Trust Forever</div>
+            </div>
           </div>
 
           {/* Centered Premium Navigation Hub */}
