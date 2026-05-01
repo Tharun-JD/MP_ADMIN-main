@@ -47,6 +47,7 @@ const navItems = [
       { label: 'Channel Partner Application', icon: 'docs' },
       { label: 'Emails', icon: 'reports' },
       { label: 'SMSs', icon: 'reports' },
+      { label: 'Reports', icon: 'reports' },
     ],
   },
 ]
@@ -59,6 +60,7 @@ function Navbar({
   onOpenChannelPartners,
   onOpenEmails,
   onOpenSms,
+  onOpenReports,
   onSignOut,
   className = '',
 }) {
@@ -214,7 +216,7 @@ function Navbar({
                     (activePage === 'dashboard' && item.label === 'Dashbord') ||
                     (activePage === 'user-account' && item.label === 'UserAccount') ||
                     (activePage === 'lead-active' && item.label === 'Lead Activity') ||
-                    ((activePage === 'channel-partners' || activePage === 'emails' || activePage === 'sms') && item.label === 'More')
+                    ((activePage === 'channel-partners' || activePage === 'emails' || activePage === 'sms' || activePage === 'reports') && item.label === 'More')
                       ? 'text-[#6366f1] border-[#6366f1]/20'
                       : 'text-[#475569]'
                   }`}
@@ -240,6 +242,9 @@ function Navbar({
                           }
                           if (option.label === 'SMSs') {
                             onOpenSms?.()
+                          }
+                          if (option.label === 'Reports') {
+                            onOpenReports?.()
                           }
                         }}
                         className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-sm text-[#274873] hover:bg-[#eef5ff]"
