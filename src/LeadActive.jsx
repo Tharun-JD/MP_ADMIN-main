@@ -780,7 +780,7 @@ function LeadActive({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, on
         )}
 
         {isDetailsOpen && viewingLeadIndex !== null && createPortal(
-          <div className="fixed inset-x-0 bottom-0 top-[88px] z-[400] flex flex-col bg-[#f8faff] overflow-y-auto rounded-t-[2.5rem] shadow-[0_-20px_50px_rgba(0,0,0,0.1)] border-t border-slate-200">
+          <div className="fixed inset-x-0 bottom-0 top-[88px] z-[400] flex flex-col bg-[#f8faff] overflow-hidden rounded-t-[2.5rem] shadow-[0_-20px_50px_rgba(0,0,0,0.1)] border-t border-slate-200">
             {/* Top Header Card */}
             <div className="px-6 pt-6 lg:px-8 lg:pt-8 max-w-[1600px] mx-auto w-full shrink-0">
               <header className="flex items-center justify-between rounded-[2rem] bg-white px-6 py-4 shadow-sm border border-slate-100">
