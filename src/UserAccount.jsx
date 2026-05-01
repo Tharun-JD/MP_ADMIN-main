@@ -836,38 +836,7 @@ function UserAccount({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, o
           </div>
         </div>
 
-        {/* Floating Add Button */}
-        {accounts.length > 0 && (
-          <div className="fixed top-28 right-8 z-[100] group">
-            <button
-              onClick={() => setIsAddUserOpen((prev) => !prev)}
-              className="flex h-14 w-14 items-center justify-center rounded-2xl bg-[#6366f1] text-white shadow-2xl shadow-indigo-300 transition hover:bg-[#4f46e5] hover:scale-105 active:scale-95"
-            >
-              <svg className="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
-                <path d="M12 5v14M5 12h14" />
-              </svg>
-            </button>
-            {isAddUserOpen && (
-              <div className="absolute top-[calc(100%+0.5rem)] right-0 w-64 overflow-hidden rounded-2xl border border-[#f1f5f9] bg-white p-2 shadow-2xl animate-elastic-pop">
-                {addUserOptions.map((option) => (
-                  <button
-                    key={option}
-                    type="button"
-                    onClick={() => {
-                      setIsAddUserOpen(false)
-                      setSelectedAddUserRole(option)
-                      resetAddUserForm()
-                      setIsAddUserFormOpen(true)
-                    }}
-                    className="flex w-full items-center rounded-xl px-4 py-2.5 text-left text-xs font-bold text-[#64748b] transition hover:bg-[#f0f4ff] hover:text-[#6366f1]"
-                  >
-                    {option}
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>
-        )}
+
 
         {/* Modals & Overlays */}
         {isFilterOpen && (
@@ -1030,9 +999,26 @@ function UserAccount({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, o
           <div className="fixed inset-0 z-[500] flex items-center justify-center bg-[#0f172a]/40 p-4 backdrop-blur-sm">
             <div className="w-full max-w-2xl rounded-[2.5rem] bg-white shadow-2xl animate-elastic-pop">
               <div className="flex items-center justify-between border-b border-[#f1f5f9] px-8 py-6 rounded-t-[2.5rem]">
-                <h2 className="text-2xl font-black text-[#1e293b]">User Details</h2>
-                <button onClick={() => setIsDetailsOpen(false)} className="text-[#94a3b8] hover:text-[#ef4444]">
-                  <svg className="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                <div className="flex items-center gap-4">
+                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-[#4f46e5] text-white shadow-lg shadow-indigo-200">
+                    <svg className="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                      <circle cx="8.5" cy="7" r="4" />
+                      <line x1="20" y1="8" x2="20" y2="14" />
+                      <line x1="23" y1="11" x2="17" y2="11" />
+                    </svg>
+                  </div>
+                  <div>
+                    <h2 className="text-2xl font-black text-[#1e293b]">Details</h2>
+                    <div className="mt-1 flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-[#94a3b8]">
+                      <span>LEAD ID: #{accounts[viewingAccountIndex].sellDoLeadId || '---'}</span>
+                      <span className="h-1 w-1 rounded-full bg-[#cbd5e1]" />
+                      <span className="text-[#4f46e5]">{accounts[viewingAccountIndex].role || 'USER'}</span>
+                    </div>
+                  </div>
+                </div>
+                <button onClick={() => setIsDetailsOpen(false)} className="flex h-10 w-10 items-center justify-center rounded-full text-[#94a3b8] transition hover:bg-[#f1f5f9] hover:text-[#ef4444]">
+                  <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                     <path d="M18 6L6 18M6 6l12 12" />
                   </svg>
                 </button>
@@ -1143,14 +1129,13 @@ function UserAccount({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, o
         {openActionIndex !== null && menuAnchorRect && createPortal(
           <div
             ref={actionMenuRef}
-            className="fixed z-[999] w-72 overflow-hidden rounded-[2.5rem] border border-white bg-white/90 p-4 shadow-[0_25px_70px_rgba(49,46,129,0.25)] backdrop-blur-3xl animate-elastic-pop"
+            className="fixed z-[999] w-48 overflow-hidden rounded-2xl border border-slate-100 bg-white py-1.5 shadow-xl animate-elastic-pop"
             style={{
-              top: `${menuAnchorRect.top - window.scrollY + 12}px`,
-              left: `${Math.max(20, menuAnchorRect.left - window.scrollX - 260)}px`
+              top: `${menuAnchorRect.top - window.scrollY + 8}px`,
+              left: `${Math.max(20, menuAnchorRect.left - window.scrollX - 160)}px`
             }}
           >
-            <div className="absolute inset-0 bg-gradient-to-br from-[#312e81]/5 to-transparent opacity-50" />
-            <div className="relative space-y-1.5">
+            <div className="flex flex-col">
               <button
                 type="button"
                 onClick={() => {
@@ -1159,18 +1144,13 @@ function UserAccount({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, o
                   setViewingAccountIndex(openActionIndex)
                   setIsDetailsOpen(true)
                 }}
-                className="group flex w-full items-center gap-4 rounded-2xl p-3 text-left transition-all duration-300 hover:bg-[#312e81] hover:text-white hover:shadow-lg hover:shadow-indigo-200"
+                className="flex w-full items-center gap-3 px-4 py-2.5 text-left text-sm font-semibold text-slate-700 transition-colors hover:bg-slate-50"
               >
-                <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-[#eff6ff] text-[#312e81] transition-colors group-hover:bg-white/20 group-hover:text-white">
-                  <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
-                    <circle cx="12" cy="12" r="3" />
-                  </svg>
-                </div>
-                <div>
-                  <div className="text-base font-bold">View Details</div>
-                  <div className="text-[10px] opacity-70 font-medium">Full profile & history</div>
-                </div>
+                <svg className="h-4 w-4 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                  <circle cx="12" cy="12" r="3" />
+                </svg>
+                Show Details
               </button>
 
               <button
@@ -1180,18 +1160,13 @@ function UserAccount({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, o
                   setMenuAnchorRect(null)
                   handleOpenFollowUp(accounts[openActionIndex])
                 }}
-                className="group flex w-full items-center gap-4 rounded-2xl p-3 text-left transition-all duration-300 hover:bg-[#ea580c] hover:text-white hover:shadow-lg hover:shadow-orange-200"
+                className="flex w-full items-center gap-3 px-4 py-2.5 text-left text-sm font-semibold text-slate-700 transition-colors hover:bg-slate-50"
               >
-                <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-[#fff7ed] text-[#ea580c] transition-colors group-hover:bg-white/20 group-hover:text-white">
-                  <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                    <line x1="12" y1="5" x2="12" y2="19" />
-                    <line x1="5" y1="12" x2="19" y2="12" />
-                  </svg>
-                </div>
-                <div>
-                  <div className="text-base font-bold">Add Follow-up</div>
-                  <div className="text-[10px] opacity-70 font-medium">Schedule next activity</div>
-                </div>
+                <svg className="h-4 w-4 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <line x1="12" y1="5" x2="12" y2="19" />
+                  <line x1="5" y1="12" x2="19" y2="12" />
+                </svg>
+                Add Follow
               </button>
             </div>
           </div>,

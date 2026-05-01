@@ -1583,9 +1583,7 @@ function Moreoption({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, on
                             ref={actionMenuRef}
                             className="fixed z-[999] w-72 overflow-hidden rounded-[2.5rem] border border-white bg-white/90 p-4 shadow-[0_25px_70px_rgba(49,46,129,0.25)] backdrop-blur-3xl animate-elastic-pop"
                             style={{
-                              top: `${(menuAnchorRect.top - window.scrollY) + 180 > window.innerHeight
-                                ? menuAnchorRect.top - window.scrollY - 190
-                                : menuAnchorRect.top - window.scrollY + 12}px`,
+                              top: `${menuAnchorRect.top - window.scrollY + 12}px`,
                               left: `${menuAnchorRect.left - window.scrollX - 260}px`
                             }}
                           >
@@ -1599,16 +1597,16 @@ function Moreoption({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, on
                                   setViewingPartnerIndex(index)
                                   setIsDetailsOpen(true)
                                 }}
-                                className="group flex w-full items-center gap-4 rounded-2xl p-3 text-left transition-all duration-300 hover:bg-[#312e81] hover:text-white hover:shadow-lg hover:shadow-indigo-200"
+                                className="group flex w-full items-center gap-4 rounded-2xl p-3 text-left transition-all duration-300 hover:bg-[#6366f1] hover:text-white hover:shadow-lg hover:shadow-indigo-200"
                               >
-                                <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-[#eff6ff] text-[#312e81] transition-colors group-hover:bg-white/20 group-hover:text-white">
+                                <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-[#f0f4ff] text-[#6366f1] transition-colors group-hover:bg-white/20 group-hover:text-white">
                                   <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                                     <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
                                     <circle cx="12" cy="12" r="3" />
                                   </svg>
                                 </div>
                                 <div>
-                                  <div className="text-base font-bold">View Details</div>
+                                  <div className="text-base font-bold">Show Details</div>
                                   <div className="text-[10px] opacity-70 font-medium">Partner profile & history</div>
                                 </div>
                               </button>
