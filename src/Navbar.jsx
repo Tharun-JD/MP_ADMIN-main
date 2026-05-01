@@ -193,10 +193,14 @@ function Navbar({
           <div className="absolute -left-16 top-0 h-full w-[26rem] rotate-[4deg] bg-gradient-to-r from-transparent via-[#2f3fa9]/18 to-transparent blur-xl" />
           <div className="absolute right-0 top-0 h-full w-[22rem] rotate-[-3deg] bg-gradient-to-r from-transparent via-[#1a79d1]/14 to-transparent blur-xl" />
         </div>
-        <div className="relative flex w-full items-center justify-between gap-4 overflow-visible px-4 py-4 lg:px-6">
-          <div className="text-xl font-black tracking-tight text-[#6366f1]">MP Developers</div>
+        <div className="relative flex w-full items-center justify-between gap-8 overflow-visible px-6 py-5 lg:px-10">
+          {/* Brand Logo - Left */}
+          <div className="flex shrink-0 items-center">
+            <div className="text-xl font-black tracking-tight text-[#6366f1]">MP Developers</div>
+          </div>
 
-          <nav className="flex flex-wrap items-center gap-2 lg:gap-3">
+          {/* Centered Premium Navigation Hub */}
+          <nav className="absolute left-1/2 top-1/2 flex -translate-x-1/2 -translate-y-1/2 items-center gap-1.5 rounded-[2.5rem] border border-[#f1f5f9] bg-white/40 p-1.5 shadow-sm backdrop-blur-xl">
             {navItems.map((item) => (
               <div key={item.label} className="relative">
                 <button
@@ -212,65 +216,77 @@ function Navbar({
                     if (item.label === 'UserAccount') onOpenUserAccount?.()
                     if (item.label === 'Lead Activity') onOpenLeadActive?.()
                   }}
-                  className={`nav-btn flex items-center gap-1.5 rounded-lg border border-[#e2e8f0] bg-white px-3 py-2 text-sm font-semibold transition hover:border-[#6366f1]/50 hover:text-[#6366f1] ${
+                  className={`group relative flex items-center gap-2 rounded-full px-6 py-2.5 text-[11px] font-black uppercase tracking-wider transition-all duration-300 ${
                     (activePage === 'dashboard' && item.label === 'Dashbord') ||
                     (activePage === 'user-account' && item.label === 'UserAccount') ||
                     (activePage === 'lead-active' && item.label === 'Lead Activity') ||
                     ((activePage === 'channel-partners' || activePage === 'emails' || activePage === 'sms' || activePage === 'reports') && item.label === 'More')
-                      ? 'text-[#6366f1] border-[#6366f1]/20'
-                      : 'text-[#475569]'
+                      ? 'bg-white text-[#6366f1] shadow-[0_12px_25px_rgba(99,102,241,0.12)] ring-1 ring-[#6366f1]/20'
+                      : 'text-slate-500 hover:bg-white/80 hover:text-[#0f172a]'
                   }`}
                 >
-                  <Icon name={item.icon} className="h-4 w-4" />
-                  {item.label}
-                  {item.label === 'More' && <Icon name="chevron" className="h-3 w-3" />}
+                  <Icon name={item.icon} className={`h-4 w-4 transition-transform group-hover:scale-110 ${
+                    (activePage === 'dashboard' && item.label === 'Dashbord') ||
+                    (activePage === 'user-account' && item.label === 'UserAccount') ||
+                    (activePage === 'lead-active' && item.label === 'Lead Activity') ||
+                    ((activePage === 'channel-partners' || activePage === 'emails' || activePage === 'sms' || activePage === 'reports') && item.label === 'More')
+                      ? 'text-[#6366f1]'
+                      : 'text-[#94a3b8]'
+                  }`} />
+                  <span>{item.label}</span>
+                  {item.label === 'More' && <Icon name="chevron" className={`h-3 w-3 transition-transform duration-300 ${openMenu === 'More' ? 'rotate-180' : ''}`} />}
                 </button>
 
                 {item.label === 'More' && openMenu === item.label && (
-                  <div className="absolute left-0 top-full z-[260] mt-2 min-w-44 rounded-xl border border-[#d5e3f7] bg-white p-2 shadow-xl">
-                    {item.options.map((option) => (
-                      <button
-                        key={option.label}
-                        type="button"
-                        onClick={() => {
-                          setOpenMenu(null)
-                          if (option.label === 'Channel Partner Application') {
-                            onOpenChannelPartners?.()
-                          }
-                          if (option.label === 'Emails') {
-                            onOpenEmails?.()
-                          }
-                          if (option.label === 'SMSs') {
-                            onOpenSms?.()
-                          }
-                          if (option.label === 'Reports') {
-                            onOpenReports?.()
-                          }
-                        }}
-                        className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-sm text-[#274873] hover:bg-[#eef5ff]"
-                      >
-                        <Icon name={option.icon} className="h-4 w-4 text-[#1a79d1]" />
-                        {option.label}
-                      </button>
-                    ))}
+                  <div className="animate-fall absolute left-1/2 top-full z-[260] mt-4 w-72 -translate-x-1/2 overflow-hidden rounded-[2rem] border border-white bg-white/95 p-2 shadow-[0_25px_60px_rgba(0,0,0,0.12)] backdrop-blur-xl">
+                    <div className="absolute inset-0 bg-gradient-to-br from-[#6366f1]/5 to-transparent opacity-50" />
+                    <div className="relative space-y-1">
+                      {item.options.map((option) => (
+                        <button
+                          key={option.label}
+                          type="button"
+                          onClick={() => {
+                            setOpenMenu(null)
+                            if (option.label === 'Channel Partner Application') onOpenChannelPartners?.()
+                            if (option.label === 'Emails') onOpenEmails?.()
+                            if (option.label === 'SMSs') onOpenSms?.()
+                            if (option.label === 'Reports') onOpenReports?.()
+                          }}
+                          className="flex w-full items-center gap-3 rounded-2xl px-4 py-3 text-left transition-all duration-300 hover:bg-[#6366f1] hover:text-white hover:shadow-lg hover:shadow-indigo-100"
+                        >
+                          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-indigo-50 text-[#6366f1] transition-colors group-hover:bg-white/20 group-hover:text-white">
+                            <Icon name={option.icon} className="h-4 w-4" />
+                          </div>
+                          <div>
+                            <div className="text-sm font-black">{option.label}</div>
+                            <div className="text-[10px] font-bold uppercase tracking-widest opacity-60">Management Tool</div>
+                          </div>
+                        </button>
+                      ))}
+                    </div>
                   </div>
                 )}
               </div>
             ))}
           </nav>
 
-          <div ref={welcomeMenuRef} className="relative">
+          {/* User Profile Hub - Right */}
+          <div ref={welcomeMenuRef} className="relative shrink-0">
             <button
               type="button"
               onClick={() => {
                 setOpenMenu(null)
                 setOpenWelcome((current) => !current)
               }}
-              className="nav-btn flex items-center gap-1.5 rounded-xl bg-[#6366f1] px-4 py-2 text-sm font-bold text-white shadow-lg shadow-indigo-100 transition hover:bg-[#4f46e5]"
+              className={`group flex items-center gap-3 rounded-2xl px-6 py-2.5 text-[11px] font-black uppercase tracking-widest transition-all duration-300 hover:shadow-[0_12px_25px_rgba(0,0,0,0.08)] active:scale-95 ${
+                openWelcome ? 'bg-white text-[#6366f1] ring-1 ring-[#6366f1]/20' : 'bg-slate-50 text-slate-600 hover:bg-white'
+              }`}
             >
-              <Icon name="user" className="h-4 w-4" />
-              Welcome
-              <Icon name="chevron" className="h-3 w-3" />
+              <div className={`flex h-7 w-7 items-center justify-center rounded-lg transition-transform group-hover:scale-110 ${openWelcome ? 'bg-[#6366f1] text-white' : 'bg-slate-200 text-slate-500'}`}>
+                <Icon name="user" className="h-4 w-4" />
+              </div>
+              <span>Welcome</span>
+              <Icon name="chevron" className={`h-3 w-3 transition-transform duration-300 ${openWelcome ? 'rotate-180' : ''}`} />
             </button>
 
             {openWelcome && (
