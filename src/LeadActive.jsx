@@ -409,6 +409,16 @@ function LeadActive({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, on
                 </div>
                 
                 <button 
+                  onClick={() => setIsAddLeadOpen(true)}
+                  className="flex items-center gap-2 rounded-xl bg-[#6366f1] px-5 py-2.5 text-xs font-bold text-white shadow-lg shadow-indigo-100 transition hover:bg-[#4f46e5] active:scale-95"
+                >
+                  <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
+                    <path d="M12 5v14M5 12h14" />
+                  </svg>
+                  Add Lead
+                </button>
+
+                <button 
                   onClick={() => setIsFilterOpen(true)}
                   className="flex items-center gap-2 rounded-xl bg-[#f8fafc] px-5 py-2.5 text-xs font-bold text-[#64748b] border border-[#f1f5f9] transition hover:bg-white hover:shadow-md"
                 >
