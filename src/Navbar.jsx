@@ -24,6 +24,8 @@ function Icon({ name, className = 'h-4 w-4' }) {
     chevron: <path d="m6 9 6 6 6-6" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round" />,
     docs: <path d="M7 2.5h8l4 4V21.5H7V2.5Zm8 2v3h3l-3-3Zm-5 7h6v2h-6v-2Zm0 4h6v2h-6v-2Z" fill="currentColor" />,
     reports: <path d="M5 3.5h14a1.5 1.5 0 0 1 1.5 1.5V19A1.5 1.5 0 0 1 19 20.5H5A1.5 1.5 0 0 1 3.5 19V5A1.5 1.5 0 0 1 5 3.5Zm2.5 12h2v-5h-2v5Zm3.5 0h2V8h-2v7Zm3.5 0h2v-3h-2v3Z" fill="currentColor" />,
+    mail: <path d="M3.5 6.25h17A1.25 1.25 0 0 1 21.75 7.5v9A1.25 1.25 0 0 1 20.5 17.75h-17A1.25 1.25 0 0 1 2.25 16.5v-9A1.25 1.25 0 0 1 3.5 6.25Zm8.5 6.6 7.2-4.35H4.8l7.2 4.35Zm7.5-2.05-7.5 4.5-7.5-4.5v4.7h15v-4.7Z" fill="currentColor" />,
+    sms: <path d="M4 4.5h16A1.5 1.5 0 0 1 21.5 6v9a1.5 1.5 0 0 1-1.5 1.5H8.5L4 21V6a1.5 1.5 0 0 1 1.5-1.5ZM7 8h10v2H7V8Zm0 4h7v2H7v-2Z" fill="currentColor" />,
     profile: <path d="M12 12a4.4 4.4 0 1 0-4.4-4.4A4.4 4.4 0 0 0 12 12Zm0 2.2c-4.13 0-7.5 2.18-7.5 4.88V21h15v-1.92c0-2.7-3.37-4.88-7.5-4.88Z" fill="currentColor" />,
     settings: <path d="m12 2.5 1.3 2.2 2.5.5.4 2.5 2 1.5-1 2.3 1 2.3-2 1.5-.4 2.5-2.5.5-1.3 2.2-2.3-1-2.3 1-1.3-2.2-2.5-.5-.4-2.5-2-1.5 1-2.3-1-2.3 2-1.5.4-2.5 2.5-.5L9.7 2.5h2.3Zm0 6.2A3.3 3.3 0 1 0 15.3 12 3.3 3.3 0 0 0 12 8.7Z" fill="currentColor" />,
     signout: <path d="M10 4.5h-4A1.5 1.5 0 0 0 4.5 6v12A1.5 1.5 0 0 0 6 19.5h4v-2H6.5v-11H10v-2Zm4.06 3.44-1.42 1.41L14.8 11.5H8v2h6.8l-2.16 2.15 1.42 1.41L18.6 12l-4.54-4.06Z" fill="currentColor" />,
@@ -45,8 +47,8 @@ const navItems = [
     icon: 'more',
     options: [
       { label: 'Channel Partner Application', icon: 'docs' },
-      { label: 'Emails', icon: 'reports' },
-      { label: 'SMSs', icon: 'reports' },
+      { label: 'Emails', icon: 'mail' },
+      { label: 'SMSs', icon: 'sms' },
       { label: 'Reports', icon: 'reports' },
     ],
   },
@@ -290,37 +292,56 @@ function Navbar({
             </button>
 
             {openWelcome && (
-              <div className="absolute right-0 top-full z-[260] mt-2 min-w-48 rounded-xl border border-[#d5e3f7] bg-white p-2 shadow-xl">
-                <button
-                  type="button"
-                  onClick={() => {
-                    setOpenWelcome(false)
-                    setIsProfileOpen(true)
-                  }}
-                  className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-sm text-[#274873] hover:bg-[#eef5ff]"
-                >
-                  <Icon name="profile" className="h-4 w-4 text-[#1a79d1]" />
-                  Channel Manager Profile
-                </button>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setOpenWelcome(false)
-                    setIsPasswordOpen(true)
-                  }}
-                  className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-sm text-[#274873] hover:bg-[#eef5ff]"
-                >
-                  <Icon name="settings" className="h-4 w-4 text-[#1a79d1]" />
-                  Change Password
-                </button>
-                <button
-                  type="button"
-                  onClick={onSignOut}
-                  className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-sm font-semibold text-[#c43d2f] hover:bg-[#fff1ef]"
-                >
-                  <Icon name="signout" className="h-4 w-4" />
-                  Sign Out
-                </button>
+              <div className="animate-rise absolute right-0 top-full z-[260] mt-4 w-72 overflow-hidden rounded-[2rem] border border-white bg-white/95 p-2 shadow-[0_25px_60px_rgba(0,0,0,0.12)] backdrop-blur-xl">
+                <div className="absolute inset-0 bg-gradient-to-br from-[#6366f1]/5 to-transparent opacity-50" />
+                <div className="relative space-y-1">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setOpenWelcome(false)
+                      setIsProfileOpen(true)
+                    }}
+                    className="group flex w-full items-center gap-3 rounded-2xl px-4 py-3 text-left transition-all duration-300 hover:bg-[#6366f1] hover:text-white hover:shadow-lg hover:shadow-indigo-100"
+                  >
+                    <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-indigo-50 text-[#6366f1] transition-colors group-hover:bg-white/20 group-hover:text-white">
+                      <Icon name="profile" className="h-4 w-4" />
+                    </div>
+                    <div>
+                      <div className="text-sm font-black text-inherit">My Profile</div>
+                      <div className="text-[10px] font-bold uppercase tracking-widest opacity-60">Account Settings</div>
+                    </div>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setOpenWelcome(false)
+                      setIsPasswordOpen(true)
+                    }}
+                    className="group flex w-full items-center gap-3 rounded-2xl px-4 py-3 text-left transition-all duration-300 hover:bg-[#6366f1] hover:text-white hover:shadow-lg hover:shadow-indigo-100"
+                  >
+                    <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-indigo-50 text-[#6366f1] transition-colors group-hover:bg-white/20 group-hover:text-white">
+                      <Icon name="settings" className="h-4 w-4" />
+                    </div>
+                    <div>
+                      <div className="text-sm font-black text-inherit">Security</div>
+                      <div className="text-[10px] font-bold uppercase tracking-widest opacity-60">Change Password</div>
+                    </div>
+                  </button>
+                  <div className="my-1 h-px bg-slate-100" />
+                  <button
+                    type="button"
+                    onClick={onSignOut}
+                    className="group flex w-full items-center gap-3 rounded-2xl px-4 py-3 text-left transition-all duration-300 hover:bg-rose-500 hover:text-white hover:shadow-lg hover:shadow-rose-100"
+                  >
+                    <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-rose-50 text-rose-500 transition-colors group-hover:bg-white/20 group-hover:text-white">
+                      <Icon name="signout" className="h-4 w-4" />
+                    </div>
+                    <div>
+                      <div className="text-sm font-black text-inherit">Sign Out</div>
+                      <div className="text-[10px] font-bold uppercase tracking-widest opacity-60">End Session</div>
+                    </div>
+                  </button>
+                </div>
               </div>
             )}
           </div>

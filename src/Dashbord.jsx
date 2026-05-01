@@ -39,6 +39,8 @@ function Icon({ name, className = 'h-4 w-4' }) {
     docs: <path d="M7 2.5h8l4 4V21.5H7V2.5Zm8 2v3h3l-3-3Zm-5 7h6v2h-6v-2Zm0 4h6v2h-6v-2Z" fill="currentColor" />,
     vendors: <path d="M4 5.5h16V8H4V5.5Zm1 4h14v10H5v-10Zm3 2v2h3v-2H8Zm0 3.5v2h3v-2H8Zm5-3.5v2h3v-2h-3Zm0 3.5v2h3v-2h-3Z" fill="currentColor" />,
     reports: <path d="M5 3.5h14a1.5 1.5 0 0 1 1.5 1.5V19A1.5 1.5 0 0 1 19 20.5H5A1.5 1.5 0 0 1 3.5 19V5A1.5 1.5 0 0 1 5 3.5Zm2.5 12h2v-5h-2v5Zm3.5 0h2V8h-2v7Zm3.5 0h2v-3h-2v3Z" fill="currentColor" />,
+    mail: <path d="M3.5 6.25h17A1.25 1.25 0 0 1 21.75 7.5v9A1.25 1.25 0 0 1 20.5 17.75h-17A1.25 1.25 0 0 1 2.25 16.5v-9A1.25 1.25 0 0 1 3.5 6.25Zm8.5 6.6 7.2-4.35H4.8l7.2 4.35Zm7.5-2.05-7.5 4.5-7.5-4.5v4.7h15v-4.7Z" fill="currentColor" />,
+    sms: <path d="M4 4.5h16A1.5 1.5 0 0 1 21.5 6v9a1.5 1.5 0 0 1-1.5 1.5H8.5L4 21V6a1.5 1.5 0 0 1 1.5-1.5ZM7 8h10v2H7V8Zm0 4h7v2H7v-2Z" fill="currentColor" />,
     profile: <path d="M12 12a4.4 4.4 0 1 0-4.4-4.4A4.4 4.4 0 0 0 12 12Zm0 2.2c-4.13 0-7.5 2.18-7.5 4.88V21h15v-1.92c0-2.7-3.37-4.88-7.5-4.88Z" fill="currentColor" />,
     settings: <path d="m12 2.5 1.3 2.2 2.5.5.4 2.5 2 1.5-1 2.3 1 2.3-2 1.5-.4 2.5-2.5.5-1.3 2.2-2.3-1-2.3 1-1.3-2.2-2.5-.5-.4-2.5-2-1.5 1-2.3-1-2.3 2-1.5.4-2.5 2.5-.5L9.7 2.5h2.3Zm0 6.2A3.3 3.3 0 1 0 15.3 12 3.3 3.3 0 0 0 12 8.7Z" fill="currentColor" />,
     signout: <path d="M10 4.5h-4A1.5 1.5 0 0 0 4.5 6v12A1.5 1.5 0 0 0 6 19.5h4v-2H6.5v-11H10v-2Zm4.06 3.44-1.42 1.41L14.8 11.5H8v2h6.8l-2.16 2.15 1.42 1.41L18.6 12l-4.54-4.06Z" fill="currentColor" />,
@@ -74,8 +76,8 @@ const navItems = [
     icon: 'more',
     options: [
       { label: 'Channel Partner Application', icon: 'docs' },
-      { label: 'Emails', icon: 'reports' },
-      { label: 'SMSs', icon: 'reports' },
+      { label: 'Emails', icon: 'mail' },
+      { label: 'SMSs', icon: 'sms' },
       { label: 'Reports', icon: 'reports' },
     ],
   },
@@ -517,10 +519,14 @@ function Dashbord({ onSignOut, onBackToDashboard, onOpenUserAccount, onOpenLeadA
             className="absolute left-1/3 top-0 h-full w-[22rem] rotate-[1deg] bg-gradient-to-r from-transparent via-[#eb7a26]/16 to-transparent blur-xl"
           />
         </div>
-        <div className="flex w-full items-center justify-between gap-4 px-4 py-4 lg:px-8">
-          <div className="text-xl font-black tracking-tight text-[#6366f1]">MP Developers</div>
+        <div className="relative flex w-full items-center justify-between gap-8 overflow-visible px-6 py-5 lg:px-10">
+          {/* Brand Logo - Left */}
+          <div className="flex shrink-0 items-center">
+            <div className="text-xl font-black tracking-tight text-[#6366f1]">MP Developers</div>
+          </div>
 
-          <nav className="flex flex-wrap items-center gap-2 lg:gap-3">
+          {/* Centered Premium Navigation Hub */}
+          <nav className="absolute left-1/2 top-1/2 flex -translate-x-1/2 -translate-y-1/2 items-center gap-1.5 rounded-[2.5rem] border border-[#f1f5f9] bg-white/40 p-1.5 shadow-sm backdrop-blur-xl">
             {navItems.map((item) => (
               <div key={item.label} className="relative">
                 <button
@@ -537,85 +543,112 @@ function Dashbord({ onSignOut, onBackToDashboard, onOpenUserAccount, onOpenLeadA
                       if (item.label === 'Lead Activity') onOpenLeadActive?.()
                     }
                   }}
-                  className={`nav-btn flex items-center gap-1.5 rounded-lg border border-[#e2e8f0] bg-white px-3 py-2 text-sm font-semibold transition hover:border-[#6366f1]/50 hover:text-[#6366f1] ${
-                    item.label === 'Dashbord' ? 'text-[#6366f1] border-[#6366f1]/20' : 'text-[#475569]'
+                  className={`group relative flex items-center gap-2 rounded-full px-6 py-2.5 text-[11px] font-black uppercase tracking-wider transition-all duration-300 ${
+                    item.label === 'Dashbord'
+                      ? 'bg-white text-[#6366f1] shadow-[0_12px_25px_rgba(99,102,241,0.12)] ring-1 ring-[#6366f1]/20'
+                      : 'text-slate-500 hover:bg-white/80 hover:text-[#0f172a]'
                   }`}
                 >
-                  <Icon name={item.icon} className="h-4 w-4" />
-                  {item.label}
-                  {item.label === 'More' && <Icon name="chevron" className="h-3 w-3" />}
+                  <Icon name={item.icon} className={`h-4 w-4 transition-transform group-hover:scale-110 ${
+                    item.label === 'Dashbord' ? 'text-[#6366f1]' : 'text-[#94a3b8]'
+                  }`} />
+                  <span>{item.label}</span>
+                  {item.label === 'More' && <Icon name="chevron" className={`h-3 w-3 transition-transform duration-300 ${openMenu === 'More' ? 'rotate-180' : ''}`} />}
                 </button>
 
                 {item.label === 'More' && openMenu === item.label && (
-                  <div className="absolute left-0 top-full z-30 mt-2 min-w-44 rounded-xl border border-[#d5e3f7] bg-white p-2 shadow-xl">
-                    {item.options.map((option) => (
-                      <button
-                        key={option.label}
-                        type="button"
-                        onClick={() => {
-                          setOpenMenu(null)
-                          showToast(`Opening ${option.label}`, 'success')
-                          if (option.label === 'Channel Partner Application') {
-                            onOpenChannelPartners?.()
-                          }
-                          if (option.label === 'Emails') {
-                            onOpenEmails?.()
-                          }
-                          if (option.label === 'SMSs') {
-                            onOpenSms?.()
-                          }
-                          if (option.label === 'Reports') {
-                            onOpenReports?.()
-                          }
-                        }}
-                        className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-sm text-[#274873] hover:bg-[#eef5ff]"
-                      >
-                        <Icon name={option.icon} className="h-4 w-4 text-[#1a79d1]" />
-                        {option.label}
-                      </button>
-                    ))}
+                  <div className="animate-fall absolute left-1/2 top-full z-30 mt-4 w-72 -translate-x-1/2 overflow-hidden rounded-[2rem] border border-white bg-white/95 p-2 shadow-[0_25px_60px_rgba(0,0,0,0.12)] backdrop-blur-xl">
+                    <div className="absolute inset-0 bg-gradient-to-br from-[#6366f1]/5 to-transparent opacity-50" />
+                    <div className="relative space-y-1">
+                      {item.options.map((option) => (
+                        <button
+                          key={option.label}
+                          type="button"
+                          onClick={() => {
+                            setOpenMenu(null)
+                            showToast(`Opening ${option.label}`, 'success')
+                            if (option.label === 'Channel Partner Application') onOpenChannelPartners?.()
+                            if (option.label === 'Emails') onOpenEmails?.()
+                            if (option.label === 'SMSs') onOpenSms?.()
+                            if (option.label === 'Reports') onOpenReports?.()
+                          }}
+                          className="flex w-full items-center gap-3 rounded-2xl px-4 py-3 text-left transition-all duration-300 hover:bg-[#6366f1] hover:text-white hover:shadow-lg hover:shadow-indigo-100"
+                        >
+                          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-indigo-50 text-[#6366f1] transition-colors group-hover:bg-white/20 group-hover:text-white">
+                            <Icon name={option.icon} className="h-4 w-4" />
+                          </div>
+                          <div>
+                            <div className="text-sm font-black">{option.label}</div>
+                            <div className="text-[10px] font-bold uppercase tracking-widest opacity-60">Management Tool</div>
+                          </div>
+                        </button>
+                      ))}
+                    </div>
                   </div>
                 )}
               </div>
             ))}
           </nav>
 
-          <div className="relative">
+          {/* User Profile Hub - Right */}
+          <div className="relative shrink-0">
             <button
               type="button"
               onClick={() => {
                 setOpenMenu(null)
                 setOpenWelcome((current) => !current)
-                showToast('Profile menu updated')
               }}
-              className="nav-btn flex items-center gap-1.5 rounded-xl bg-[#6366f1] px-4 py-2 text-sm font-bold text-white shadow-lg shadow-indigo-100 transition hover:bg-[#4f46e5]"
+              className={`group flex items-center gap-3 rounded-2xl px-6 py-2.5 text-[11px] font-black uppercase tracking-widest transition-all duration-300 hover:shadow-[0_12px_25px_rgba(0,0,0,0.08)] active:scale-95 ${
+                openWelcome ? 'bg-white text-[#6366f1] ring-1 ring-[#6366f1]/20' : 'bg-slate-50 text-slate-600 hover:bg-white'
+              }`}
             >
-              <Icon name="user" className="h-4 w-4" />
-              Welcome
-              <Icon name="chevron" className="h-3 w-3" />
+              <div className={`flex h-7 w-7 items-center justify-center rounded-lg transition-transform group-hover:scale-110 ${openWelcome ? 'bg-[#6366f1] text-white' : 'bg-slate-200 text-slate-500'}`}>
+                <Icon name="user" className="h-4 w-4" />
+              </div>
+              <span>Welcome</span>
+              <Icon name="chevron" className={`h-3 w-3 transition-transform duration-300 ${openWelcome ? 'rotate-180' : ''}`} />
             </button>
 
             {openWelcome && (
-              <div className="absolute right-0 top-full z-30 mt-2 min-w-48 rounded-xl border border-[#d5e3f7] bg-white p-2 shadow-xl">
-                <button type="button" className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-sm text-[#274873] hover:bg-[#eef5ff]">
-                  <Icon name="profile" className="h-4 w-4 text-[#1a79d1]" />
-                  Channel Manager Profile
-                </button>
-                <button type="button" className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-sm text-[#274873] hover:bg-[#eef5ff]">
-                  <Icon name="settings" className="h-4 w-4 text-[#1a79d1]" />
-                  Settings
-                </button>
-                <button
-                  type="button"
-                  onClick={() => {
-                    showToast('Signing out', 'warning')
-                    setTimeout(() => onSignOut?.(), 250)
-                  }}
-                  className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-sm font-semibold text-[#c43d2f] hover:bg-[#fff1ef]"
-                >
-                  <Icon name="signout" className="h-4 w-4" />
-                  Sign Out
-                </button>
+              <div className="animate-rise absolute right-0 top-full z-30 mt-4 w-72 overflow-hidden rounded-[2rem] border border-white bg-white/95 p-2 shadow-[0_25px_60px_rgba(0,0,0,0.12)] backdrop-blur-xl">
+                <div className="absolute inset-0 bg-gradient-to-br from-[#6366f1]/5 to-transparent opacity-50" />
+                <div className="relative space-y-1">
+                  <button type="button" className="group flex w-full items-center gap-3 rounded-2xl px-4 py-3 text-left transition-all duration-300 hover:bg-[#6366f1] hover:text-white hover:shadow-lg hover:shadow-indigo-100">
+                    <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-indigo-50 text-[#6366f1] transition-colors group-hover:bg-white/20 group-hover:text-white">
+                      <Icon name="profile" className="h-4 w-4" />
+                    </div>
+                    <div>
+                      <div className="text-sm font-black text-inherit">My Profile</div>
+                      <div className="text-[10px] font-bold uppercase tracking-widest opacity-60">Account Settings</div>
+                    </div>
+                  </button>
+                  <button type="button" className="group flex w-full items-center gap-3 rounded-2xl px-4 py-3 text-left transition-all duration-300 hover:bg-[#6366f1] hover:text-white hover:shadow-lg hover:shadow-indigo-100">
+                    <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-indigo-50 text-[#6366f1] transition-colors group-hover:bg-white/20 group-hover:text-white">
+                      <Icon name="settings" className="h-4 w-4" />
+                    </div>
+                    <div>
+                      <div className="text-sm font-black text-inherit">Settings</div>
+                      <div className="text-[10px] font-bold uppercase tracking-widest opacity-60">Preferences</div>
+                    </div>
+                  </button>
+                  <div className="my-1 h-px bg-slate-100" />
+                  <button
+                    type="button"
+                    onClick={() => {
+                      showToast('Signing out', 'warning')
+                      setTimeout(() => onSignOut?.(), 250)
+                    }}
+                    className="group flex w-full items-center gap-3 rounded-2xl px-4 py-3 text-left transition-all duration-300 hover:bg-rose-500 hover:text-white hover:shadow-lg hover:shadow-rose-100"
+                  >
+                    <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-rose-50 text-rose-500 transition-colors group-hover:bg-white/20 group-hover:text-white">
+                      <Icon name="signout" className="h-4 w-4" />
+                    </div>
+                    <div>
+                      <div className="text-sm font-black text-inherit">Sign Out</div>
+                      <div className="text-[10px] font-bold uppercase tracking-widest opacity-60">End Session</div>
+                    </div>
+                  </button>
+                </div>
               </div>
             )}
           </div>
