@@ -1085,6 +1085,7 @@ function UserAccount({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, o
                       <option>Enquiry Received</option>
                       <option>Visit Done</option>
                       <option>Interested</option>
+                      <option>Not Interested</option>
                     </select>
                   </div>
                   <div className="space-y-2">
@@ -1095,6 +1096,30 @@ function UserAccount({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, o
                       onChange={(e) => setFollowUpFormValues({ ...followUpFormValues, project: e.target.value })}
                       className="w-full rounded-xl border border-[#e2e8f0] bg-[#f8fafc] px-4 py-3 text-sm outline-none focus:border-[#6366f1]"
                     />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-xs font-bold uppercase tracking-wider text-[#64748b]">Lead Status</label>
+                    <select
+                      value={followUpFormValues.leadStatus}
+                      onChange={(e) => setFollowUpFormValues({ ...followUpFormValues, leadStatus: e.target.value })}
+                      className="w-full rounded-xl border border-[#e2e8f0] bg-[#f8fafc] px-4 py-3 text-sm outline-none focus:border-[#6366f1]"
+                    >
+                      <option>Active</option>
+                      <option>Inactive</option>
+                      <option>Closed</option>
+                    </select>
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-xs font-bold uppercase tracking-wider text-[#64748b]">Count Status</label>
+                    <select
+                      value={followUpFormValues.countStatus}
+                      onChange={(e) => setFollowUpFormValues({ ...followUpFormValues, countStatus: e.target.value })}
+                      className="w-full rounded-xl border border-[#e2e8f0] bg-[#f8fafc] px-4 py-3 text-sm outline-none focus:border-[#6366f1]"
+                    >
+                      <option>Pending</option>
+                      <option>Count Given</option>
+                      <option>No Count</option>
+                    </select>
                   </div>
                 </div>
                 <div className="space-y-2">
@@ -1120,9 +1145,7 @@ function UserAccount({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, o
             ref={actionMenuRef}
             className="fixed z-[999] w-72 overflow-hidden rounded-[2.5rem] border border-white bg-white/90 p-4 shadow-[0_25px_70px_rgba(49,46,129,0.25)] backdrop-blur-3xl animate-elastic-pop"
             style={{
-              top: `${(menuAnchorRect.top - window.scrollY) + 180 > window.innerHeight
-                ? menuAnchorRect.top - window.scrollY - 190
-                : menuAnchorRect.top - window.scrollY + 12}px`,
+              top: `${menuAnchorRect.top - window.scrollY + 12}px`,
               left: `${Math.max(20, menuAnchorRect.left - window.scrollX - 260)}px`
             }}
           >

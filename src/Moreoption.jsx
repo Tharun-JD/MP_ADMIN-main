@@ -798,68 +798,56 @@ function Moreoption({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, on
                           <div className="cp-add-field space-y-1.5">
                             <label className="ml-1 text-[11px] font-black uppercase tracking-widest text-[#64748b]">Phone *</label>
                             <div className="flex gap-2">
-                              <div className="relative w-32">
-                                <div
-                                  onClick={(e) => {
-                                    if (isPhonePrefixOpen) {
-                                      setIsPhonePrefixOpen(false)
-                                      setPhoneAnchor(null)
-                                    } else {
-                                      const rect = e.currentTarget.getBoundingClientRect()
-                                      setPhoneAnchor({ top: rect.bottom, left: rect.left, width: rect.width })
-                                      setIsPhonePrefixOpen(true)
-                                    }
-                                  }}
-                                  className={`prefix-trigger flex h-[54px] cursor-pointer items-center justify-between rounded-2xl border px-4 transition-all duration-300 ${isPhonePrefixOpen ? 'border-[#f59e0b] bg-white ring-4 ring-[#f59e0b]/10' : 'border-[#e2e8f0] bg-[#f8fafc]'}`}
+                              <div className="relative">
+                                <button
+                                  type="button"
+                                  onClick={() => setIsPhonePrefixOpen(!isPhonePrefixOpen)}
+                                  className="prefix-trigger flex items-center gap-3 rounded-2xl border border-[#e2e8f0] bg-[#f8fafc] px-5 py-4 text-sm font-bold text-[#1e293b] outline-none transition-all hover:bg-white focus:border-[#6366f1]"
+                                  style={{ minWidth: '130px', height: '62px' }}
                                 >
-                                  <span className="text-base font-semibold text-[#0f172a]">
-                                    {formValues.phonePrefix}
+                                  <span className="text-[11px] font-black uppercase tracking-widest text-[#64748b]">
+                                    {countryPhoneOptions.find(opt => opt.code === formValues.phonePrefix)?.iso}
                                   </span>
-                                  <IconChevron />
-                                </div>
-                                {isPhonePrefixOpen && phoneAnchor && createPortal(
+                                  <span className="text-lg font-black">{formValues.phonePrefix}</span>
+                                  <IconChevron className={`h-4 w-4 transition-transform duration-300 ${isPhonePrefixOpen ? 'rotate-180' : ''}`} />
+                                </button>
+                                {isPhonePrefixOpen && (
                                   <div
                                     ref={phonePrefixRef}
-                                    onMouseDown={(e) => e.stopPropagation()}
-                                    onClick={(e) => e.stopPropagation()}
-                                    className="fixed z-[600] w-64 overflow-hidden rounded-2xl border border-white bg-white p-2 shadow-[0_20px_50px_rgba(0,0,0,0.15)] backdrop-blur-xl animate-elastic-pop"
-                                    style={{ top: `${phoneAnchor.top + 8}px`, left: `${phoneAnchor.left}px` }}
+                                    className="absolute left-0 top-full z-[600] mt-2 w-80 overflow-hidden rounded-2xl border border-[#f1f5f9] bg-white p-2 shadow-[0_20px_50px_rgba(0,0,0,0.15)] animate-fall"
                                   >
-                                    <div className="mb-2 px-2">
+                                    <div className="mb-2 px-2 pt-1">
                                       <input
                                         type="text"
-                                        placeholder="Search code..."
+                                        placeholder="Search country or code..."
                                         value={phoneSearch}
                                         onChange={(e) => setPhoneSearch(e.target.value)}
-                                        onClick={(e) => e.stopPropagation()}
-                                        className="w-full rounded-xl border border-[#f1f5f9] bg-[#f8fafc] px-4 py-2 text-sm font-bold text-[#0f172a] outline-none focus:border-[#f59e0b]"
+                                        className="w-full rounded-xl border border-[#f1f5f9] bg-[#f8fafc] px-4 py-3 text-sm font-bold text-[#0f172a] outline-none focus:border-[#6366f1]"
                                       />
                                     </div>
-                                    <div className="max-h-60 overflow-y-auto no-scrollbar">
+                                    <div className="max-h-80 overflow-y-auto no-scrollbar">
                                       {countryPhoneOptions
-                                        .filter(p => p.country.toLowerCase().includes(phoneSearch.toLowerCase()) || p.code.includes(phoneSearch))
+                                        .filter(p => p.country.toLowerCase().includes(phoneSearch.toLowerCase()) || p.code.includes(phoneSearch) || p.iso.toLowerCase().includes(phoneSearch.toLowerCase()))
                                         .map(p => (
                                           <button
                                             key={`${p.country}-${p.code}`}
                                             type="button"
-                                            onClick={(e) => {
-                                              e.preventDefault()
-                                              e.stopPropagation()
+                                            onClick={() => {
                                               setFormField('phonePrefix', p.code)
                                               setIsPhonePrefixOpen(false)
-                                              setPhoneAnchor(null)
                                               setPhoneSearch('')
                                             }}
-                                            className="flex w-full items-center gap-3 px-4 py-2.5 text-left text-sm font-bold text-[#475569] transition hover:bg-[#fff7ed] hover:text-[#f59e0b]"
+                                            className="flex w-full items-center gap-3 rounded-lg px-3 py-3 text-left text-sm font-bold text-[#475569] transition hover:bg-[#f0f4ff] hover:text-[#6366f1]"
                                           >
-                                            <span className="text-lg">{p.flag}</span>
-                                            <span>{p.country} ({p.code})</span>
+                                            <span className="text-xl">{p.flag}</span>
+                                            <span className="flex-1 font-bold text-[#1e293b]">{p.country}</span>
+                                            <span className="rounded bg-slate-100 px-2 py-0.5 text-[10px] font-black text-[#94a3b8] uppercase">{p.iso}</span>
+                                            <span className="font-black text-[#0f172a]">{p.code}</span>
                                           </button>
                                         ))
                                       }
                                     </div>
-                                  </div>,
-                                  document.body
+                                  </div>
                                 )}
                               </div>
                               <input
@@ -867,7 +855,8 @@ function Moreoption({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, on
                                 placeholder="Phone Number"
                                 value={formValues.phone}
                                 onChange={(e) => setFormField('phone', e.target.value)}
-                                className="flex-1 rounded-2xl border border-[#e2e8f0] bg-[#f8fafc] px-5 py-3.5 text-base font-semibold text-[#0f172a] outline-none transition-all focus:border-[#f59e0b] focus:bg-white focus:ring-4 focus:ring-[#f59e0b]/10"
+                                className="flex-1 rounded-2xl border border-[#e2e8f0] bg-[#f8fafc] px-6 py-4 font-semibold text-[#0f172a] outline-none transition-all focus:border-[#6366f1] focus:bg-white focus:ring-4 focus:ring-[#6366f1]/10"
+                                style={{ height: '62px', fontSize: '1.125rem' }}
                               />
                             </div>
                           </div>
@@ -886,68 +875,56 @@ function Moreoption({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, on
                           <div className="cp-add-field space-y-1.5">
                             <label className="ml-1 text-[11px] font-black uppercase tracking-widest text-[#64748b]">Alternate Number</label>
                             <div className="flex gap-2">
-                              <div className="relative w-32">
-                                <div
-                                  onClick={(e) => {
-                                    if (isAltPhonePrefixOpen) {
-                                      setIsAltPhonePrefixOpen(false)
-                                      setAltPhoneAnchor(null)
-                                    } else {
-                                      const rect = e.currentTarget.getBoundingClientRect()
-                                      setAltPhoneAnchor({ top: rect.bottom, left: rect.left, width: rect.width })
-                                      setIsAltPhonePrefixOpen(true)
-                                    }
-                                  }}
-                                  className={`alt-prefix-trigger flex h-[54px] cursor-pointer items-center justify-between rounded-2xl border px-4 transition-all duration-300 ${isAltPhonePrefixOpen ? 'border-[#f59e0b] bg-white ring-4 ring-[#f59e0b]/10' : 'border-[#e2e8f0] bg-[#f8fafc]'}`}
+                              <div className="relative">
+                                <button
+                                  type="button"
+                                  onClick={() => setIsAltPhonePrefixOpen(!isAltPhonePrefixOpen)}
+                                  className="alt-prefix-trigger flex items-center gap-3 rounded-2xl border border-[#e2e8f0] bg-[#f8fafc] px-5 py-4 text-sm font-bold text-[#1e293b] outline-none transition-all hover:bg-white focus:border-[#6366f1]"
+                                  style={{ minWidth: '130px', height: '62px' }}
                                 >
-                                  <span className="text-base font-semibold text-[#0f172a]">
-                                    {formValues.alternatePhonePrefix}
+                                  <span className="text-[11px] font-black uppercase tracking-widest text-[#64748b]">
+                                    {countryPhoneOptions.find(opt => opt.code === formValues.alternatePhonePrefix)?.iso}
                                   </span>
-                                  <IconChevron />
-                                </div>
-                                {isAltPhonePrefixOpen && altPhoneAnchor && createPortal(
+                                  <span className="text-lg font-black">{formValues.alternatePhonePrefix}</span>
+                                  <IconChevron className={`h-4 w-4 transition-transform duration-300 ${isAltPhonePrefixOpen ? 'rotate-180' : ''}`} />
+                                </button>
+                                {isAltPhonePrefixOpen && (
                                   <div
                                     ref={altPhonePrefixRef}
-                                    onMouseDown={(e) => e.stopPropagation()}
-                                    onClick={(e) => e.stopPropagation()}
-                                    className="fixed z-[600] w-64 overflow-hidden rounded-2xl border border-white bg-white p-2 shadow-[0_20px_50px_rgba(0,0,0,0.15)] backdrop-blur-xl animate-elastic-pop"
-                                    style={{ top: `${altPhoneAnchor.top + 8}px`, left: `${altPhoneAnchor.left}px` }}
+                                    className="absolute left-0 top-full z-[600] mt-2 w-80 overflow-hidden rounded-2xl border border-[#f1f5f9] bg-white p-2 shadow-[0_20px_50px_rgba(0,0,0,0.15)] animate-fall"
                                   >
-                                    <div className="mb-2 px-2">
+                                    <div className="mb-2 px-2 pt-1">
                                       <input
                                         type="text"
-                                        placeholder="Search code..."
+                                        placeholder="Search country or code..."
                                         value={altPhoneSearch}
                                         onChange={(e) => setAltPhoneSearch(e.target.value)}
-                                        onClick={(e) => e.stopPropagation()}
-                                        className="w-full rounded-xl border border-[#f1f5f9] bg-[#f8fafc] px-4 py-2 text-sm font-bold text-[#0f172a] outline-none focus:border-[#f59e0b]"
+                                        className="w-full rounded-xl border border-[#f1f5f9] bg-[#f8fafc] px-4 py-3 text-sm font-bold text-[#0f172a] outline-none focus:border-[#6366f1]"
                                       />
                                     </div>
-                                    <div className="max-h-60 overflow-y-auto no-scrollbar">
+                                    <div className="max-h-80 overflow-y-auto no-scrollbar">
                                       {countryPhoneOptions
-                                        .filter(p => p.country.toLowerCase().includes(altPhoneSearch.toLowerCase()) || p.code.includes(altPhoneSearch))
+                                        .filter(p => p.country.toLowerCase().includes(altPhoneSearch.toLowerCase()) || p.code.includes(altPhoneSearch) || p.iso.toLowerCase().includes(altPhoneSearch.toLowerCase()))
                                         .map(p => (
                                           <button
                                             key={`${p.country}-${p.code}-alt`}
                                             type="button"
-                                            onClick={(e) => {
-                                              e.preventDefault()
-                                              e.stopPropagation()
+                                            onClick={() => {
                                               setFormField('alternatePhonePrefix', p.code)
                                               setIsAltPhonePrefixOpen(false)
-                                              setAltPhoneAnchor(null)
                                               setAltPhoneSearch('')
                                             }}
-                                            className="flex w-full items-center gap-3 px-4 py-2.5 text-left text-sm font-bold text-[#475569] transition hover:bg-[#fff7ed] hover:text-[#f59e0b]"
+                                            className="flex w-full items-center gap-3 rounded-lg px-3 py-3 text-left text-sm font-bold text-[#475569] transition hover:bg-[#f0f4ff] hover:text-[#6366f1]"
                                           >
-                                            <span className="text-lg">{p.flag}</span>
-                                            <span>{p.country} ({p.code})</span>
+                                            <span className="text-xl">{p.flag}</span>
+                                            <span className="flex-1 font-bold text-[#1e293b]">{p.country}</span>
+                                            <span className="rounded bg-slate-100 px-2 py-0.5 text-[10px] font-black text-[#94a3b8] uppercase">{p.iso}</span>
+                                            <span className="font-black text-[#0f172a]">{p.code}</span>
                                           </button>
                                         ))
                                       }
                                     </div>
-                                  </div>,
-                                  document.body
+                                  </div>
                                 )}
                               </div>
                               <input
@@ -955,7 +932,8 @@ function Moreoption({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, on
                                 placeholder="Alternate Number"
                                 value={formValues.alternateNumber}
                                 onChange={(e) => setFormField('alternateNumber', e.target.value)}
-                                className="flex-1 rounded-2xl border border-[#e2e8f0] bg-[#f8fafc] px-5 py-3.5 text-base font-semibold text-[#0f172a] outline-none transition-all focus:border-[#f59e0b] focus:bg-white focus:ring-4 focus:ring-[#f59e0b]/10"
+                                className="flex-1 rounded-2xl border border-[#e2e8f0] bg-[#f8fafc] px-6 py-4 font-semibold text-[#0f172a] outline-none transition-all focus:border-[#6366f1] focus:bg-white focus:ring-4 focus:ring-[#6366f1]/10"
+                                style={{ height: '62px', fontSize: '1.125rem' }}
                               />
                             </div>
                           </div>
