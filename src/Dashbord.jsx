@@ -465,13 +465,13 @@ function Dashbord({ onSignOut, onBackToDashboard, onOpenUserAccount, onOpenLeadA
           ref={(node) => {
             ringRefs.current[0] = node
           }}
-          className="absolute left-1/2 top-1/2 h-[34rem] w-[34rem] -translate-x-1/2 -translate-y-1/2 rounded-full border border-[#2f3fa9]/10"
+          className="absolute left-1/2 top-1/2 h-[28rem] w-[28rem] -translate-x-1/2 -translate-y-1/2 rounded-full border border-[#2f3fa9]/10"
         />
         <div
           ref={(node) => {
             ringRefs.current[1] = node
           }}
-          className="absolute left-1/2 top-1/2 h-[24rem] w-[24rem] -translate-x-1/2 -translate-y-1/2 rounded-full border border-[#1a79d1]/12"
+          className="absolute left-1/2 top-1/2 h-[20rem] w-[20rem] -translate-x-1/2 -translate-y-1/2 rounded-full border border-[#1a79d1]/12"
         />
       </div>
 
@@ -618,11 +618,11 @@ function Dashbord({ onSignOut, onBackToDashboard, onOpenUserAccount, onOpenLeadA
         </div>
       </header>
 
-      <section className="relative z-10 flex min-h-[calc(100vh-88px)] w-full items-start justify-center px-4 py-8 lg:px-8">
+      <section className="relative z-10 flex min-h-[calc(100vh-88px)] w-full items-start justify-center px-4 py-6 lg:px-8">
         <div ref={canvasRef} className="relative w-full [transform-style:preserve-3d]">
           <div
             ref={heroRef}
-            className="relative mb-6 overflow-hidden rounded-2xl border border-[#e2e8f0] bg-white p-6 text-[#0f172a] shadow-xl shadow-slate-200/40 [transform-style:preserve-3d] sm:p-8"
+            className="relative mb-5 overflow-hidden rounded-2xl border border-[#e2e8f0] bg-white p-5 text-[#0f172a] shadow-xl shadow-slate-200/40 [transform-style:preserve-3d] sm:p-6"
           >
             <div
               ref={heroGlowRef}

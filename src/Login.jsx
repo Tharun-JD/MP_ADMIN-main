@@ -240,17 +240,17 @@ function Login({ onSignIn }) {
           ref={(node) => {
             ringRefs.current[0] = node
           }}
-          className="absolute left-1/2 top-1/2 h-[34rem] w-[34rem] -translate-x-1/2 -translate-y-1/2 rounded-full border border-[#2f3fa9]/10"
+          className="absolute left-1/2 top-1/2 h-[28rem] w-[28rem] -translate-x-1/2 -translate-y-1/2 rounded-full border border-[#2f3fa9]/10"
         />
         <div
           ref={(node) => {
             ringRefs.current[1] = node
           }}
-          className="absolute left-1/2 top-1/2 h-[23rem] w-[23rem] -translate-x-1/2 -translate-y-1/2 rounded-full border border-[#1a79d1]/15"
+          className="absolute left-1/2 top-1/2 h-[18rem] w-[18rem] -translate-x-1/2 -translate-y-1/2 rounded-full border border-[#1a79d1]/15"
         />
       </div>
 
-      <section className="relative z-10 mx-auto grid min-h-screen w-full max-w-7xl grid-cols-1 items-center gap-10 px-5 py-8 lg:grid-cols-2 lg:px-8">
+      <section className="relative z-10 mx-auto grid min-h-screen w-full max-w-6xl grid-cols-1 items-center gap-8 px-5 py-8 lg:grid-cols-2 lg:px-8">
         <div
           ref={cardRef}
           className="w-full max-w-xl rounded-[2rem] border border-[#2f3fa9]/18 bg-white/85 p-8 shadow-2xl shadow-[#2f3fa9]/20 backdrop-blur-xl sm:p-10 lg:order-2 lg:justify-self-end"

@@ -1,4 +1,17 @@
 @import "tailwindcss";
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+}
+
+html {
+  font-size: 94%;
+}
+
+@media (min-width: 1536px) {
+  html {
+    font-size: 90%;
+  }
+}
 
 @layer utilities {
   .no-scrollbar::-webkit-scrollbar {
