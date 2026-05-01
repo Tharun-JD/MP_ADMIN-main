@@ -151,6 +151,9 @@ function UserAccount({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, o
       timeZone: '(GMT+05:30) Mumbai',
     }
   })
+  const [isCountryCodeOpen, setIsCountryCodeOpen] = useState(false)
+  const [countryCodeSearch, setCountryCodeSearch] = useState('')
+  const countryCodeDropdownRef = useRef(null)
   const [viewingAccountIndex, setViewingAccountIndex] = useState(null)
   const [isDetailsOpen, setIsDetailsOpen] = useState(false)
   const [openActionIndex, setOpenActionIndex] = useState(null)
@@ -227,6 +230,9 @@ function UserAccount({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, o
       }
       if (followUpFormRef.current && !followUpFormRef.current.contains(event.target)) {
         // Only close if not clicking outside modal
+      }
+      if (countryCodeDropdownRef.current && !countryCodeDropdownRef.current.contains(event.target) && !event.target.closest('.ua-cc-trigger')) {
+        setIsCountryCodeOpen(false)
       }
     }
 
@@ -948,18 +954,62 @@ function UserAccount({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, o
                 <div className="ua-add-user-field space-y-2">
                   <label className="text-xs font-bold uppercase tracking-wider text-[#64748b]">Phone Number</label>
                   <div className="flex gap-2">
-                    <select
-                      value={addUserFormValues.countryCode}
-                      onChange={(e) => setAddUserField('countryCode', e.target.value)}
-                      className="rounded-xl border border-[#e2e8f0] bg-[#f8fafc] px-3 py-3 text-sm outline-none focus:border-[#6366f1]"
-                    >
-                      {countryPhoneOptions.map(opt => <option key={opt.code} value={opt.code}>{opt.flag} {opt.code}</option>)}
-                    </select>
+                    <div className="relative">
+                      <button
+                        type="button"
+                        onClick={() => setIsCountryCodeOpen(!isCountryCodeOpen)}
+                        className="ua-cc-trigger flex items-center gap-2 rounded-xl border border-[#e2e8f0] bg-[#f8fafc] px-4 py-3 text-sm font-bold text-[#1e293b] outline-none transition-all hover:bg-white focus:border-[#6366f1]"
+                      >
+                        <span>{countryPhoneOptions.find(opt => opt.code === addUserFormValues.countryCode)?.flag}</span>
+                        <span>{addUserFormValues.countryCode}</span>
+                        <IconChevron className={`transition-transform duration-300 ${isCountryCodeOpen ? 'rotate-180' : ''}`} />
+                      </button>
+
+                      {isCountryCodeOpen && (
+                        <div 
+                          ref={countryCodeDropdownRef}
+                          className="absolute left-0 top-full z-[300] mt-2 w-64 overflow-hidden rounded-2xl border border-[#f1f5f9] bg-white p-2 shadow-2xl animate-fall"
+                        >
+                          <div className="mb-2 px-2 pt-1">
+                            <input 
+                              type="text"
+                              placeholder="Search code..."
+                              autoFocus
+                              value={countryCodeSearch}
+                              onChange={(e) => setCountryCodeSearch(e.target.value)}
+                              className="w-full rounded-xl border border-[#f1f5f9] bg-[#f8fafc] px-3 py-2 text-xs font-bold text-[#0f172a] outline-none focus:border-[#6366f1]"
+                            />
+                          </div>
+                          <div className="max-h-60 overflow-y-auto no-scrollbar">
+                            {countryPhoneOptions
+                              .filter(opt => opt.country.toLowerCase().includes(countryCodeSearch.toLowerCase()) || opt.code.includes(countryCodeSearch))
+                              .map(opt => (
+                                <button
+                                  key={`${opt.country}-${opt.code}`}
+                                  type="button"
+                                  onClick={() => {
+                                    setAddUserField('countryCode', opt.code)
+                                    setIsCountryCodeOpen(false)
+                                    setCountryCodeSearch('')
+                                  }}
+                                  className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left text-xs font-bold text-[#64748b] transition hover:bg-[#f0f4ff] hover:text-[#6366f1]"
+                                >
+                                  <span className="text-base">{opt.flag}</span>
+                                  <span className="flex-1">{opt.country}</span>
+                                  <span className="text-[#94a3b8]">{opt.code}</span>
+                                </button>
+                              ))
+                            }
+                          </div>
+                        </div>
+                      )}
+                    </div>
                     <input
                       type="tel"
                       value={addUserFormValues.phone}
                       onChange={(e) => setAddUserField('phone', e.target.value)}
-                      className="w-full rounded-xl border border-[#e2e8f0] bg-[#f8fafc] px-4 py-3 text-sm outline-none focus:border-[#6366f1]"
+                      placeholder="Enter phone number"
+                      className="w-full rounded-xl border border-[#e2e8f0] bg-[#f8fafc] px-4 py-3 text-sm outline-none transition-all focus:border-[#6366f1] focus:bg-white"
                     />
                   </div>
                 </div>
@@ -1065,7 +1115,9 @@ function UserAccount({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, o
             ref={actionMenuRef}
             className="fixed z-[999] w-72 overflow-hidden rounded-[2.5rem] border border-white bg-white/90 p-4 shadow-[0_25px_70px_rgba(49,46,129,0.25)] backdrop-blur-3xl animate-elastic-pop"
             style={{ 
-              top: `${Math.min(menuAnchorRect.top - window.scrollY + 12, window.innerHeight - 200)}px`, 
+              top: `${(menuAnchorRect.top - window.scrollY) + 180 > window.innerHeight 
+                ? menuAnchorRect.top - window.scrollY - 190 
+                : menuAnchorRect.top - window.scrollY + 12}px`, 
               left: `${Math.max(20, menuAnchorRect.left - window.scrollX - 260)}px` 
             }}
           >

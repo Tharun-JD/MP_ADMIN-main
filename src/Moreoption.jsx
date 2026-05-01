@@ -1608,7 +1608,9 @@ function Moreoption({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, on
                         ref={actionMenuRef}
                         className="fixed z-[999] w-72 overflow-hidden rounded-[2.5rem] border border-white bg-white/90 p-4 shadow-[0_25px_70px_rgba(49,46,129,0.25)] backdrop-blur-3xl animate-elastic-pop"
                         style={{ 
-                          top: `${menuAnchorRect.top - window.scrollY + 12}px`, 
+                          top: `${(menuAnchorRect.top - window.scrollY) + 180 > window.innerHeight 
+                            ? menuAnchorRect.top - window.scrollY - 190 
+                            : menuAnchorRect.top - window.scrollY + 12}px`, 
                           left: `${menuAnchorRect.left - window.scrollX - 260}px` 
                         }}
                       >

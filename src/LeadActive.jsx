@@ -12,6 +12,71 @@ const actionOptions = ['Show', 'Add Follow']
 
 const initialLeads = []
 
+const countryPhoneOptions = [
+  { flag: '🇮🇳', country: 'India', code: '+91' },
+  { flag: '🇺🇸', country: 'United States', code: '+1' },
+  { flag: '🇨🇦', country: 'Canada', code: '+1' },
+  { flag: '🇬🇧', country: 'United Kingdom', code: '+44' },
+  { flag: '🇦🇺', country: 'Australia', code: '+61' },
+  { flag: '🇳🇿', country: 'New Zealand', code: '+64' },
+  { flag: '🇸🇬', country: 'Singapore', code: '+65' },
+  { flag: '🇦🇪', country: 'UAE', code: '+971' },
+  { flag: '🇸🇦', country: 'Saudi Arabia', code: '+966' },
+  { flag: '🇶🇦', country: 'Qatar', code: '+974' },
+  { flag: '🇰🇼', country: 'Kuwait', code: '+965' },
+  { flag: '🇧🇭', country: 'Bahrain', code: '+973' },
+  { flag: '🇴🇲', country: 'Oman', code: '+968' },
+  { flag: '🇩🇪', country: 'Germany', code: '+49' },
+  { flag: '🇫🇷', country: 'France', code: '+33' },
+  { flag: '🇮🇹', country: 'Italy', code: '+39' },
+  { flag: '🇪🇸', country: 'Spain', code: '+34' },
+  { flag: '🇵🇹', country: 'Portugal', code: '+351' },
+  { flag: '🇳🇱', country: 'Netherlands', code: '+31' },
+  { flag: '🇧🇪', country: 'Belgium', code: '+32' },
+  { flag: '🇸🇪', country: 'Sweden', code: '+46' },
+  { flag: '🇳🇴', country: 'Norway', code: '+47' },
+  { flag: '🇩🇰', country: 'Denmark', code: '+45' },
+  { flag: '🇫🇮', country: 'Finland', code: '+358' },
+  { flag: '🇨🇭', country: 'Switzerland', code: '+41' },
+  { flag: '🇦🇹', country: 'Austria', code: '+43' },
+  { flag: '🇮🇪', country: 'Ireland', code: '+353' },
+  { flag: '🇵🇱', country: 'Poland', code: '+48' },
+  { flag: '🇨🇿', country: 'Czech Republic', code: '+420' },
+  { flag: '🇬🇷', country: 'Greece', code: '+30' },
+  { flag: '🇹🇷', country: 'Turkey', code: '+90' },
+  { flag: '🇷🇺', country: 'Russia', code: '+7' },
+  { flag: '🇺🇦', country: 'Ukraine', code: '+380' },
+  { flag: '🇯🇵', country: 'Japan', code: '+81' },
+  { flag: '🇰🇷', country: 'South Korea', code: '+82' },
+  { flag: '🇨🇳', country: 'China', code: '+86' },
+  { flag: '🇭🇰', country: 'Hong Kong', code: '+852' },
+  { flag: '🇹🇼', country: 'Taiwan', code: '+886' },
+  { flag: '🇲🇾', country: 'Malaysia', code: '+60' },
+  { flag: '🇹🇭', country: 'Thailand', code: '+66' },
+  { flag: '🇻🇳', country: 'Vietnam', code: '+84' },
+  { flag: '🇵🇭', country: 'Philippines', code: '+63' },
+  { flag: '🇮🇩', country: 'Indonesia', code: '+62' },
+  { flag: '🇵🇰', country: 'Pakistan', code: '+92' },
+  { flag: '🇧🇩', country: 'Bangladesh', code: '+880' },
+  { flag: '🇱🇰', country: 'Sri Lanka', code: '+94' },
+  { flag: '🇳🇵', country: 'Nepal', code: '+977' },
+  { flag: '🇿🇦', country: 'South Africa', code: '+27' },
+  { flag: '🇳🇬', country: 'Nigeria', code: '+234' },
+  { flag: '🇪🇬', country: 'Egypt', code: '+20' },
+  { flag: '🇰🇪', country: 'Kenya', code: '+254' },
+  { flag: '🇬🇭', country: 'Ghana', code: '+233' },
+  { flag: '🇪🇹', country: 'Ethiopia', code: '+251' },
+  { flag: '🇲🇦', country: 'Morocco', code: '+212' },
+  { flag: '🇹🇿', country: 'Tanzania', code: '+255' },
+  { flag: '🇦🇷', country: 'Argentina', code: '+54' },
+  { flag: '🇧🇷', country: 'Brazil', code: '+55' },
+  { flag: '🇲🇽', country: 'Mexico', code: '+52' },
+  { flag: '🇨🇱', country: 'Chile', code: '+56' },
+  { flag: '🇨🇴', country: 'Colombia', code: '+57' },
+  { flag: '🇵🇪', country: 'Peru', code: '+51' },
+  { flag: '🇺🇾', country: 'Uruguay', code: '+598' },
+]
+
 function IconKey() {
   return (
     <svg viewBox="0 0 24 24" className="h-6 w-6" aria-hidden="true">
@@ -91,6 +156,7 @@ function LeadActive({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, on
     name: '',
     email: '',
     phone: '',
+    countryCode: '+91',
     sellDoLeadId: '',
     project: '',
     channelPartner: '',
@@ -99,6 +165,9 @@ function LeadActive({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, on
     countStatus: 'Pending',
     validityPeriod: '90 Days'
   })
+  const [isCountryCodeOpen, setIsCountryCodeOpen] = useState(false)
+  const [countryCodeSearch, setCountryCodeSearch] = useState('')
+  const countryCodeDropdownRef = useRef(null)
   const addLeadModalRef = useRef(null)
 
   useEffect(() => {
@@ -145,6 +214,9 @@ function LeadActive({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, on
       }
       if (followUpPanelRef.current && !followUpPanelRef.current.contains(event.target)) {
         setIsFollowUpOpen(false)
+      }
+      if (countryCodeDropdownRef.current && !countryCodeDropdownRef.current.contains(event.target) && !event.target.closest('.la-cc-trigger')) {
+        setIsCountryCodeOpen(false)
       }
     }
 
@@ -352,6 +424,7 @@ function LeadActive({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, on
       name: '',
       email: '',
       phone: '',
+      countryCode: '+91',
       sellDoLeadId: '',
       project: '',
       channelPartner: '',
@@ -592,11 +665,64 @@ function LeadActive({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, on
                   </div>
                   <div className="space-y-2">
                     <label className="text-xs font-bold uppercase tracking-wider text-[#64748b]">Phone</label>
-                    <input 
-                      type="tel" required value={newLead.phone}
-                      onChange={e => setNewLead({...newLead, phone: e.target.value})}
-                      className="w-full rounded-xl border border-[#e2e8f0] bg-[#f8fafc] px-4 py-3 text-sm outline-none focus:border-[#6366f1] transition"
-                    />
+                    <div className="flex gap-2">
+                      <div className="relative">
+                        <button
+                          type="button"
+                          onClick={() => setIsCountryCodeOpen(!isCountryCodeOpen)}
+                          className="la-cc-trigger flex items-center gap-2 rounded-xl border border-[#e2e8f0] bg-[#f8fafc] px-4 py-3 text-sm font-bold text-[#1e293b] outline-none transition-all hover:bg-white focus:border-[#6366f1]"
+                        >
+                          <span className="text-base">{countryPhoneOptions.find(opt => opt.code === (newLead.countryCode || '+91'))?.flag}</span>
+                          <span className="text-sm">{newLead.countryCode || '+91'}</span>
+                          <IconChevron className={`transition-transform duration-300 ${isCountryCodeOpen ? 'rotate-180' : ''}`} />
+                        </button>
+
+                        {isCountryCodeOpen && (
+                          <div 
+                            ref={countryCodeDropdownRef}
+                            className="absolute left-0 top-full z-[700] mt-2 w-64 overflow-hidden rounded-2xl border border-[#f1f5f9] bg-white p-2 shadow-2xl animate-fall"
+                          >
+                            <div className="mb-2 px-2 pt-1">
+                              <input 
+                                type="text"
+                                placeholder="Search code..."
+                                autoFocus
+                                value={countryCodeSearch}
+                                onChange={(e) => setCountryCodeSearch(e.target.value)}
+                                className="w-full rounded-xl border border-[#f1f5f9] bg-[#f8fafc] px-3 py-2 text-xs font-bold text-[#0f172a] outline-none focus:border-[#6366f1]"
+                              />
+                            </div>
+                            <div className="max-h-60 overflow-y-auto no-scrollbar">
+                              {countryPhoneOptions
+                                .filter(opt => opt.country.toLowerCase().includes(countryCodeSearch.toLowerCase()) || opt.code.includes(countryCodeSearch))
+                                .map(opt => (
+                                  <button
+                                    key={`${opt.country}-${opt.code}`}
+                                    type="button"
+                                    onClick={() => {
+                                      setNewLead({...newLead, countryCode: opt.code})
+                                      setIsCountryCodeOpen(false)
+                                      setCountryCodeSearch('')
+                                    }}
+                                    className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left text-xs font-bold text-[#64748b] transition hover:bg-[#f0f4ff] hover:text-[#6366f1]"
+                                  >
+                                    <span className="text-base">{opt.flag}</span>
+                                    <span className="flex-1">{opt.country}</span>
+                                    <span className="text-[#94a3b8]">{opt.code}</span>
+                                  </button>
+                                ))
+                              }
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                      <input 
+                        type="tel" required value={newLead.phone}
+                        onChange={e => setNewLead({...newLead, phone: e.target.value})}
+                        placeholder="Enter phone number"
+                        className="w-full rounded-xl border border-[#e2e8f0] bg-[#f8fafc] px-4 py-3 text-sm outline-none focus:border-[#6366f1] transition focus:bg-white"
+                      />
+                    </div>
                   </div>
                   <div className="space-y-2">
                     <label className="text-xs font-bold uppercase tracking-wider text-[#64748b]">Sell Do Lead ID</label>
@@ -634,50 +760,122 @@ function LeadActive({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, on
         )}
 
         {isDetailsOpen && viewingLeadIndex !== null && (
-          <div className="fixed inset-0 z-[500] flex items-center justify-center bg-[#0f172a]/10 p-4 backdrop-blur-sm">
-            <div className="w-full overflow-hidden rounded-2xl border border-[#e2e8f0] bg-white shadow-2xl shadow-slate-200/50">
-              <div className="flex items-center justify-between border-b border-[#e2e8f0] bg-gradient-to-r from-[#f0f9ff] to-[#e0f2fe] px-6 py-5">
-                <h2 className="text-2xl font-bold tracking-tight text-[#0f172a]">Lead Activity Details</h2>
-                <button
-                  type="button"
-                  onClick={() => setIsDetailsOpen(false)}
-                  className="la-clickable text-3xl font-bold leading-none text-[#64748b] transition hover:text-[#0f172a]"
-                >
-                  &times;
-                </button>
+          <div className="fixed inset-0 z-[500] flex flex-col bg-[#f8faff] animate-fade-in">
+            {/* Header */}
+            <header className="flex h-16 items-center justify-between border-b border-slate-200 bg-white/80 px-6 backdrop-blur-md">
+              <div className="flex items-center gap-3">
+                 <button onClick={() => setIsDetailsOpen(false)} className="group flex h-8 w-8 items-center justify-center rounded-lg transition hover:bg-slate-100">
+                    <svg className="h-5 w-5 text-slate-400 group-hover:text-brand-blue" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="m15 18-6-6 6-6" /></svg>
+                 </button>
+                 <h1 className="text-lg font-black text-slate-800 tracking-tight flex items-center gap-2">
+                    <span className="h-2 w-2 rounded-full bg-brand-blue" />
+                    Customer Detail
+                 </h1>
               </div>
-              <div className="max-h-[75vh] overflow-y-auto p-6">
-                <div className="grid gap-6 md:grid-cols-2">
-                  {[
-                    { label: 'Name', value: leads[viewingLeadIndex].name },
-                    { label: 'Email', value: leads[viewingLeadIndex].email },
-                    { label: 'Phone', value: leads[viewingLeadIndex].phone },
-                    { label: 'Sell Do Lead ID', value: leads[viewingLeadIndex].sellDoLeadId },
-                    { label: 'Project', value: leads[viewingLeadIndex].project },
-                    { label: 'Channel Partner', value: leads[viewingLeadIndex].channelPartner },
-                    { label: 'Lead Stage', value: leads[viewingLeadIndex].leadStage },
-                    { label: 'Status', value: leads[viewingLeadIndex].leadStatus },
-                    { label: 'Count Status', value: leads[viewingLeadIndex].countStatus },
-                    { label: 'Registered At', value: leads[viewingLeadIndex].registeredAt },
-                    { label: 'Validity Period', value: leads[viewingLeadIndex].validityPeriod },
-                  ].map((item) => (
-                    <div key={item.label} className="border-b border-[#f1f4ff] pb-2">
-                      <div className="text-xs font-semibold uppercase tracking-wider text-[#7a879a]">
-                        {item.label}
+              <div className="flex items-center gap-3">
+                 <button onClick={() => setIsDetailsOpen(false)} className="rounded-xl border border-slate-200 bg-white px-4 py-1.5 text-xs font-bold text-slate-600 transition hover:bg-slate-50">Back to Lead Activities</button>
+                 <button className="flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-400 transition hover:bg-slate-50"><span className="text-xl font-bold">...</span></button>
+                 <button onClick={() => setIsDetailsOpen(false)} className="flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-400 transition hover:text-rose-500 hover:bg-rose-50">&times;</button>
+              </div>
+            </header>
+
+            <div className="flex-1 overflow-y-auto p-6 lg:p-8 no-scrollbar">
+              <div className="mx-auto max-w-[1600px] space-y-6">
+                
+                {/* Section 1: Customer Detail */}
+                <section className="rounded-3xl border border-white bg-white/70 p-8 shadow-[0_15px_40px_-15px_rgba(0,0,0,0.04)] backdrop-blur-xl">
+                   <h2 className="mb-8 text-xl font-black text-slate-800 tracking-tight">Customer Detail</h2>
+                   <div className="grid gap-x-12 gap-y-6 md:grid-cols-2">
+                      {[
+                        { label: 'First Name', value: leads[viewingLeadIndex].name.split(' ')[0] },
+                        { label: 'Last Name', value: leads[viewingLeadIndex].name.split(' ')[1] || '---' },
+                        { label: 'Name', value: leads[viewingLeadIndex].name },
+                        { label: 'Email', value: leads[viewingLeadIndex].email },
+                        { label: 'Phone', value: leads[viewingLeadIndex].phone || '+91 1234567890' },
+                        { label: 'Sell Do Lead ID', value: leads[viewingLeadIndex].sellDoLeadId || 'SD-0959818' },
+                        { label: 'Project', value: leads[viewingLeadIndex].project || 'MP Amber' },
+                        { label: 'Lead Stage', value: leads[viewingLeadIndex].leadStage || 'Fresh' },
+                        { label: 'Lead Status', value: leads[viewingLeadIndex].leadStatus || 'Already Exists' },
+                        { label: 'Count Status', value: leads[viewingLeadIndex].countStatus || 'Pending' },
+                        { label: 'Registered At', value: leads[viewingLeadIndex].registeredAt || '24/04/2026' },
+                        { label: 'Lead Validity Period', value: leads[viewingLeadIndex].validityPeriod || '90 Days' },
+                        { label: 'Budget', value: leads[viewingLeadIndex].budget || 'INR 50 Lakh' },
+                        { label: 'Location', value: leads[viewingLeadIndex].location || 'Chn' },
+                        { label: 'Configuration', value: leads[viewingLeadIndex].configuration || '1 BHK' },
+                        { label: 'Property Type', value: leads[viewingLeadIndex].propertyType || 'Apartment' },
+                      ].map((item, idx) => (
+                        <div key={idx} className="flex justify-between border-b border-slate-50 py-3">
+                           <span className="text-xs font-bold uppercase tracking-wider text-slate-400">{item.label}:</span>
+                           <span className="text-sm font-black text-slate-800">{item.value}</span>
+                        </div>
+                      ))}
+                   </div>
+                </section>
+
+                {/* Section 2: Sell Do Lead Site Visit */}
+                <section className="rounded-3xl border border-white bg-white/70 p-8 shadow-[0_15px_40px_-15px_rgba(0,0,0,0.04)] backdrop-blur-xl">
+                   <h2 className="mb-8 text-xl font-black text-slate-800 tracking-tight">Sell Do Lead Site Visit</h2>
+                   <div className="grid gap-x-12 gap-y-6 md:grid-cols-2">
+                      {[
+                        { label: 'Lead ID', value: leads[viewingLeadIndex].sellDoLeadId || 'SD-0959818' },
+                        { label: 'Project', value: leads[viewingLeadIndex].project || 'MP Amber' },
+                        { label: 'Visit Date', value: 'Not scheduled' },
+                        { label: 'Visit Status', value: 'Pending' },
+                        { label: 'Assigned Executive', value: 'Not assigned' },
+                        { label: 'Remarks', value: 'No site visit remark yet.' },
+                      ].map((item, idx) => (
+                        <div key={idx} className="flex justify-between border-b border-slate-50 py-3">
+                           <span className="text-xs font-bold uppercase tracking-wider text-slate-400">{item.label}:</span>
+                           <span className="text-sm font-black text-slate-800">{item.value}</span>
+                        </div>
+                      ))}
+                   </div>
+                </section>
+
+                {/* Section 3: Remark from Selldo */}
+                <section className="rounded-3xl border border-white bg-white/70 p-8 shadow-[0_15px_40px_-15px_rgba(0,0,0,0.04)] backdrop-blur-xl">
+                   <h2 className="mb-6 text-xl font-black text-slate-800 tracking-tight">Remark from Selldo</h2>
+                   <div className="space-y-3">
+                      {[
+                        'Initial lead captured from panel.',
+                        'Current status: Already Exists'
+                      ].map((remark, idx) => (
+                        <div key={idx} className="rounded-xl border border-slate-100 bg-[#f8fafc] px-5 py-3 text-sm font-medium text-slate-600">
+                           {remark}
+                        </div>
+                      ))}
+                   </div>
+                </section>
+
+                {/* Section 4: Notes */}
+                <section className="rounded-3xl border border-white bg-white/70 p-8 shadow-[0_15px_40px_-15px_rgba(0,0,0,0.04)] backdrop-blur-xl">
+                   <div className="mb-6 flex items-center justify-between">
+                      <h2 className="text-xl font-black text-slate-800 tracking-tight">Notes</h2>
+                      <button className="text-slate-400 transition hover:text-brand-blue">
+                         <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" /><path d="M18.5 2.5a2.121 2.121 0 1 1 3 3L12 15l-4 1-1-4 9.5-9.5z" /></svg>
+                      </button>
+                   </div>
+                   <div className="min-h-[100px] rounded-2xl border border-slate-100 bg-[#f8fafc] px-6 py-5 text-sm font-medium text-slate-400 italic">
+                      No additional notes available for this customer.
+                   </div>
+                </section>
+
+                {/* Section 5: Follow Up */}
+                <section className="rounded-3xl border border-white bg-white/70 p-8 shadow-[0_15px_40px_-15px_rgba(0,0,0,0.04)] backdrop-blur-xl">
+                   <h2 className="mb-6 text-xl font-black text-slate-800 tracking-tight">Follow Up</h2>
+                   <div className="flex justify-end">
+                      <div className="relative">
+                         <button className="flex items-center gap-10 rounded-xl border border-slate-100 bg-white px-6 py-3 shadow-sm transition hover:shadow-md">
+                            <div className="text-left">
+                               <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 leading-none">Follow Up</p>
+                               <p className="mt-1 text-xs font-bold text-slate-700">Update Follow Up Status</p>
+                            </div>
+                            <svg className="h-4 w-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5"><path d="m6 9 6 6 6-6" /></svg>
+                         </button>
                       </div>
-                      <div className="mt-1 text-lg font-medium text-[#2d4568]">{item.value}</div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-              <div className="border-t border-[#e2e8f0] bg-gradient-to-r from-[#f0f9ff] to-[#e0f2fe] px-6 py-5 text-right">
-                <button
-                  type="button"
-                  onClick={() => setIsDetailsOpen(false)}
-                  className="la-clickable rounded-xl bg-[#6366f1] px-8 py-2.5 text-base font-bold text-white shadow-lg shadow-indigo-100 transition hover:bg-[#4f46e5]"
-                >
-                  Close
-                </button>
+                   </div>
+                </section>
+
               </div>
             </div>
           </div>
@@ -760,7 +958,69 @@ function LeadActive({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, on
             </div>
           </div>
         )}
+
+        {/* Action Menu Portal */}
+        {openActionIndex !== null && menuAnchorRect && createPortal(
+          <div 
+            ref={actionMenuRef}
+            className="fixed z-[999] w-72 overflow-hidden rounded-[2.5rem] border border-white bg-white/90 p-4 shadow-[0_25px_70px_rgba(49,46,129,0.25)] backdrop-blur-3xl animate-elastic-pop"
+            style={{ 
+              top: `${(menuAnchorRect.top - window.scrollY) + 180 > window.innerHeight 
+                ? menuAnchorRect.top - window.scrollY - 190 
+                : menuAnchorRect.top - window.scrollY + 12}px`, 
+              left: `${Math.max(20, menuAnchorRect.left - window.scrollX - 260)}px` 
+            }}
+          >
+            <div className="absolute inset-0 bg-gradient-to-br from-[#6366f1]/5 to-transparent opacity-50" />
+            <div className="relative space-y-1.5">
+              <button
+                type="button"
+                onClick={() => {
+                  setOpenActionIndex(null)
+                  setMenuAnchorRect(null)
+                  setViewingLeadIndex(openActionIndex)
+                  setIsDetailsOpen(true)
+                }}
+                className="group flex w-full items-center gap-4 rounded-2xl p-3 text-left transition-all duration-300 hover:bg-[#6366f1] hover:text-white hover:shadow-lg hover:shadow-indigo-200"
+              >
+                <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-[#f0f4ff] text-[#6366f1] transition-colors group-hover:bg-white/20 group-hover:text-white">
+                  <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                    <circle cx="12" cy="12" r="3" />
+                  </svg>
+                </div>
+                <div>
+                  <div className="text-base font-bold">Show Details</div>
+                  <div className="text-[10px] opacity-70 font-medium">View full activity logs</div>
+                </div>
+              </button>
+              
+              <button
+                type="button"
+                onClick={() => {
+                  setOpenActionIndex(null)
+                  setMenuAnchorRect(null)
+                  handleOpenFollowUp(openActionIndex)
+                }}
+                className="group flex w-full items-center gap-4 rounded-2xl p-3 text-left transition-all duration-300 hover:bg-[#ea580c] hover:text-white hover:shadow-lg hover:shadow-orange-200"
+              >
+                <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-[#fff7ed] text-[#ea580c] transition-colors group-hover:bg-white/20 group-hover:text-white">
+                  <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <line x1="12" y1="5" x2="12" y2="19" />
+                    <line x1="5" y1="12" x2="19" y2="12" />
+                  </svg>
+                </div>
+                <div>
+                  <div className="text-base font-bold">Add Follow</div>
+                  <div className="text-[10px] opacity-70 font-medium">Update stage & status</div>
+                </div>
+              </button>
+            </div>
+          </div>,
+          document.body
+        )}
       </section>
+
     </main>
   )
 }

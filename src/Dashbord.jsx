@@ -346,12 +346,12 @@ function Dashbord({ onSignOut, onBackToDashboard, onOpenUserAccount, onOpenLeadA
   useEffect(() => {
     if (!filterPanelRef.current) return
     if (isFilterOpen) {
-      gsap.fromTo(filterPanelRef.current, 
-        { height: 0, opacity: 0, marginTop: 0 }, 
+      gsap.fromTo(filterPanelRef.current,
+        { height: 0, opacity: 0, marginTop: 0 },
         { height: 'auto', opacity: 1, marginTop: 12, duration: 0.4, ease: 'power2.out' }
       )
     } else {
-      gsap.to(filterPanelRef.current, 
+      gsap.to(filterPanelRef.current,
         { height: 0, opacity: 0, marginTop: 0, duration: 0.3, ease: 'power2.in' }
       )
     }
@@ -360,12 +360,12 @@ function Dashbord({ onSignOut, onBackToDashboard, onOpenUserAccount, onOpenLeadA
   useEffect(() => {
     if (!incentiveFilterPanelRef.current) return
     if (isIncentiveFilterOpen) {
-      gsap.fromTo(incentiveFilterPanelRef.current, 
-        { height: 0, opacity: 0, marginTop: 0 }, 
+      gsap.fromTo(incentiveFilterPanelRef.current,
+        { height: 0, opacity: 0, marginTop: 0 },
         { height: 'auto', opacity: 1, marginTop: 16, duration: 0.4, ease: 'power2.out' }
       )
     } else {
-      gsap.to(incentiveFilterPanelRef.current, 
+      gsap.to(incentiveFilterPanelRef.current,
         { height: 0, opacity: 0, marginTop: 0, duration: 0.3, ease: 'power2.in' }
       )
     }
@@ -374,12 +374,12 @@ function Dashbord({ onSignOut, onBackToDashboard, onOpenUserAccount, onOpenLeadA
   useEffect(() => {
     if (!channelFilterPanelRef.current) return
     if (isChannelFilterOpen) {
-      gsap.fromTo(channelFilterPanelRef.current, 
-        { height: 0, opacity: 0, marginTop: 0 }, 
+      gsap.fromTo(channelFilterPanelRef.current,
+        { height: 0, opacity: 0, marginTop: 0 },
         { height: 'auto', opacity: 1, marginTop: 16, duration: 0.4, ease: 'power2.out' }
       )
     } else {
-      gsap.to(channelFilterPanelRef.current, 
+      gsap.to(channelFilterPanelRef.current,
         { height: 0, opacity: 0, marginTop: 0, duration: 0.3, ease: 'power2.in' }
       )
     }
@@ -388,12 +388,12 @@ function Dashbord({ onSignOut, onBackToDashboard, onOpenUserAccount, onOpenLeadA
   useEffect(() => {
     if (!managerFilterPanelRef.current) return
     if (isManagerFilterOpen) {
-      gsap.fromTo(managerFilterPanelRef.current, 
-        { height: 0, opacity: 0, marginTop: 0 }, 
+      gsap.fromTo(managerFilterPanelRef.current,
+        { height: 0, opacity: 0, marginTop: 0 },
         { height: 'auto', opacity: 1, marginTop: 12, duration: 0.4, ease: 'power2.out' }
       )
     } else {
-      gsap.to(managerFilterPanelRef.current, 
+      gsap.to(managerFilterPanelRef.current,
         { height: 0, opacity: 0, marginTop: 0, duration: 0.3, ease: 'power2.in' }
       )
     }
@@ -482,13 +482,12 @@ function Dashbord({ onSignOut, onBackToDashboard, onOpenUserAccount, onOpenLeadA
         <div className="pointer-events-none fixed right-4 top-4 z-[90] sm:right-8">
           <div
             ref={toastRef}
-            className={`flex min-w-64 items-center gap-3 rounded-xl border px-4 py-3 text-sm font-medium shadow-xl ${
-              toast.tone === 'success'
+            className={`flex min-w-64 items-center gap-3 rounded-xl border px-4 py-3 text-sm font-medium shadow-xl ${toast.tone === 'success'
                 ? 'border-[#1a79d1]/25 bg-[#f2f8ff] text-[#1b3e72]'
                 : toast.tone === 'warning'
                   ? 'border-[#eb7a26]/35 bg-[#fff6ef] text-[#7a4313]'
                   : 'border-[#2f3fa9]/18 bg-white text-[#2b4469]'
-            }`}
+              }`}
           >
             <span className="inline-flex h-7 w-7 items-center justify-center rounded-full bg-white/90">
               <Icon name={toast.tone === 'success' ? 'approved' : toast.tone === 'warning' ? 'approval' : 'updates'} className="h-4 w-4" />
@@ -547,15 +546,13 @@ function Dashbord({ onSignOut, onBackToDashboard, onOpenUserAccount, onOpenLeadA
                       if (item.label === 'Lead Activity') onOpenLeadActive?.()
                     }
                   }}
-                  className={`group relative flex items-center gap-2 rounded-full px-6 py-2 text-[10.5px] font-black uppercase tracking-wider transition-all duration-300 ${
-                    item.label === 'Dashbord'
+                  className={`group relative flex items-center gap-2 rounded-full px-6 py-2 text-[10.5px] font-black uppercase tracking-wider transition-all duration-300 ${item.label === 'Dashbord'
                       ? 'bg-white text-[#6366f1] shadow-[0_12px_25px_rgba(99,102,241,0.12)] ring-1 ring-[#6366f1]/20'
                       : 'text-slate-500 hover:bg-white/80 hover:text-[#0f172a]'
-                  }`}
+                    }`}
                 >
-                  <Icon name={item.icon} className={`h-4 w-4 transition-transform group-hover:scale-110 ${
-                    item.label === 'Dashbord' ? 'text-[#6366f1]' : 'text-[#94a3b8]'
-                  }`} />
+                  <Icon name={item.icon} className={`h-4 w-4 transition-transform group-hover:scale-110 ${item.label === 'Dashbord' ? 'text-[#6366f1]' : 'text-[#94a3b8]'
+                    }`} />
                   <span>{item.label}</span>
                   {item.label === 'More' && <Icon name="chevron" className={`h-3 w-3 transition-transform duration-300 ${openMenu === 'More' ? 'rotate-180' : ''}`} />}
                 </button>
@@ -602,9 +599,8 @@ function Dashbord({ onSignOut, onBackToDashboard, onOpenUserAccount, onOpenLeadA
                 setOpenMenu(null)
                 setOpenWelcome((current) => !current)
               }}
-              className={`group flex items-center gap-3 rounded-2xl px-6 py-2 text-[10.5px] font-black uppercase tracking-widest transition-all duration-300 hover:shadow-[0_12px_25px_rgba(0,0,0,0.08)] active:scale-95 ${
-                openWelcome ? 'bg-white text-[#6366f1] ring-1 ring-[#6366f1]/20' : 'bg-slate-50 text-slate-600 hover:bg-white'
-              }`}
+              className={`group flex items-center gap-3 rounded-2xl px-6 py-2 text-[10.5px] font-black uppercase tracking-widest transition-all duration-300 hover:shadow-[0_12px_25px_rgba(0,0,0,0.08)] active:scale-95 ${openWelcome ? 'bg-white text-[#6366f1] ring-1 ring-[#6366f1]/20' : 'bg-slate-50 text-slate-600 hover:bg-white'
+                }`}
             >
               <div className={`flex h-7 w-7 items-center justify-center rounded-lg transition-transform group-hover:scale-110 ${openWelcome ? 'bg-[#6366f1] text-white' : 'bg-slate-200 text-slate-500'}`}>
                 <Icon name="user" className="h-4 w-4" />
@@ -854,11 +850,10 @@ function Dashbord({ onSignOut, onBackToDashboard, onOpenUserAccount, onOpenLeadA
               <button
                 type="button"
                 onClick={toggleChannelFilter}
-                className={`flex items-center gap-2 rounded-lg border px-4 py-1.5 text-sm font-bold transition-all duration-300 ${
-                  isChannelFilterOpen 
-                    ? 'border-[#6366f1] bg-[#6366f1] text-white shadow-lg shadow-indigo-100' 
+                className={`flex items-center gap-2 rounded-lg border px-4 py-1.5 text-sm font-bold transition-all duration-300 ${isChannelFilterOpen
+                    ? 'border-[#6366f1] bg-[#6366f1] text-white shadow-lg shadow-indigo-100'
                     : 'border-[#6366f1]/20 bg-[#6366f1]/5 text-[#6366f1] hover:bg-[#6366f1]/10'
-                }`}
+                  }`}
               >
                 <Icon name="filter" className="h-4 w-4" />
                 Filter
@@ -870,74 +865,74 @@ function Dashbord({ onSignOut, onBackToDashboard, onOpenUserAccount, onOpenLeadA
               className="relative z-20 overflow-hidden rounded-lg border border-[#d3dbe9] bg-[#f3f5f9] opacity-0"
               style={{ height: 0 }}
             >
-                <div className="flex items-center justify-between border-b border-[#d3dbe9] px-4 py-3.5">
-                  <h5 className="text-xl font-medium leading-none text-[#2f3e56]">Filter</h5>
+              <div className="flex items-center justify-between border-b border-[#d3dbe9] px-4 py-3.5">
+                <h5 className="text-xl font-medium leading-none text-[#2f3e56]">Filter</h5>
+              </div>
+
+              <div className="space-y-6 px-4 py-5">
+                <div>
+                  <label className="mb-1.5 block text-sm font-semibold text-[#2f3d53]">From Date</label>
+                  <input
+                    type="text"
+                    value={channelFromDate}
+                    onChange={(event) => setChannelFromDate(event.target.value)}
+                    placeholder="dd/mm/yyyy"
+                    className="h-10 w-full rounded border border-[#b6c0d4] bg-white px-3 text-sm text-[#1f365d] outline-none placeholder:text-[#7e8fa8] focus:border-[#7f8dff] focus:ring-2 focus:ring-[#7f8dff]/20"
+                  />
                 </div>
 
-                <div className="space-y-6 px-4 py-5">
-                  <div>
-                    <label className="mb-1.5 block text-sm font-semibold text-[#2f3d53]">From Date</label>
-                    <input
-                      type="text"
-                      value={channelFromDate}
-                      onChange={(event) => setChannelFromDate(event.target.value)}
-                      placeholder="dd/mm/yyyy"
-                      className="h-10 w-full rounded border border-[#b6c0d4] bg-white px-3 text-sm text-[#1f365d] outline-none placeholder:text-[#7e8fa8] focus:border-[#7f8dff] focus:ring-2 focus:ring-[#7f8dff]/20"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="mb-1.5 block text-sm font-semibold text-[#2f3d53]">To Date</label>
-                    <input
-                      type="text"
-                      value={channelToDate}
-                      onChange={(event) => setChannelToDate(event.target.value)}
-                      placeholder="dd/mm/yyyy"
-                      className="h-10 w-full rounded border border-[#b6c0d4] bg-white px-3 text-sm text-[#1f365d] outline-none placeholder:text-[#7e8fa8] focus:border-[#7f8dff] focus:ring-2 focus:ring-[#7f8dff]/20"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="mb-1.5 block text-sm font-semibold text-[#2f3d53]">Project</label>
-                    <select
-                      value={channelProject}
-                      onChange={(event) => setChannelProject(event.target.value)}
-                      className="h-10 w-full rounded border border-[#b6c0d4] bg-white px-3 text-sm text-[#1f365d] outline-none focus:border-[#7f8dff] focus:ring-2 focus:ring-[#7f8dff]/20"
-                    >
-                      <option value="">Select</option>
-                      <option value="project_a">Project A</option>
-                      <option value="project_b">Project B</option>
-                      <option value="project_c">Project C</option>
-                    </select>
-                  </div>
+                <div>
+                  <label className="mb-1.5 block text-sm font-semibold text-[#2f3d53]">To Date</label>
+                  <input
+                    type="text"
+                    value={channelToDate}
+                    onChange={(event) => setChannelToDate(event.target.value)}
+                    placeholder="dd/mm/yyyy"
+                    className="h-10 w-full rounded border border-[#b6c0d4] bg-white px-3 text-sm text-[#1f365d] outline-none placeholder:text-[#7e8fa8] focus:border-[#7f8dff] focus:ring-2 focus:ring-[#7f8dff]/20"
+                  />
                 </div>
 
-                <div className="flex items-center justify-end gap-2.5 border-t border-[#d3dbe9] px-4 py-3">
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setChannelFromDate('')
-                      setChannelToDate('')
-                      setChannelProject('')
-                      setIsChannelFilterOpen(false)
-                      showToast('Channel partner filter cleared')
-                    }}
-                    className="h-10 rounded-md border border-[#6d76ff] bg-white px-5 text-sm font-semibold text-[#636eff] transition hover:bg-[#f3f4ff]"
+                <div>
+                  <label className="mb-1.5 block text-sm font-semibold text-[#2f3d53]">Project</label>
+                  <select
+                    value={channelProject}
+                    onChange={(event) => setChannelProject(event.target.value)}
+                    className="h-10 w-full rounded border border-[#b6c0d4] bg-white px-3 text-sm text-[#1f365d] outline-none focus:border-[#7f8dff] focus:ring-2 focus:ring-[#7f8dff]/20"
                   >
-                    Cancel
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setIsChannelFilterOpen(false)
-                      showToast('Channel partner filter applied', 'success')
-                    }}
-                    className="inline-flex h-10 items-center gap-2 rounded-md bg-gradient-to-r from-[#777dff] to-[#6b69ec] px-6 text-sm font-semibold text-white transition hover:brightness-110"
-                  >
-                    <Icon name="approved" className="h-4 w-4" />
-                    Apply
-                  </button>
+                    <option value="">Select</option>
+                    <option value="project_a">Project A</option>
+                    <option value="project_b">Project B</option>
+                    <option value="project_c">Project C</option>
+                  </select>
                 </div>
+              </div>
+
+              <div className="flex items-center justify-end gap-2.5 border-t border-[#d3dbe9] px-4 py-3">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setChannelFromDate('')
+                    setChannelToDate('')
+                    setChannelProject('')
+                    setIsChannelFilterOpen(false)
+                    showToast('Channel partner filter cleared')
+                  }}
+                  className="h-10 rounded-md border border-[#6d76ff] bg-white px-5 text-sm font-semibold text-[#636eff] transition hover:bg-[#f3f4ff]"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setIsChannelFilterOpen(false)
+                    showToast('Channel partner filter applied', 'success')
+                  }}
+                  className="inline-flex h-10 items-center gap-2 rounded-md bg-gradient-to-r from-[#777dff] to-[#6b69ec] px-6 text-sm font-semibold text-white transition hover:brightness-110"
+                >
+                  <Icon name="approved" className="h-4 w-4" />
+                  Apply
+                </button>
+              </div>
             </div>
           </div>
 
@@ -950,11 +945,10 @@ function Dashbord({ onSignOut, onBackToDashboard, onOpenUserAccount, onOpenLeadA
               <button
                 type="button"
                 onClick={toggleManagerFilter}
-                className={`flex items-center gap-2 rounded-lg border px-4 py-1.5 text-sm font-bold transition-all duration-300 ${
-                  isManagerFilterOpen 
-                    ? 'border-[#6366f1] bg-[#6366f1] text-white shadow-lg shadow-indigo-100' 
+                className={`flex items-center gap-2 rounded-lg border px-4 py-1.5 text-sm font-bold transition-all duration-300 ${isManagerFilterOpen
+                    ? 'border-[#6366f1] bg-[#6366f1] text-white shadow-lg shadow-indigo-100'
                     : 'border-[#6366f1]/20 bg-[#6366f1]/5 text-[#6366f1] hover:bg-[#6366f1]/10'
-                }`}
+                  }`}
               >
                 <Icon name="filter" className="h-4 w-4" />
                 Filter
@@ -966,74 +960,74 @@ function Dashbord({ onSignOut, onBackToDashboard, onOpenUserAccount, onOpenLeadA
               className="relative z-20 overflow-hidden rounded-lg border border-[#d3dbe9] bg-[#f3f5f9] opacity-0 shadow-2xl"
               style={{ height: 0 }}
             >
-                <div className="flex items-center justify-between border-b border-[#d3dbe9] px-4 py-3.5">
-                  <h5 className="text-xl font-medium leading-none text-[#2f3e56]">Filter</h5>
+              <div className="flex items-center justify-between border-b border-[#d3dbe9] px-4 py-3.5">
+                <h5 className="text-xl font-medium leading-none text-[#2f3e56]">Filter</h5>
+              </div>
+
+              <div className="space-y-6 px-4 py-5">
+                <div>
+                  <label className="mb-1.5 block text-sm font-semibold text-[#2f3d53]">From Date</label>
+                  <input
+                    type="text"
+                    value={managerFromDate}
+                    onChange={(event) => setManagerFromDate(event.target.value)}
+                    placeholder="dd/mm/yyyy"
+                    className="h-10 w-full rounded border border-[#b6c0d4] bg-white px-3 text-sm text-[#1f365d] outline-none placeholder:text-[#7e8fa8] focus:border-[#7f8dff] focus:ring-2 focus:ring-[#7f8dff]/20"
+                  />
                 </div>
 
-                <div className="space-y-6 px-4 py-5">
-                  <div>
-                    <label className="mb-1.5 block text-sm font-semibold text-[#2f3d53]">From Date</label>
-                    <input
-                      type="text"
-                      value={managerFromDate}
-                      onChange={(event) => setManagerFromDate(event.target.value)}
-                      placeholder="dd/mm/yyyy"
-                      className="h-10 w-full rounded border border-[#b6c0d4] bg-white px-3 text-sm text-[#1f365d] outline-none placeholder:text-[#7e8fa8] focus:border-[#7f8dff] focus:ring-2 focus:ring-[#7f8dff]/20"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="mb-1.5 block text-sm font-semibold text-[#2f3d53]">To Date</label>
-                    <input
-                      type="text"
-                      value={managerToDate}
-                      onChange={(event) => setManagerToDate(event.target.value)}
-                      placeholder="dd/mm/yyyy"
-                      className="h-10 w-full rounded border border-[#b6c0d4] bg-white px-3 text-sm text-[#1f365d] outline-none placeholder:text-[#7e8fa8] focus:border-[#7f8dff] focus:ring-2 focus:ring-[#7f8dff]/20"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="mb-1.5 block text-sm font-semibold text-[#2f3d53]">Project</label>
-                    <select
-                      value={managerProject}
-                      onChange={(event) => setManagerProject(event.target.value)}
-                      className="h-10 w-full rounded border border-[#b6c0d4] bg-white px-3 text-sm text-[#1f365d] outline-none focus:border-[#7f8dff] focus:ring-2 focus:ring-[#7f8dff]/20"
-                    >
-                      <option value="">Select</option>
-                      <option value="project_a">Project A</option>
-                      <option value="project_b">Project B</option>
-                      <option value="project_c">Project C</option>
-                    </select>
-                  </div>
+                <div>
+                  <label className="mb-1.5 block text-sm font-semibold text-[#2f3d53]">To Date</label>
+                  <input
+                    type="text"
+                    value={managerToDate}
+                    onChange={(event) => setManagerToDate(event.target.value)}
+                    placeholder="dd/mm/yyyy"
+                    className="h-10 w-full rounded border border-[#b6c0d4] bg-white px-3 text-sm text-[#1f365d] outline-none placeholder:text-[#7e8fa8] focus:border-[#7f8dff] focus:ring-2 focus:ring-[#7f8dff]/20"
+                  />
                 </div>
 
-                <div className="flex items-center justify-end gap-2.5 border-t border-[#d3dbe9] px-4 py-3">
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setManagerFromDate('')
-                      setManagerToDate('')
-                      setManagerProject('')
-                      setIsManagerFilterOpen(false)
-                      showToast('Manager filter cleared')
-                    }}
-                    className="h-10 rounded-md border border-[#6d76ff] bg-white px-5 text-sm font-semibold text-[#636eff] transition hover:bg-[#f3f4ff]"
+                <div>
+                  <label className="mb-1.5 block text-sm font-semibold text-[#2f3d53]">Project</label>
+                  <select
+                    value={managerProject}
+                    onChange={(event) => setManagerProject(event.target.value)}
+                    className="h-10 w-full rounded border border-[#b6c0d4] bg-white px-3 text-sm text-[#1f365d] outline-none focus:border-[#7f8dff] focus:ring-2 focus:ring-[#7f8dff]/20"
                   >
-                    Cancel
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setIsManagerFilterOpen(false)
-                      showToast('Manager filter applied', 'success')
-                    }}
-                    className="inline-flex h-10 items-center gap-2 rounded-md bg-gradient-to-r from-[#777dff] to-[#6b69ec] px-6 text-sm font-semibold text-white transition hover:brightness-110"
-                  >
-                    <Icon name="approved" className="h-4 w-4" />
-                    Apply
-                  </button>
+                    <option value="">Select</option>
+                    <option value="project_a">Project A</option>
+                    <option value="project_b">Project B</option>
+                    <option value="project_c">Project C</option>
+                  </select>
                 </div>
+              </div>
+
+              <div className="flex items-center justify-end gap-2.5 border-t border-[#d3dbe9] px-4 py-3">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setManagerFromDate('')
+                    setManagerToDate('')
+                    setManagerProject('')
+                    setIsManagerFilterOpen(false)
+                    showToast('Manager filter cleared')
+                  }}
+                  className="h-10 rounded-md border border-[#6d76ff] bg-white px-5 text-sm font-semibold text-[#636eff] transition hover:bg-[#f3f4ff]"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setIsManagerFilterOpen(false)
+                    showToast('Manager filter applied', 'success')
+                  }}
+                  className="inline-flex h-10 items-center gap-2 rounded-md bg-gradient-to-r from-[#777dff] to-[#6b69ec] px-6 text-sm font-semibold text-white transition hover:brightness-110"
+                >
+                  <Icon name="approved" className="h-4 w-4" />
+                  Apply
+                </button>
+              </div>
             </div>
           </div>
 
@@ -1049,30 +1043,30 @@ function Dashbord({ onSignOut, onBackToDashboard, onOpenUserAccount, onOpenLeadA
           </div>
 
           <div className="relative mt-8 h-[22rem]">
-          <div
-            ref={(node) => {
-              orbRefs.current[0] = node
-            }}
-            className="absolute left-[6%] top-[8%] h-28 w-28 rounded-[2rem] border border-[#2f3fa9]/30 bg-white/70 shadow-2xl shadow-[#2f3fa9]/15 backdrop-blur"
-          />
-          <div
-            ref={(node) => {
-              orbRefs.current[1] = node
-            }}
-            className="absolute right-[10%] top-[12%] h-20 w-20 rounded-full border border-[#eb7a26]/35 bg-white/75 shadow-2xl shadow-[#eb7a26]/20 backdrop-blur"
-          />
-          <div
-            ref={(node) => {
-              orbRefs.current[2] = node
-            }}
-            className="absolute left-[24%] bottom-[9%] h-24 w-24 rounded-3xl border border-[#1a79d1]/30 bg-white/70 shadow-2xl shadow-[#1a79d1]/15 backdrop-blur"
-          />
-          <div
-            ref={(node) => {
-              orbRefs.current[3] = node
-            }}
-            className="absolute right-[18%] bottom-[8%] h-32 w-32 rounded-[2.25rem] border border-[#2f3fa9]/25 bg-white/65 shadow-2xl shadow-[#2f3fa9]/15 backdrop-blur"
-          />
+            <div
+              ref={(node) => {
+                orbRefs.current[0] = node
+              }}
+              className="absolute left-[6%] top-[8%] h-28 w-28 rounded-[2rem] border border-[#2f3fa9]/30 bg-white/70 shadow-2xl shadow-[#2f3fa9]/15 backdrop-blur"
+            />
+            <div
+              ref={(node) => {
+                orbRefs.current[1] = node
+              }}
+              className="absolute right-[10%] top-[12%] h-20 w-20 rounded-full border border-[#eb7a26]/35 bg-white/75 shadow-2xl shadow-[#eb7a26]/20 backdrop-blur"
+            />
+            <div
+              ref={(node) => {
+                orbRefs.current[2] = node
+              }}
+              className="absolute left-[24%] bottom-[9%] h-24 w-24 rounded-3xl border border-[#1a79d1]/30 bg-white/70 shadow-2xl shadow-[#1a79d1]/15 backdrop-blur"
+            />
+            <div
+              ref={(node) => {
+                orbRefs.current[3] = node
+              }}
+              className="absolute right-[18%] bottom-[8%] h-32 w-32 rounded-[2.25rem] border border-[#2f3fa9]/25 bg-white/65 shadow-2xl shadow-[#2f3fa9]/15 backdrop-blur"
+            />
           </div>
         </div>
       </section>
