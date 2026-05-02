@@ -307,7 +307,7 @@ function CpApprove({
                   </span>
                 </div>
 
-                <div className="grid grid-cols-2 gap-y-10">
+                <div className="grid grid-cols-2 gap-x-12 gap-y-10">
                   <div className="space-y-1.5">
                     <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 flex items-center gap-2">
                        <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="3"><path d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
@@ -331,30 +331,17 @@ function CpApprove({
                   </div>
                   <div className="space-y-1.5">
                     <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 flex items-center gap-2">
-                       <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="3"><path d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
-                       Registration Stage
+                       <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="3"><path d="M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V5a2 2 0 114 0v1m-4 0a2 2 0 104 0m-5 8a2 2 0 100-4 2 2 0 000 4zm0 0c1.306 0 2.417.835 2.83 2M9 14a3.001 3.001 0 00-2.83 2M15 11h3m-3 4h2" /></svg>
+                       Aadhaar Number
                     </p>
-                    <span className="inline-flex rounded-lg bg-indigo-50 px-3 py-1 text-[10px] font-black uppercase tracking-wider text-indigo-600 ring-1 ring-indigo-200">
-                       <span className="mr-1.5 h-1 w-1 rounded-full bg-indigo-500 animate-pulse" />
-                       {selectedItem.status}
-                    </span>
+                    <p className="text-lg font-black text-slate-900 uppercase">{selectedItem.aadhaar || 'N/A'}</p>
                   </div>
                   <div className="space-y-1.5">
                     <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 flex items-center gap-2">
-                       <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="3"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                       Compliance Status
+                       <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="3"><path d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
+                       Occupation
                     </p>
-                    <span className="inline-flex rounded-lg bg-emerald-50 px-3 py-1 text-[10px] font-black uppercase tracking-wider text-emerald-600 ring-1 ring-emerald-200">
-                       <span className="mr-1.5 h-1 w-1 rounded-full bg-emerald-500" />
-                       Verified
-                    </span>
-                  </div>
-                  <div className="space-y-1.5">
-                    <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 flex items-center gap-2">
-                       <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="3"><path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                       Submission Date
-                    </p>
-                    <p className="text-lg font-black text-slate-900">{new Date(selectedItem.createdAt || Date.now()).toLocaleDateString('en-GB')}</p>
+                    <p className="text-lg font-black text-slate-900">{selectedItem.occupation || 'N/A'}</p>
                   </div>
                   <div className="space-y-1.5">
                     <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 flex items-center gap-2">
@@ -362,6 +349,13 @@ function CpApprove({
                        Company Name
                     </p>
                     <p className="text-lg font-black text-slate-900 truncate pr-4">{selectedItem.companyName || 'N/A'}</p>
+                  </div>
+                  <div className="space-y-1.5">
+                    <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 flex items-center gap-2">
+                       <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="3"><path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
+                       RERA Number
+                    </p>
+                    <p className="text-lg font-black text-slate-900 uppercase">{selectedItem.rera || 'N/A'}</p>
                   </div>
                   <div className="space-y-1.5">
                     <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 flex items-center gap-2">
@@ -373,6 +367,133 @@ function CpApprove({
                 </div>
               </div>
 
+              {/* Business Location Card */}
+              <div className="rounded-[2.5rem] border border-white bg-white p-10 shadow-sm">
+                <div className="mb-10 flex items-center gap-4">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-orange-50 text-orange-500">
+                    <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-black text-slate-900">Business Address</h3>
+                    <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400">Registered Operational Base</p>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-x-12 gap-y-10">
+                  <div className="space-y-1.5 md:col-span-2">
+                    <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Office / House & Street</p>
+                    <p className="text-lg font-black text-slate-900 leading-tight">
+                      {selectedItem.house ? `${selectedItem.house}, ` : ''}{selectedItem.street || 'Address not provided'}
+                    </p>
+                  </div>
+                  <div className="space-y-1.5">
+                    <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">City & State</p>
+                    <p className="text-lg font-black text-slate-900">{selectedItem.city || 'N/A'}, {selectedItem.state || '-'}</p>
+                  </div>
+                  <div className="space-y-1.5">
+                    <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Country & Pincode</p>
+                    <p className="text-lg font-black text-slate-900">{selectedItem.country || 'N/A'} - {selectedItem.zip || 'N/A'}</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Financial Profile Card */}
+              <div className="rounded-[2.5rem] border border-white bg-white p-10 shadow-sm">
+                <div className="mb-10 flex items-center gap-4">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-50 text-emerald-500">
+                    <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" /></svg>
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-black text-slate-900">Financial Profile</h3>
+                    <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400">Payout & Settlement Records</p>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-x-12 gap-y-10">
+                  <div className="space-y-1.5">
+                    <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Bank Name</p>
+                    <p className="text-lg font-black text-slate-900">{selectedItem.bankName || 'N/A'}</p>
+                  </div>
+                  <div className="space-y-1.5">
+                    <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Branch Name</p>
+                    <p className="text-lg font-black text-slate-900">{selectedItem.branch || 'N/A'}</p>
+                  </div>
+                  <div className="space-y-1.5">
+                    <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">IFSC Code</p>
+                    <p className="text-lg font-black text-slate-900 uppercase">{selectedItem.ifsc || 'N/A'}</p>
+                  </div>
+                  <div className="space-y-1.5">
+                    <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Account Type</p>
+                    <p className="text-lg font-black text-slate-900">{selectedItem.accountType || 'N/A'}</p>
+                  </div>
+                  <div className="space-y-1.5 md:col-span-2">
+                    <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Account Number</p>
+                    <p className="text-2xl font-black tracking-tighter text-slate-900 font-mono">{selectedItem.accountNumber || 'N/A'}</p>
+                  </div>
+                  <div className="space-y-1.5">
+                    <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">GST Registration</p>
+                    <span className={`inline-flex rounded-lg px-3 py-1 text-[10px] font-black uppercase tracking-wider ring-1 ${selectedItem.gstApplicable === 'Yes' ? 'bg-indigo-50 text-indigo-600 ring-indigo-200' : 'bg-slate-50 text-slate-400 ring-slate-200'}`}>
+                      {selectedItem.gstApplicable === 'Yes' ? 'REGISTERED' : 'NOT APPLICABLE'}
+                    </span>
+                  </div>
+                  {selectedItem.gstApplicable === 'Yes' && (
+                    <div className="space-y-1.5">
+                      <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">GST Number</p>
+                      <p className="text-lg font-black text-slate-900 uppercase">{selectedItem.gstNumber}</p>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Compliance Documents Card */}
+              <div className="rounded-[2.5rem] border border-white bg-white p-10 shadow-sm">
+                <div className="mb-10 flex items-center gap-4">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-indigo-50 text-indigo-500">
+                    <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" /></svg>
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-black text-slate-900">Compliance Documents</h3>
+                    <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400">KYC & Business Verification Files</p>
+                  </div>
+                </div>
+
+                {selectedItem.uploadDocuments && selectedItem.uploadDocuments.length > 0 ? (
+                  <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                    {selectedItem.uploadDocuments.map((doc, idx) => (
+                      <div key={idx} className="group flex items-center justify-between rounded-2xl border border-slate-100 bg-slate-50/50 p-4 transition-all hover:bg-white hover:shadow-md">
+                        <div className="flex items-center gap-4">
+                          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white text-indigo-500 shadow-sm">
+                             <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
+                          </div>
+                          <div className="overflow-hidden">
+                            <p className="truncate text-sm font-bold text-slate-700">{doc.name || `Document_${idx + 1}`}</p>
+                            <p className="text-[10px] font-medium text-slate-400">
+                              {doc.size ? `${(doc.size / 1024 / 1024).toFixed(2)} MB` : 'Size Unknown'} • {doc.type || 'PDF'}
+                            </p>
+                          </div>
+                        </div>
+                        <a
+                          href={doc.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex h-9 w-9 items-center justify-center rounded-lg bg-indigo-600 text-white shadow-lg shadow-indigo-100 transition hover:bg-indigo-700"
+                          title="View Document"
+                        >
+                          <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5"><path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path d="M2.036 12.322a1.012 1.012 0 010-.644C3.399 8.049 7.452 5 12 5s8.601 3.049 9.964 6.678c.07.185.07.392 0 .577C20.601 15.951 16.548 19 12 19s-8.601-3.049-9.964-6.678z" /></svg>
+                        </a>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="flex flex-col items-center justify-center rounded-3xl border-2 border-dashed border-slate-100 bg-slate-50/30 py-12 text-center">
+                    <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-slate-100 text-slate-300">
+                       <svg className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
+                    </div>
+                    <p className="text-sm font-bold text-slate-500">No documents uploaded</p>
+                    <p className="mt-1 text-[11px] font-medium text-slate-400">The partner has not submitted any KYC or business files yet.</p>
+                  </div>
+                )}
+              </div>
             </div>
 
             {/* Right Column: Sidebar Width */}
