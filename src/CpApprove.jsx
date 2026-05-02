@@ -373,50 +373,6 @@ function CpApprove({
                 </div>
               </div>
 
-              {/* Engagement History Card */}
-              <div className="rounded-[2.5rem] border border-white bg-white p-10 shadow-sm">
-                <div className="mb-8 flex items-center justify-between">
-                  <div className="flex items-center gap-4">
-                    <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-indigo-50 text-indigo-500">
-                      <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                    </div>
-                    <div>
-                      <h3 className="text-xl font-black text-slate-900">Onboarding History</h3>
-                      <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400">Past & Upcoming Interactions</p>
-                    </div>
-                  </div>
-                  <button className="rounded-xl bg-indigo-50 px-4 py-2 text-[10px] font-black uppercase tracking-widest text-indigo-600 hover:bg-indigo-600 hover:text-white transition-all">
-                    + New Interaction
-                  </button>
-                </div>
-
-                <div className="overflow-hidden rounded-2xl border border-slate-50">
-                  <table className="w-full text-left">
-                    <thead>
-                      <tr className="bg-slate-50/50">
-                        <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-slate-400">Subject</th>
-                        <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-slate-400">Status</th>
-                        <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-slate-400">Scheduled</th>
-                        <th className="px-6 py-4 text-right text-[10px] font-black uppercase tracking-widest text-slate-400">Action</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-slate-50">
-                      <tr>
-                        <td className="px-6 py-5 text-sm font-bold text-slate-700">Initial Registration</td>
-                        <td className="px-6 py-5">
-                          <span className="rounded-full bg-amber-50 px-2.5 py-1 text-[9px] font-black uppercase tracking-widest text-amber-600 ring-1 ring-amber-100">Pending</span>
-                        </td>
-                        <td className="px-6 py-5 text-sm font-bold text-slate-700">{new Date(selectedItem.createdAt || Date.now()).toLocaleDateString('en-GB')}</td>
-                        <td className="px-6 py-5 text-right">
-                          <button className="text-slate-300 hover:text-slate-600">
-                             <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><circle cx="12" cy="12" r="1" /><circle cx="5" cy="12" r="1" /><circle cx="19" cy="12" r="1" /></svg>
-                          </button>
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-              </div>
             </div>
 
             {/* Right Column: Sidebar Width */}
@@ -448,48 +404,6 @@ function CpApprove({
                     <p className="mt-1 text-sm font-black text-slate-800">Unassigned</p>
                   </div>
                 </div>
-              </div>
-
-              {/* System Logs Card */}
-              <div className="rounded-[2.5rem] border border-white bg-white p-8 shadow-sm">
-                <div className="mb-8 flex items-center gap-4">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-slate-50 text-slate-400">
-                    <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5"><path d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
-                  </div>
-                  <h3 className="text-sm font-black uppercase tracking-widest text-slate-900">System Logs</h3>
-                </div>
-                
-                <div className="space-y-4">
-                  <div className="rounded-2xl bg-slate-50/50 p-4 border border-slate-100">
-                    <p className="text-[11px] font-medium italic text-slate-500 leading-relaxed">
-                      "Partner registration captured via MP Developers portal."
-                    </p>
-                  </div>
-                  <div className="rounded-2xl border border-slate-100 p-4">
-                    <p className="text-[11px] font-medium italic text-slate-400 leading-relaxed">
-                       Current status identified as: Pending Approval
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              {/* Collaborative Notes Card */}
-              <div className="group relative overflow-hidden rounded-[2.5rem] bg-slate-900 p-8 shadow-xl">
-                <div className="absolute -right-4 -top-4 h-24 w-24 rounded-full bg-white/5 blur-2xl group-hover:bg-white/10 transition-colors" />
-                <div className="relative mb-6 flex items-center justify-between">
-                   <div className="flex items-center gap-3">
-                      <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-white/10 text-white">
-                         <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5"><path d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>
-                      </div>
-                      <h3 className="text-[13px] font-black uppercase tracking-widest text-white">Verification Notes</h3>
-                   </div>
-                   <button className="flex h-8 w-8 items-center justify-center rounded-lg bg-white/20 text-white hover:bg-white/30 transition-all">
-                      <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="3"><path d="M12 4v16m8-8H4" /></svg>
-                   </button>
-                </div>
-                <p className="text-[11px] font-medium leading-relaxed text-slate-400">
-                  No internal collaboration notes have been recorded for this partner yet. Use notes to share insights with your team.
-                </p>
               </div>
 
               {/* Approval Actions Card */}
