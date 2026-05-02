@@ -39,20 +39,14 @@ function Icon({ name, className = 'h-4 w-4' }) {
 }
 
 const navItems = [
-  { label: 'Dashbord', icon: 'dashboard' },
-  { label: 'UserAccount', icon: 'user' },
+  { label: 'Dashboard', icon: 'dashboard' },
+  { label: 'User Account', icon: 'user' },
   { label: 'Lead Activity', icon: 'lead' },
   { label: 'CP Approve', icon: 'docs' },
-  {
-    label: 'More',
-    icon: 'more',
-    options: [
-      { label: 'Channel Partner Application', icon: 'docs' },
-      { label: 'Emails', icon: 'mail' },
-      { label: 'SMSs', icon: 'sms' },
-      { label: 'Reports', icon: 'reports' },
-    ],
-  },
+  { label: 'Channel Partners', icon: 'docs' },
+  { label: 'Emails', icon: 'mail' },
+  { label: 'SMSs', icon: 'sms' },
+  { label: 'Reports', icon: 'reports' },
 ]
 
 function Navbar({
@@ -215,68 +209,44 @@ function Navbar({
                   type="button"
                   onClick={() => {
                     setOpenWelcome(false)
-                    if (item.label === 'More') {
-                      setOpenMenu((current) => (current === item.label ? null : item.label))
-                      return
-                    }
                     setOpenMenu(null)
-                    if (item.label === 'Dashbord') onBackToDashboard?.()
-                    if (item.label === 'UserAccount') onOpenUserAccount?.()
+                    if (item.label === 'Dashboard') onBackToDashboard?.()
+                    if (item.label === 'User Account') onOpenUserAccount?.()
                     if (item.label === 'Lead Activity') onOpenLeadActive?.()
                     if (item.label === 'CP Approve') onOpenCpApprove?.()
+                    if (item.label === 'Channel Partners') onOpenChannelPartners?.()
+                    if (item.label === 'Emails') onOpenEmails?.()
+                    if (item.label === 'SMSs') onOpenSms?.()
+                    if (item.label === 'Reports') onOpenReports?.()
                   }}
-                  className={`nav-btn group relative flex items-center gap-2 rounded-full px-6 py-2 text-[10.5px] font-black uppercase tracking-wider transition-all duration-300 ${
-                    (activePage === 'dashboard' && item.label === 'Dashbord') ||
-                    (activePage === 'user-account' && item.label === 'UserAccount') ||
+                  className={`nav-btn group relative flex items-center gap-2 rounded-full px-5 py-2 text-[10px] font-black uppercase tracking-wider transition-all duration-300 ${
+                    (activePage === 'dashboard' && item.label === 'Dashboard') ||
+                    (activePage === 'user-account' && item.label === 'User Account') ||
                     (activePage === 'lead-active' && item.label === 'Lead Activity') ||
                     (activePage === 'cp-approve' && item.label === 'CP Approve') ||
-                    ((activePage === 'channel-partners' || activePage === 'emails' || activePage === 'sms' || activePage === 'reports') && item.label === 'More')
+                    (activePage === 'channel-partners' && item.label === 'Channel Partners') ||
+                    (activePage === 'emails' && item.label === 'Emails') ||
+                    (activePage === 'sms' && item.label === 'SMSs') ||
+                    (activePage === 'reports' && item.label === 'Reports')
                       ? 'bg-white text-[#6366f1] shadow-[0_12px_25px_rgba(99,102,241,0.12)] ring-1 ring-[#6366f1]/20'
                       : 'text-slate-500 hover:bg-white/80 hover:text-[#0f172a]'
                   }`}
                 >
                   <Icon name={item.icon} className={`h-4 w-4 transition-transform group-hover:scale-110 ${
-                    (activePage === 'dashboard' && item.label === 'Dashbord') ||
-                    (activePage === 'user-account' && item.label === 'UserAccount') ||
+                    (activePage === 'dashboard' && item.label === 'Dashboard') ||
+                    (activePage === 'user-account' && item.label === 'User Account') ||
                     (activePage === 'lead-active' && item.label === 'Lead Activity') ||
                     (activePage === 'cp-approve' && item.label === 'CP Approve') ||
-                    ((activePage === 'channel-partners' || activePage === 'emails' || activePage === 'sms' || activePage === 'reports') && item.label === 'More')
+                    (activePage === 'channel-partners' && item.label === 'Channel Partners') ||
+                    (activePage === 'emails' && item.label === 'Emails') ||
+                    (activePage === 'sms' && item.label === 'SMSs') ||
+                    (activePage === 'reports' && item.label === 'Reports')
                       ? 'text-[#6366f1]'
                       : 'text-[#94a3b8]'
                   }`} />
                   <span>{item.label}</span>
-                  {item.label === 'More' && <Icon name="chevron" className={`h-3 w-3 transition-transform duration-300 ${openMenu === 'More' ? 'rotate-180' : ''}`} />}
                 </button>
 
-                {item.label === 'More' && openMenu === item.label && (
-                  <div className="animate-fall absolute left-1/2 top-full z-[260] mt-4 w-72 -translate-x-1/2 overflow-hidden rounded-[2rem] border border-white bg-white/95 p-2 shadow-[0_25px_60px_rgba(0,0,0,0.12)] backdrop-blur-xl">
-                    <div className="absolute inset-0 bg-gradient-to-br from-[#6366f1]/5 to-transparent opacity-50" />
-                    <div className="relative space-y-1">
-                      {item.options.map((option) => (
-                        <button
-                          key={option.label}
-                          type="button"
-                          onClick={() => {
-                            setOpenMenu(null)
-                            if (option.label === 'Channel Partner Application') onOpenChannelPartners?.()
-                            if (option.label === 'Emails') onOpenEmails?.()
-                            if (option.label === 'SMSs') onOpenSms?.()
-                            if (option.label === 'Reports') onOpenReports?.()
-                          }}
-                          className="flex w-full items-center gap-3 rounded-2xl px-4 py-3 text-left transition-all duration-300 hover:bg-[#6366f1] hover:text-white hover:shadow-lg hover:shadow-indigo-100"
-                        >
-                          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-indigo-50 text-[#6366f1] transition-colors group-hover:bg-white/20 group-hover:text-white">
-                            <Icon name={option.icon} className="h-4 w-4" />
-                          </div>
-                          <div>
-                            <div className="text-sm font-black">{option.label}</div>
-                            <div className="text-[10px] font-bold uppercase tracking-widest opacity-60">Management Tool</div>
-                          </div>
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                )}
               </div>
             ))}
           </nav>

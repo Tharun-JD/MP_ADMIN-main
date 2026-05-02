@@ -96,19 +96,26 @@ function Dashbord({
   const [accountsCount, setAccountsCount] = useState(0)
 
   useEffect(() => {
-    // Fetch live counts from API
+    // Fetch live counts from API with local fallbacks
     fetch('http://localhost:3000/leads')
       .then(res => res.json())
-      .then(data => setLeadsCount(data.length))
-      .catch(() => setLeadsCount(JSON.parse(localStorage.getItem('mp_leads_v3') || '[]').length))
+      .then(data => setLeadsCount(Array.isArray(data) ? data.length : 0))
+      .catch(() => {
+        const saved = localStorage.getItem('mp_leads_v3')
+        if (saved) setLeadsCount(JSON.parse(saved).length)
+      })
 
     fetch('http://localhost:3000/partners')
       .then(res => res.json())
-      .then(data => setPartnersCount(data.length))
-      .catch(() => setPartnersCount(JSON.parse(localStorage.getItem('mp_channel_partners_v3') || '[]').length))
+      .then(data => setPartnersCount(Array.isArray(data) ? data.length : 0))
+      .catch(() => {
+        const saved = localStorage.getItem('mp_channel_partners_v3')
+        if (saved) setPartnersCount(JSON.parse(saved).length)
+      })
 
-    // Note: User accounts are still local for now as per plan
-    setAccountsCount(JSON.parse(localStorage.getItem('mp_user_accounts_v4') || '[]').length)
+    // User accounts are primarily local as per architecture
+    const savedAccounts = localStorage.getItem('mp_user_accounts_v4')
+    if (savedAccounts) setAccountsCount(JSON.parse(savedAccounts).length)
   }, [])
 
   const canvasRef = useRef(null)

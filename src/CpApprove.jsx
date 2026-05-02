@@ -145,8 +145,11 @@ function CpApprove({
             <h1 className="font-sora text-3xl font-black tracking-tight text-slate-900">CP Approval Queue</h1>
             <p className="mt-1 text-sm font-bold text-indigo-500 uppercase tracking-[0.2em]">Partner Compliance & Identity Verification</p>
           </div>
-          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white shadow-sm ring-1 ring-slate-200">
-             <span className="text-lg font-black text-indigo-600">{approvals.length}</span>
+          <div className="flex items-center gap-4 rounded-2xl bg-white px-6 py-2.5 shadow-sm ring-1 ring-slate-200">
+             <div className="text-right">
+                <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Total</p>
+                <p className="font-sora text-xl font-black text-indigo-600 leading-none">{approvals.length}</p>
+             </div>
           </div>
         </header>
 
@@ -180,7 +183,7 @@ function CpApprove({
                         <div>
                           <div className="text-sm font-black text-slate-900">{item.name}</div>
                           <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
-                            ID: {item.id && item.id.includes('-') ? item.id.split('-')[1] : (item.id ? item.id.slice(0, 8) : 'N/A')}
+                            ID: {String(item.id).includes('-') ? String(item.id).split('-')[1] : String(item.id).slice(0, 8)}
                           </div>
                         </div>
                       </div>
@@ -268,7 +271,7 @@ function CpApprove({
                 <div>
                   <h2 className="font-sora text-2xl font-black text-slate-900">{selectedItem.name}</h2>
                   <div className="mt-0.5 flex items-center gap-3 text-[10px] font-bold uppercase tracking-widest text-slate-400">
-                    <span>PARTNER ID: #{selectedItem.id ? selectedItem.id.slice(-8).toUpperCase() : 'N/A'}</span>
+                    <span>PARTNER ID: #{String(selectedItem.id).slice(-8).toUpperCase()}</span>
                     <span className="h-1 w-1 rounded-full bg-slate-300" />
                     <span className="text-indigo-500">{selectedItem.companyName || 'INDIVIDUAL PARTNER'}</span>
                   </div>
