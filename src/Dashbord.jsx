@@ -70,7 +70,7 @@ function Dashbord({
   onOpenEmails, 
   onOpenSms, 
   onOpenReports,
-  onOpenCpApprove 
+  onOpenCpApprove
 }) {
   const [openMenu, setOpenMenu] = useState(null)
   const [openWelcome, setOpenWelcome] = useState(false)

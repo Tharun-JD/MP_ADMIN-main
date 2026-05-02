@@ -32,7 +32,56 @@ function SmsPage({
   onOpenCpApprove,
   onSignOut,
 }) {
-  const smsRows = []
+  const smsRows = [
+    {
+      id: 'sms-lead-otp',
+      to: '+91 98765 43210',
+      content: 'Your MP Construct enquiry has been received. Our sales team will contact you shortly.',
+      status: 'Delivered',
+      sentOn: '02 May 2026, 10:18 AM',
+      action: 'View',
+    },
+    {
+      id: 'sms-visit-reminder',
+      to: '+91 99887 76655',
+      content: 'Reminder: Your site visit is scheduled today. Please carry a valid ID proof.',
+      status: 'Scheduled',
+      sentOn: '02 May 2026, 03:00 PM',
+      action: 'Edit',
+    },
+    {
+      id: 'sms-cp-approval',
+      to: '+91 91234 56789',
+      content: 'Your channel partner registration is approved. You can now access assigned leads.',
+      status: 'Delivered',
+      sentOn: '01 May 2026, 06:08 PM',
+      action: 'View',
+    },
+    {
+      id: 'sms-kyc-pending',
+      to: '+91 90909 80808',
+      content: 'Your KYC review is pending. Please complete missing business details to continue.',
+      status: 'Pending',
+      sentOn: '01 May 2026, 11:45 AM',
+      action: 'Review',
+    },
+    {
+      id: 'sms-follow-up',
+      to: '+91 93456 78901',
+      content: 'Lead follow-up is due today. Update stage and count status after the call.',
+      status: 'Delivered',
+      sentOn: '30 Apr 2026, 09:05 AM',
+      action: 'View',
+    },
+    {
+      id: 'sms-payment',
+      to: '+91 90123 45678',
+      content: 'Partner payout SMS failed. Verify contact number before retrying notification.',
+      status: 'Failed',
+      sentOn: '29 Apr 2026, 03:25 PM',
+      action: 'Retry',
+    },
+  ]
   const pageRef = useRef(null)
   const headerRef = useRef(null)
   const controlsRef = useRef(null)
@@ -207,9 +256,25 @@ function SmsPage({
               <div key={row.id} className="sms-row grid min-w-[980px] grid-cols-[1.1fr_2fr_0.9fr_1fr_0.8fr] border-t border-[#e4ecfb]">
                 <div className="px-5 py-4 text-sm text-[#314b6d]">{row.to}</div>
                 <div className="px-5 py-4 text-sm text-[#314b6d]">{row.content}</div>
-                <div className="px-5 py-4 text-sm text-[#314b6d]">{row.status}</div>
+                <div className="px-5 py-4 text-sm text-[#314b6d]">
+                  <span className={`rounded-full px-3 py-1 text-[10px] font-black uppercase tracking-widest ring-1 ${
+                    row.status === 'Delivered'
+                      ? 'bg-emerald-50 text-emerald-700 ring-emerald-100'
+                      : row.status === 'Scheduled'
+                        ? 'bg-indigo-50 text-indigo-700 ring-indigo-100'
+                        : row.status === 'Failed'
+                          ? 'bg-rose-50 text-rose-700 ring-rose-100'
+                          : 'bg-amber-50 text-amber-700 ring-amber-100'
+                  }`}>
+                    {row.status}
+                  </span>
+                </div>
                 <div className="px-5 py-4 text-sm text-[#314b6d]">{row.sentOn}</div>
-                <div className="px-5 py-4 text-sm text-[#314b6d]">{row.action}</div>
+                <div className="px-5 py-4 text-sm text-[#314b6d]">
+                  <button type="button" className="sms-clickable rounded-lg border border-[#ddd6fe] bg-[#f5f3ff] px-3 py-1.5 text-xs font-black text-[#6d28d9] transition hover:bg-[#6d28d9] hover:text-white">
+                    {row.action}
+                  </button>
+                </div>
               </div>
             ))
           )}

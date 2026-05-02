@@ -32,7 +32,56 @@ function EmailPage({
   onOpenCpApprove,
   onSignOut,
 }) {
-  const emailRows = []
+  const emailRows = [
+    {
+      id: 'email-lead-welcome',
+      to: 'New lead',
+      subject: 'Welcome to MP Construct - project enquiry received',
+      status: 'Delivered',
+      sentOn: '02 May 2026, 10:15 AM',
+      action: 'View',
+    },
+    {
+      id: 'email-site-visit',
+      to: 'Site visit lead',
+      subject: 'Your site visit schedule and project location details',
+      status: 'Scheduled',
+      sentOn: '02 May 2026, 04:30 PM',
+      action: 'Edit',
+    },
+    {
+      id: 'email-cp-approved',
+      to: 'Channel partner',
+      subject: 'Channel partner registration approved',
+      status: 'Delivered',
+      sentOn: '01 May 2026, 06:05 PM',
+      action: 'View',
+    },
+    {
+      id: 'email-cp-pending',
+      to: 'Approval team',
+      subject: 'Pending channel partner KYC review required',
+      status: 'Pending',
+      sentOn: '01 May 2026, 11:40 AM',
+      action: 'Review',
+    },
+    {
+      id: 'email-follow-up',
+      to: 'Sales executive',
+      subject: 'Follow-up reminder for active lead count status',
+      status: 'Delivered',
+      sentOn: '30 Apr 2026, 09:00 AM',
+      action: 'View',
+    },
+    {
+      id: 'email-invoice',
+      to: 'Billing team',
+      subject: 'Approved invoice summary for partner payout',
+      status: 'Failed',
+      sentOn: '29 Apr 2026, 03:20 PM',
+      action: 'Retry',
+    },
+  ]
   const pageRef = useRef(null)
   const headerRef = useRef(null)
   const controlsRef = useRef(null)
@@ -207,9 +256,25 @@ function EmailPage({
               <div key={row.id} className="email-row grid min-w-[980px] grid-cols-[1.6fr_1.4fr_0.7fr_0.8fr_0.7fr] border-t border-[#e4ecfb]">
                 <div className="px-5 py-4 text-sm text-[#314b6d]">{row.to}</div>
                 <div className="px-5 py-4 text-sm text-[#314b6d]">{row.subject}</div>
-                <div className="px-5 py-4 text-sm text-[#314b6d]">{row.status}</div>
+                <div className="px-5 py-4 text-sm text-[#314b6d]">
+                  <span className={`rounded-full px-3 py-1 text-[10px] font-black uppercase tracking-widest ring-1 ${
+                    row.status === 'Delivered'
+                      ? 'bg-emerald-50 text-emerald-700 ring-emerald-100'
+                      : row.status === 'Scheduled'
+                        ? 'bg-indigo-50 text-indigo-700 ring-indigo-100'
+                        : row.status === 'Failed'
+                          ? 'bg-rose-50 text-rose-700 ring-rose-100'
+                          : 'bg-amber-50 text-amber-700 ring-amber-100'
+                  }`}>
+                    {row.status}
+                  </span>
+                </div>
                 <div className="px-5 py-4 text-sm text-[#314b6d]">{row.sentOn}</div>
-                <div className="px-5 py-4 text-sm text-[#314b6d]">{row.action}</div>
+                <div className="px-5 py-4 text-sm text-[#314b6d]">
+                  <button type="button" className="email-clickable rounded-lg border border-[#dbeafe] bg-[#eff6ff] px-3 py-1.5 text-xs font-black text-[#2563eb] transition hover:bg-[#2563eb] hover:text-white">
+                    {row.action}
+                  </button>
+                </div>
               </div>
             ))
           )}

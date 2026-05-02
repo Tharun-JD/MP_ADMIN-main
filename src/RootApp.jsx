@@ -8,12 +8,11 @@ import EmailPage from './EmailPage.jsx'
 import SmsPage from './SmsPage.jsx'
 import ReportsPage from './ReportsPage.jsx'
 import CpApprove from './CpApprove.jsx'
-import CustDetailsAdmin from './CustDetailsAdmin.jsx'
 
 const SIGNED_IN_KEY = 'mp_admin_signed_in'
 const ACTIVE_PAGE_KEY = 'mp_admin_active_page'
 const DEFAULT_PAGE = 'dashboard'
-const VALID_PAGES = new Set(['dashboard', 'user-account', 'lead-active', 'channel-partners', 'emails', 'sms', 'reports', 'cp-approve', 'cust-details'])
+const VALID_PAGES = new Set(['dashboard', 'user-account', 'lead-active', 'channel-partners', 'emails', 'sms', 'reports', 'cp-approve'])
 
 const getInitialPage = () => {
   const storedPage = localStorage.getItem(ACTIVE_PAGE_KEY)
@@ -58,7 +57,6 @@ function RootApp() {
     onOpenSms: () => goToPage('sms'),
     onOpenReports: () => goToPage('reports'),
     onOpenCpApprove: () => goToPage('cp-approve'),
-    onOpenCustDetails: () => goToPage('cust-details'),
     onSignOut: handleSignOut,
   }
 
@@ -90,9 +88,7 @@ function RootApp() {
     return <CpApprove {...navCallbacks} />
   }
 
-  if (activePage === 'cust-details') {
-    return <CustDetailsAdmin {...navCallbacks} />
-  }
+
 
   return (
     <Dashbord

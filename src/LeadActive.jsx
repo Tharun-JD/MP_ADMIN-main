@@ -115,7 +115,7 @@ function LeadActive({
   onOpenEmails, 
   onOpenSms, 
   onOpenReports,
-  onOpenCpApprove, 
+  onOpenCpApprove,
   onSignOut 
 }) {
   const [isExportOpen, setIsExportOpen] = useState(false)
@@ -131,23 +131,50 @@ function LeadActive({
     countStatus: 'Select',
     registeredAt: '',
   })
-  const [leads, setLeads] = useState(initialLeads)
+  const [leads, setLeads] = useState([])
 
   useEffect(() => {
-    // Fetch leads from API
-    fetch('http://localhost:3000/leads')
-      .then(res => res.json())
-      .then(data => {
-        setLeads(data)
-      })
-      .catch(err => {
-        console.error('Error fetching leads:', err)
-        // Fallback to local storage if API fails
-        const saved = localStorage.getItem('mp_leads_v3')
-        if (saved) {
-          setLeads(JSON.parse(saved))
+    const loadLeadsAndDetails = async () => {
+      try {
+        const [leadsRes, custRes, addrRes] = await Promise.all([
+          fetch('http://localhost:3000/leads').catch(() => null),
+          fetch('http://localhost:3000/customerDetails').catch(() => null),
+          fetch('http://localhost:3000/addressInfo').catch(() => null)
+        ])
+        const leadsData = (leadsRes && leadsRes.ok) ? await leadsRes.json() : []
+        const custData = (custRes && custRes.ok) ? await custRes.json() : []
+        const addrData = (addrRes && addrRes.ok) ? await addrRes.json() : []
+        if (!Array.isArray(leadsData)) return
+        const reversedCust = Array.isArray(custData) ? [...custData].reverse() : []
+        const reversedAddr = Array.isArray(addrData) ? [...addrData].reverse() : []
+        const mergedLeads = leadsData.map(lead => {
+          const matchedCust = reversedCust.find(c => c.userEmail === lead.email || c.email === lead.email)
+          const matchedAddr = reversedAddr.find(a => a.userEmail === lead.email)
+          return { ...lead, ...matchedCust, ...matchedAddr, name: lead.name, email: lead.email, phone: lead.phone }
+        })
+        if (mergedLeads.length > 0) setLeads(mergedLeads)
+        else {
+          const saved = localStorage.getItem('mp_leads_v3')
+          if (saved) setLeads(JSON.parse(saved))
         }
-      })
+      } catch (err) {
+        console.error('Data sync failed:', err)
+      }
+    }
+    loadLeadsAndDetails()
+
+
+
+
+
+
+
+
+
+
+
+
+
   }, [])
   const [viewingLeadIndex, setViewingLeadIndex] = useState(null)
   const [isDetailsOpen, setIsDetailsOpen] = useState(false)
@@ -784,11 +811,11 @@ function LeadActive({
           </div>
         )}
 
-        {isDetailsOpen && viewingLeadIndex !== null && createPortal(
-          <div className="fixed inset-x-0 bottom-0 top-[88px] z-[400] flex flex-col bg-[#f8faff] overflow-hidden rounded-t-[2.5rem] shadow-[0_-20px_50px_rgba(0,0,0,0.1)] border-t border-slate-200">
+        {isDetailsOpen && viewingLeadIndex !== null && leads[viewingLeadIndex] && createPortal(
+          <div className="fixed inset-0 z-[9999] flex flex-col bg-[#f8faff] overflow-hidden">
             {/* Top Header Card */}
-            <div className="px-6 pt-6 lg:px-8 lg:pt-8 max-w-[1600px] mx-auto w-full shrink-0">
-              <header className="flex items-center justify-between rounded-[2rem] bg-white px-6 py-4 shadow-sm border border-slate-100">
+            <div className="px-4 pt-8 lg:px-8 lg:pt-12 max-w-[1600px] mx-auto w-full shrink-0">
+              <header className="flex items-center justify-between rounded-[2.5rem] bg-white px-8 py-6 shadow-[0_20px_50px_rgba(0,0,0,0.05)] border border-slate-100">
                 <div className="flex items-center gap-4">
                   <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-indigo-600 text-white shadow-lg shadow-indigo-200">
                     <svg className="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
@@ -799,7 +826,7 @@ function LeadActive({
                     </svg>
                   </div>
                   <div>
-                    <h1 className="text-xl font-black text-slate-800 tracking-tight">Customer Details</h1>
+                    <h1 className="text-2xl font-black text-slate-900 tracking-tight leading-none">Customer Details</h1>
                     <div className="flex items-center gap-2 mt-1">
                       <span className="text-[11px] font-bold text-slate-600">{leads[viewingLeadIndex].name}</span>
                       <span className="h-1 w-1 rounded-full bg-slate-300" />
@@ -809,17 +836,17 @@ function LeadActive({
                     </div>
                   </div>
                 </div>
-                <div className="flex items-center gap-3 relative">
-                  <button onClick={() => setIsDetailsOpen(false)} className="rounded-xl border border-slate-200 bg-white px-5 py-2.5 text-xs font-bold text-slate-600 transition hover:bg-slate-50 flex items-center gap-2">
+                <div className="flex items-center gap-4 relative">
+                  <button onClick={() => setIsDetailsOpen(false)} className="rounded-2xl border border-slate-200 bg-white px-6 py-3 text-xs font-black text-slate-600 transition-all hover:bg-slate-50 hover:shadow-lg active:scale-95 flex items-center gap-3 shrink-0">
                     <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="m15 18-6-6 6-6" /></svg>
-                    Back to Activities
+                    CLOSE PORTAL
                   </button>
                   <div className="relative">
                     <button 
                       onClick={() => setIsDetailsActionOpen(!isDetailsActionOpen)}
-                      className="details-action-trigger flex h-10 w-10 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-400 transition hover:bg-slate-50"
+                      className="details-action-trigger flex h-12 w-12 items-center justify-center rounded-2xl border border-slate-200 bg-white text-slate-400 transition-all hover:bg-slate-50 hover:text-indigo-600 shrink-0"
                     >
-                      <span className="text-xl font-bold pb-2">...</span>
+                      <span className="text-2xl font-bold pb-2">...</span>
                     </button>
                     {isDetailsActionOpen && (
                       <div 
@@ -852,81 +879,82 @@ function LeadActive({
               </header>
             </div>
 
-            <div className="flex-1 min-h-0 overflow-y-auto p-6 lg:p-8 no-scrollbar">
+            <div className="flex-1 min-h-0 overflow-y-auto p-4 lg:p-8 custom-scrollbar">
               <div className="mx-auto max-w-[1600px] grid grid-cols-1 lg:grid-cols-3 gap-6">
                 {/* Left Column (2 spans) */}
                 <div className="lg:col-span-2 space-y-6">
                   {/* Identity Records */}
-                  <section className="rounded-[2rem] border border-slate-100 bg-white p-8 shadow-[0_15px_40px_-15px_rgba(0,0,0,0.04)]">
-                    <div className="flex items-center justify-between mb-8">
-                      <div className="flex items-center gap-3">
-                        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-50 text-indigo-600">
+                  <section className="rounded-[2.5rem] border border-slate-100 bg-white p-8 lg:p-10 shadow-[0_20px_60px_-20px_rgba(0,0,0,0.03)] relative overflow-hidden">
+                    <div className="flex items-center justify-between mb-10">
+                      <div className="flex items-center gap-4">
+                        <div className="flex h-12 w-12 items-center justify-center rounded-[1.2rem] bg-indigo-50 text-indigo-600">
                           <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2" /><line x1="16" y1="2" x2="16" y2="6" /><line x1="8" y1="2" x2="8" y2="6" /><line x1="3" y1="10" x2="21" y2="10" /><path d="M8 14h.01" /><path d="M12 14h.01" /><path d="M16 14h.01" /><path d="M8 18h.01" /><path d="M12 18h.01" /><path d="M16 18h.01" /></svg>
                         </div>
                         <div>
-                          <h2 className="text-xl font-black text-slate-800 tracking-tight">Identity Records</h2>
-                          <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400">Comprehensive Customer Intelligence</p>
+                          <h2 className="text-2xl font-black text-slate-900 tracking-tight">Identity Records</h2>
+                          <p className="text-[11px] font-bold uppercase tracking-widest text-slate-400 mt-1">Consolidated Profile Intelligence</p>
                         </div>
                       </div>
-                      <div className="rounded-full bg-emerald-50 px-3 py-1 text-[10px] font-black uppercase tracking-widest text-emerald-600 border border-emerald-100">
-                        Active Lead
+                      <div className="rounded-full bg-emerald-50 px-4 py-1.5 text-[10px] font-black uppercase tracking-widest text-emerald-600 border border-emerald-100 shadow-sm">
+                        Verified Lead
                       </div>
                     </div>
                     
-                    <div className="grid grid-cols-2 gap-y-8 gap-x-8">
+                    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-y-10 gap-x-12">
                       {[
-                        { label: 'Full Name',       value: leads[viewingLeadIndex].name },
-                        { label: 'Email Address',   value: leads[viewingLeadIndex].email },
-                        { label: 'Primary Phone',   value: leads[viewingLeadIndex].phone || '+91 1234567890' },
-                        { label: 'Lead Stage',      value: leads[viewingLeadIndex].leadStage || 'Fresh', badge: 'indigo' },
-                        { label: 'Lead Status',     value: leads[viewingLeadIndex].leadStatus || 'Already Exists', badge: 'emerald' },
-                        { label: 'Validity Period', value: leads[viewingLeadIndex].validityPeriod || '30 Days' },
-                        { label: 'Project Name',    value: leads[viewingLeadIndex].project || 'MP Amber' },
-                        { label: 'Budget Range',    value: leads[viewingLeadIndex].budget || 'INR 50 Lakh' },
+                        { label: 'Full Legal Name', value: leads[viewingLeadIndex].name },
+                        { label: 'Official Email',  value: leads[viewingLeadIndex].email },
+                        { label: 'Primary Contact', value: leads[viewingLeadIndex].phone || '+91 1234567890' },
+                        { label: 'Current Stage',   value: leads[viewingLeadIndex].leadStage || 'Fresh', badge: 'indigo' },
+                        { label: 'Acquisition',     value: leads[viewingLeadIndex].leadStatus || 'Active', badge: 'emerald' },
+                        { label: 'Validity Window', value: leads[viewingLeadIndex].validityPeriod || '90 Days' },
+                        { label: 'Target Project',  value: leads[viewingLeadIndex].project || 'MP Amber' },
+                        { label: 'Budget Cap',      value: leads[viewingLeadIndex].budget || 'TBD' },
                         { label: 'Count Status',    value: leads[viewingLeadIndex].countStatus || 'Pending', badge: 'amber' },
-                        { label: 'Registered At',   value: leads[viewingLeadIndex].registeredAt || '24/04/2026' },
-                        { label: 'Location',        value: leads[viewingLeadIndex].location || 'Chn' },
-                        { label: 'Configuration',   value: leads[viewingLeadIndex].configuration || '1 BHK' },
-                        { label: 'Property Type',   value: leads[viewingLeadIndex].propertyType || 'Apartment' },
-                        { label: 'Sell Do Lead ID', value: leads[viewingLeadIndex].sellDoLeadId || 'SD-0959818' },
-                      ].map((item, idx) => (
-                        <div key={idx} className="space-y-1.5">
-                          <p className="flex items-center gap-2 text-[10px] font-black uppercase tracking-wider text-slate-400">
-                            <span className="h-1.5 w-1.5 rounded-full bg-slate-300 shrink-0" />
+                        { label: 'Registration Date', value: leads[viewingLeadIndex].registeredAt || '2026' },
+                        { label: 'Geographic Area', value: leads[viewingLeadIndex].location || '---' },
+                        { label: 'Req. Type',       value: leads[viewingLeadIndex].configuration || '---' },
+                        { label: 'Property Class',  value: leads[viewingLeadIndex].propertyType || '---' },
+                        { label: 'CRM Reference',   value: leads[viewingLeadIndex].sellDoLeadId || '---' },
+                      ].map((item, idx) => item.value ? (
+                        <div key={idx} className="group flex flex-col gap-2">
+                          <p className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.15em] text-slate-400 group-hover:text-indigo-400 transition-colors">
+                            <span className="h-1.5 w-1.5 rounded-full bg-slate-200 group-hover:bg-indigo-300 transition-colors" />
                             {item.label}
                           </p>
                           {item.badge === 'indigo' ? (
-                            <span className="inline-flex items-center gap-1.5 rounded-md bg-indigo-50 px-2 py-1 text-xs font-bold text-indigo-700 border border-indigo-100">
-                              <span className="h-1.5 w-1.5 rounded-full bg-indigo-600" />
+                            <span className="inline-flex items-center w-fit gap-1.5 rounded-xl bg-indigo-50/80 px-3 py-1.5 text-xs font-black text-indigo-700 border border-indigo-100 shadow-sm">
+                              <span className="h-2 w-2 rounded-full bg-indigo-500 animate-pulse" />
                               {item.value}
                             </span>
                           ) : item.badge === 'emerald' ? (
-                            <span className="inline-flex items-center gap-1.5 rounded-md bg-emerald-50 px-2 py-1 text-xs font-bold text-emerald-700 border border-emerald-100">
-                              <span className="h-1.5 w-1.5 rounded-full bg-emerald-600" />
+                            <span className="inline-flex items-center w-fit gap-1.5 rounded-xl bg-emerald-50/80 px-3 py-1.5 text-xs font-black text-emerald-700 border border-emerald-100 shadow-sm">
+                              <span className="h-2 w-2 rounded-full bg-emerald-500" />
                               {item.value}
                             </span>
                           ) : item.badge === 'amber' ? (
-                            <span className="inline-flex items-center rounded-md border border-amber-200 bg-amber-50 px-2 py-1 text-[10px] font-bold text-amber-600">
+                            <span className="inline-flex items-center w-fit gap-1.5 rounded-xl bg-amber-50/80 px-3 py-1.5 text-xs font-black text-amber-700 border border-amber-100 shadow-sm">
+                              <span className="h-2 w-2 rounded-full bg-amber-500" />
                               {item.value}
                             </span>
                           ) : (
-                            <p className="text-base font-black text-slate-800">{item.value}</p>
+                            <p className="text-[15px] font-bold text-slate-800 tracking-tight group-hover:translate-x-1 transition-transform">{item.value}</p>
                           )}
                         </div>
-                      ))}
+                      ) : null)}
                     </div>
                   </section>
 
                   {/* Engagement History */}
-                  <section className="rounded-[2rem] border border-slate-100 bg-white p-8 shadow-[0_15px_40px_-15px_rgba(0,0,0,0.04)]">
-                    <div className="flex items-center justify-between mb-8">
-                      <div className="flex items-center gap-3">
-                        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-50 text-indigo-600">
+                  <section className="rounded-[2.5rem] border border-slate-100 bg-white p-8 lg:p-10 shadow-[0_20px_60px_-20px_rgba(0,0,0,0.03)]">
+                    <div className="flex items-center justify-between mb-10">
+                      <div className="flex items-center gap-4">
+                        <div className="flex h-12 w-12 items-center justify-center rounded-[1.2rem] bg-indigo-50 text-indigo-600">
                           <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
                         </div>
                         <div>
-                          <h2 className="text-xl font-black text-slate-800 tracking-tight">Engagement History</h2>
-                          <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400">Past & Upcoming Interactions</p>
+                          <h2 className="text-2xl font-black text-slate-900 tracking-tight">Activity Stream</h2>
+                          <p className="text-[11px] font-bold uppercase tracking-widest text-slate-400 mt-1">Historical Engagement Timeline</p>
                         </div>
                       </div>
                       <button onClick={() => setIsFollowUpOpen(true)} className="rounded-xl bg-indigo-50 px-4 py-2 text-xs font-bold text-indigo-600 transition hover:bg-indigo-100 flex items-center gap-1">
@@ -935,25 +963,27 @@ function LeadActive({
                       </button>
                     </div>
 
-                    <div className="rounded-2xl border border-slate-100 overflow-hidden">
+                    <div className="rounded-3xl border border-slate-100 overflow-hidden shadow-sm">
                       <table className="w-full text-left text-sm">
-                        <thead className="bg-slate-50/50 text-[10px] font-black uppercase tracking-wider text-slate-400">
+                        <thead className="bg-slate-50/80 text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 border-b border-slate-100">
                           <tr>
-                            <th className="px-6 py-4">Subject</th>
-                            <th className="px-6 py-4">Status</th>
-                            <th className="px-6 py-4">Scheduled</th>
-                            <th className="px-6 py-4 text-center">Action</th>
+                            <th className="px-8 py-5">Activity Subject</th>
+                            <th className="px-8 py-5">Current Status</th>
+                            <th className="px-8 py-5">Scheduled</th>
+                            <th className="px-8 py-5 text-center">Controls</th>
                           </tr>
                         </thead>
-                        <tbody className="divide-y divide-slate-100 bg-white">
+                        <tbody className="divide-y divide-slate-50 bg-white">
                           <tr className="transition hover:bg-slate-50/50">
-                            <td className="px-6 py-4 font-bold text-slate-800">Initial Contact</td>
+                            <td className="px-8 py-6 font-bold text-slate-800">Initial System Onboarding</td>
                             <td className="px-6 py-4">
-                              <span className="inline-flex items-center rounded-md border border-amber-200 bg-amber-50 px-2 py-1 text-[10px] font-bold text-amber-600">Pending</span>
+                              <span className="inline-flex items-center rounded-xl border border-amber-200 bg-amber-50 px-3 py-1.5 text-[10px] font-black uppercase tracking-widest text-amber-600">Action Pending</span>
                             </td>
-                            <td className="px-6 py-4 font-medium text-slate-500">5/1/2026</td>
-                            <td className="px-6 py-4 text-center">
-                              <button className="rounded-lg p-1 text-slate-400 hover:bg-slate-100 hover:text-slate-600"><span className="text-lg leading-none">...</span></button>
+                            <td className="px-8 py-6 font-black text-[11px] text-slate-400">MAY 01, 2026</td>
+                            <td className="px-8 py-6 text-center">
+                              <button className="rounded-xl p-2 text-slate-300 hover:bg-white hover:text-indigo-600 hover:shadow-sm border border-transparent hover:border-slate-100 transition-all">
+                                <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><circle cx="12" cy="12" r="1" /><circle cx="19" cy="12" r="1" /><circle cx="5" cy="12" r="1" /></svg>
+                              </button>
                             </td>
                           </tr>
                         </tbody>

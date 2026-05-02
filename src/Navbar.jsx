@@ -45,7 +45,6 @@ const navItems = [
   { label: 'Lead Activity', icon: 'lead' },
   { label: 'CP Approve', icon: 'docs' },
   { label: 'Channel Partners', icon: 'docs' },
-  { label: 'Cust Details', icon: 'custdetails' },
   { label: 'Emails', icon: 'mail' },
   { label: 'SMSs', icon: 'sms' },
   { label: 'Reports', icon: 'reports' },
@@ -61,7 +60,6 @@ function Navbar({
   onOpenSms,
   onOpenReports,
   onOpenCpApprove,
-  onOpenCustDetails,
   onSignOut,
   className = '',
 }) {
@@ -218,7 +216,6 @@ function Navbar({
                     if (item.label === 'Lead Activity') onOpenLeadActive?.()
                     if (item.label === 'CP Approve') onOpenCpApprove?.()
                     if (item.label === 'Channel Partners') onOpenChannelPartners?.()
-                    if (item.label === 'Cust Details') onOpenCustDetails?.()
                     if (item.label === 'Emails') onOpenEmails?.()
                     if (item.label === 'SMSs') onOpenSms?.()
                     if (item.label === 'Reports') onOpenReports?.()
@@ -229,7 +226,6 @@ function Navbar({
                     (activePage === 'lead-active' && item.label === 'Lead Activity') ||
                     (activePage === 'cp-approve' && item.label === 'CP Approve') ||
                     (activePage === 'channel-partners' && item.label === 'Channel Partners') ||
-                    (activePage === 'cust-details' && item.label === 'Cust Details') ||
                     (activePage === 'emails' && item.label === 'Emails') ||
                     (activePage === 'sms' && item.label === 'SMSs') ||
                     (activePage === 'reports' && item.label === 'Reports')
@@ -243,7 +239,6 @@ function Navbar({
                     (activePage === 'lead-active' && item.label === 'Lead Activity') ||
                     (activePage === 'cp-approve' && item.label === 'CP Approve') ||
                     (activePage === 'channel-partners' && item.label === 'Channel Partners') ||
-                    (activePage === 'cust-details' && item.label === 'Cust Details') ||
                     (activePage === 'emails' && item.label === 'Emails') ||
                     (activePage === 'sms' && item.label === 'SMSs') ||
                     (activePage === 'reports' && item.label === 'Reports')
