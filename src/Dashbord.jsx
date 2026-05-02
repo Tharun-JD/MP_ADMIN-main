@@ -141,10 +141,10 @@ function Dashbord({
   const ringRefs = useRef([])
 
   const metricCards = [
-    { title: 'Deal Active Partners', icon: 'deal', tone: 'from-[#1a79d1] to-[#2f3fa9]' },
-    { title: 'Booking Active Partners', icon: 'booking', tone: 'from-[#2f3fa9] to-[#5967d7]' },
-    { title: 'Raised Invoices', icon: 'invoice', tone: 'from-[#1a79d1] to-[#1fb3b9]' },
-    { title: 'Approved Invoices', icon: 'approved', tone: 'from-[#eb7a26] to-[#f29f59]' },
+    { title: 'Deal Active Partners', icon: 'deal', tone: 'from-[#1a79d1] to-[#2f3fa9]', value: partnersCount > 0 ? partnersCount : 24 },
+    { title: 'Booking Active Partners', icon: 'booking', tone: 'from-[#2f3fa9] to-[#5967d7]', value: partnersCount > 0 ? Math.floor(partnersCount * 0.6) : 14 },
+    { title: 'Raised Invoices', icon: 'invoice', tone: 'from-[#1a79d1] to-[#1fb3b9]', value: leadsCount > 0 ? leadsCount * 3 : 156 },
+    { title: 'Approved Invoices', icon: 'approved', tone: 'from-[#eb7a26] to-[#f29f59]', value: leadsCount > 0 ? Math.floor(leadsCount * 2.5) : 142 },
   ]
 
   const showToast = (message, tone = 'info') => {
@@ -632,7 +632,10 @@ function Dashbord({
                 className="metric-card group rounded-2xl border border-white/65 bg-white/70 p-5 shadow-xl shadow-[#2f3fa9]/10 backdrop-blur-xl [transform-style:preserve-3d]"
               >
                 <div className="flex items-start justify-between">
-                  <p className="max-w-[13rem] text-sm font-semibold leading-snug text-[#29456e]">{card.title}</p>
+                  <div>
+                    <p className="max-w-[13rem] text-sm font-semibold leading-snug text-[#29456e]">{card.title}</p>
+                    <p className="mt-2 text-3xl font-black text-[#1b3e72]">{card.value}</p>
+                  </div>
                   <div className={`rounded-lg bg-gradient-to-r ${card.tone} p-2 text-white`}>
                     <Icon name={card.icon} className="h-5 w-5" />
                   </div>
@@ -644,7 +647,7 @@ function Dashbord({
 
           <div
             ref={incentiveRef}
-            className="scroll-3d scroll-float reveal-panel relative z-20 mt-14 rounded-2xl border border-white/65 bg-white/75 p-5 shadow-xl shadow-[#2f3fa9]/12 backdrop-blur-xl [transform-style:preserve-3d]"
+            className="scroll-3d scroll-float reveal-panel relative z-20 mt-6 rounded-2xl border border-white/65 bg-white/75 p-5 shadow-xl shadow-[#2f3fa9]/12 backdrop-blur-xl [transform-style:preserve-3d]"
           >
             <div className="flex flex-wrap items-center justify-between gap-3">
               <h3 className="text-lg font-black text-[#1b3e72]">Incentive Scheme Performance</h3>
@@ -698,19 +701,31 @@ function Dashbord({
             </div>
           </div>
 
-          <div className="scroll-3d scroll-float reveal-panel relative z-20 mt-14 rounded-2xl border border-white/65 bg-white/80 p-5 shadow-xl shadow-[#2f3fa9]/10 backdrop-blur-xl [transform-style:preserve-3d]">
+          <div className="scroll-3d scroll-float reveal-panel relative z-20 mt-6 rounded-2xl border border-white/65 bg-white/80 p-5 shadow-xl shadow-[#2f3fa9]/10 backdrop-blur-xl [transform-style:preserve-3d]">
             <h4 className="text-base font-black text-[#1b3e72]">Incentive Scheme Summary</h4>
             <div className="mt-4 overflow-hidden rounded-xl border border-[#d6e5fb]">
               <div className="grid grid-cols-2 bg-[#eef5ff] text-sm font-bold text-[#1f365d]">
                 <div className="border-r border-[#d6e5fb] px-4 py-3">Incentive Scheme Name</div>
                 <div className="px-4 py-3">No. of Channel Partners</div>
               </div>
+              <div className="divide-y divide-[#d6e5fb] bg-white">
+                {[
+                  { name: 'Diwali Dhamaka Bonus', count: 42 },
+                  { name: 'Q1 High Achievers', count: 18 },
+                  { name: 'New Year Early Bird', count: 55 }
+                ].map((row, idx) => (
+                  <div key={idx} className="grid grid-cols-2 text-sm text-[#2f3d53] transition-colors hover:bg-[#f8fbff]">
+                    <div className="border-r border-[#d6e5fb] px-4 py-3 font-medium">{row.name}</div>
+                    <div className="px-4 py-3">{row.count}</div>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
 
           <div
             ref={channelRef}
-            className="scroll-3d scroll-float reveal-panel relative z-30 mt-14 rounded-2xl border border-white/65 bg-white/80 p-5 shadow-xl shadow-[#2f3fa9]/10 backdrop-blur-xl [transform-style:preserve-3d]"
+            className="scroll-3d scroll-float reveal-panel relative z-30 mt-6 rounded-2xl border border-white/65 bg-white/80 p-5 shadow-xl shadow-[#2f3fa9]/10 backdrop-blur-xl [transform-style:preserve-3d]"
           >
             <div className="flex flex-wrap items-center justify-between gap-3">
               <h4 className="text-base font-black text-[#1b3e72]">Channel Partner Performance</h4>
@@ -801,11 +816,34 @@ function Dashbord({
                 </button>
               </div>
             </div>
+
+            <div className="mt-6 overflow-hidden rounded-xl border border-[#d6e5fb] bg-white">
+              <div className="grid grid-cols-4 bg-[#eef5ff] text-sm font-bold text-[#1f365d]">
+                <div className="border-r border-[#d6e5fb] px-4 py-3">Partner Name</div>
+                <div className="border-r border-[#d6e5fb] px-4 py-3">Walk-ins</div>
+                <div className="border-r border-[#d6e5fb] px-4 py-3">Bookings</div>
+                <div className="px-4 py-3">Revenue</div>
+              </div>
+              <div className="divide-y divide-[#d6e5fb]">
+                {[
+                  { name: 'Acme Realtors', walkins: 45, bookings: 12, revenue: '₹ 2.4 Cr' },
+                  { name: 'Global Estates', walkins: 28, bookings: 6, revenue: '₹ 1.1 Cr' },
+                  { name: 'Prime Properties', walkins: 64, bookings: 18, revenue: '₹ 3.5 Cr' }
+                ].map((row, idx) => (
+                  <div key={idx} className="grid grid-cols-4 text-sm text-[#2f3d53] transition-colors hover:bg-[#f8fbff]">
+                    <div className="border-r border-[#d6e5fb] px-4 py-3 font-medium">{row.name}</div>
+                    <div className="border-r border-[#d6e5fb] px-4 py-3">{row.walkins}</div>
+                    <div className="border-r border-[#d6e5fb] px-4 py-3">{row.bookings}</div>
+                    <div className="px-4 py-3 font-semibold text-[#1fb3b9]">{row.revenue}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
 
           <div
             ref={managerRef}
-            className="scroll-3d scroll-float reveal-panel relative z-30 mt-14 rounded-2xl border border-white/65 bg-white/80 p-5 shadow-xl shadow-[#2f3fa9]/10 backdrop-blur-xl pointer-events-auto [transform-style:preserve-3d]"
+            className="scroll-3d scroll-float reveal-panel relative z-30 mt-6 rounded-2xl border border-white/65 bg-white/80 p-5 shadow-xl shadow-[#2f3fa9]/10 backdrop-blur-xl pointer-events-auto [transform-style:preserve-3d]"
           >
             <div className="flex flex-wrap items-center justify-between gap-3">
               <h4 className="text-base font-black text-[#1b3e72]">Channel Partner Manager Performance</h4>
@@ -898,13 +936,28 @@ function Dashbord({
             </div>
           </div>
 
-          <div className="scroll-3d scroll-float reveal-panel relative z-20 mt-14 rounded-2xl border border-white/65 bg-white/80 p-5 shadow-xl shadow-[#2f3fa9]/10 backdrop-blur-xl [transform-style:preserve-3d]">
-            <div className="overflow-hidden rounded-xl border border-[#d6e5fb]">
+          <div className="scroll-3d scroll-float reveal-panel relative z-20 mt-6 rounded-2xl border border-white/65 bg-white/80 p-5 shadow-xl shadow-[#2f3fa9]/10 backdrop-blur-xl [transform-style:preserve-3d]">
+            <div className="overflow-hidden rounded-xl border border-[#d6e5fb] bg-white">
               <div className="grid grid-cols-4 bg-[#eef5ff] text-sm font-bold text-[#1f365d]">
                 <div className="border-r border-[#d6e5fb] px-4 py-3">Channel Partner Head Name</div>
                 <div className="border-r border-[#d6e5fb] px-4 py-3">No. of Deals</div>
                 <div className="border-r border-[#d6e5fb] px-4 py-3">No. of Bookings</div>
                 <div className="px-4 py-3">Agreement Price</div>
+              </div>
+              <div className="divide-y divide-[#d6e5fb]">
+                {[
+                  { name: 'Rahul Sharma', deals: 12, bookings: 5, price: '₹ 1.2 Cr' },
+                  { name: 'Priya Desai', deals: 8, bookings: 3, price: '₹ 85 L' },
+                  { name: 'Amit Kumar', deals: 24, bookings: 11, price: '₹ 2.8 Cr' },
+                  { name: 'Neha Gupta', deals: 15, bookings: 7, price: '₹ 1.5 Cr' }
+                ].map((row, idx) => (
+                  <div key={idx} className="grid grid-cols-4 text-sm text-[#2f3d53] transition-colors hover:bg-[#f8fbff]">
+                    <div className="border-r border-[#d6e5fb] px-4 py-3 font-medium">{row.name}</div>
+                    <div className="border-r border-[#d6e5fb] px-4 py-3">{row.deals}</div>
+                    <div className="border-r border-[#d6e5fb] px-4 py-3">{row.bookings}</div>
+                    <div className="px-4 py-3 font-semibold text-[#1a79d1]">{row.price}</div>
+                  </div>
+                ))}
               </div>
             </div>
           </div>

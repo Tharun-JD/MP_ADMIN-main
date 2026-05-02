@@ -29,6 +29,7 @@ function Icon({ name, className = 'h-4 w-4' }) {
     profile: <path d="M12 12a4.4 4.4 0 1 0-4.4-4.4A4.4 4.4 0 0 0 12 12Zm0 2.2c-4.13 0-7.5 2.18-7.5 4.88V21h15v-1.92c0-2.7-3.37-4.88-7.5-4.88Z" fill="currentColor" />,
     settings: <path d="m12 2.5 1.3 2.2 2.5.5.4 2.5 2 1.5-1 2.3 1 2.3-2 1.5-.4 2.5-2.5.5-1.3 2.2-2.3-1-2.3 1-1.3-2.2-2.5-.5-.4-2.5-2-1.5 1-2.3-1-2.3 2-1.5.4-2.5 2.5-.5L9.7 2.5h2.3Zm0 6.2A3.3 3.3 0 1 0 15.3 12 3.3 3.3 0 0 0 12 8.7Z" fill="currentColor" />,
     signout: <path d="M10 4.5h-4A1.5 1.5 0 0 0 4.5 6v12A1.5 1.5 0 0 0 6 19.5h4v-2H6.5v-11H10v-2Zm4.06 3.44-1.42 1.41L14.8 11.5H8v2h6.8l-2.16 2.15 1.42 1.41L18.6 12l-4.54-4.06Z" fill="currentColor" />,
+    custdetails: <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />,
   }
 
   return (
@@ -44,6 +45,7 @@ const navItems = [
   { label: 'Lead Activity', icon: 'lead' },
   { label: 'CP Approve', icon: 'docs' },
   { label: 'Channel Partners', icon: 'docs' },
+  { label: 'Cust Details', icon: 'custdetails' },
   { label: 'Emails', icon: 'mail' },
   { label: 'SMSs', icon: 'sms' },
   { label: 'Reports', icon: 'reports' },
@@ -59,6 +61,7 @@ function Navbar({
   onOpenSms,
   onOpenReports,
   onOpenCpApprove,
+  onOpenCustDetails,
   onSignOut,
   className = '',
 }) {
@@ -215,6 +218,7 @@ function Navbar({
                     if (item.label === 'Lead Activity') onOpenLeadActive?.()
                     if (item.label === 'CP Approve') onOpenCpApprove?.()
                     if (item.label === 'Channel Partners') onOpenChannelPartners?.()
+                    if (item.label === 'Cust Details') onOpenCustDetails?.()
                     if (item.label === 'Emails') onOpenEmails?.()
                     if (item.label === 'SMSs') onOpenSms?.()
                     if (item.label === 'Reports') onOpenReports?.()
@@ -225,6 +229,7 @@ function Navbar({
                     (activePage === 'lead-active' && item.label === 'Lead Activity') ||
                     (activePage === 'cp-approve' && item.label === 'CP Approve') ||
                     (activePage === 'channel-partners' && item.label === 'Channel Partners') ||
+                    (activePage === 'cust-details' && item.label === 'Cust Details') ||
                     (activePage === 'emails' && item.label === 'Emails') ||
                     (activePage === 'sms' && item.label === 'SMSs') ||
                     (activePage === 'reports' && item.label === 'Reports')
@@ -238,6 +243,7 @@ function Navbar({
                     (activePage === 'lead-active' && item.label === 'Lead Activity') ||
                     (activePage === 'cp-approve' && item.label === 'CP Approve') ||
                     (activePage === 'channel-partners' && item.label === 'Channel Partners') ||
+                    (activePage === 'cust-details' && item.label === 'Cust Details') ||
                     (activePage === 'emails' && item.label === 'Emails') ||
                     (activePage === 'sms' && item.label === 'SMSs') ||
                     (activePage === 'reports' && item.label === 'Reports')

@@ -197,6 +197,59 @@ function UserAccount({
     localStorage.setItem('mp_user_accounts_v4', JSON.stringify(accounts))
   }, [accounts])
 
+  // Fetch partner data from mock API to merge with accounts
+  useEffect(() => {
+    const fetchPartnerData = async () => {
+      try {
+        const [custRes, addrRes] = await Promise.all([
+          fetch('http://localhost:3000/customerDetails').catch(() => null),
+          fetch('http://localhost:3000/addressInfo').catch(() => null)
+        ])
+        
+        const custData = custRes?.ok ? await custRes.json() : []
+        const addrData = addrRes?.ok ? await addrRes.json() : []
+        
+        if (custData.length === 0 && addrData.length === 0) return
+        
+        setAccounts(prevAccounts => {
+          let hasChanges = false
+          const newAccounts = prevAccounts.map(acc => {
+            // Match by email to find the corresponding partner data
+            const matchedCust = custData.reverse().find(c => c.userEmail === acc.email || c.email === acc.email)
+            const matchedAddr = addrData.reverse().find(a => a.userEmail === acc.email)
+            
+            if (!matchedCust && !matchedAddr) return acc
+            
+            hasChanges = true
+            return {
+              ...acc,
+              companyName: matchedCust?.cpCompany || acc.companyName,
+              rera: matchedCust?.rera || acc.rera,
+              pan: matchedCust?.pan || acc.pan,
+              bankName: matchedCust?.bankName || acc.bankName,
+              accountNumber: matchedCust?.accountNumber || acc.accountNumber,
+              ifsc: matchedCust?.ifsc || acc.ifsc,
+              accountType: matchedCust?.accountType || acc.accountType,
+              gstNumber: matchedCust?.gstNumber || acc.gstNumber,
+              house: matchedAddr?.house || acc.house,
+              street: matchedAddr?.street || acc.street,
+              city: matchedAddr?.city || acc.city,
+              state: matchedAddr?.state || acc.state,
+              country: matchedAddr?.country || acc.country,
+              zip: matchedAddr?.zip || acc.zip,
+            }
+          })
+          
+          return hasChanges ? newAccounts : prevAccounts
+        })
+      } catch (err) {
+        console.error('Failed to load partner API data:', err)
+      }
+    }
+    
+    fetchPartnerData()
+  }, [])
+
   useEffect(() => {
     localStorage.setItem('mp_ua_form_draft', JSON.stringify(addUserFormValues))
   }, [addUserFormValues])
@@ -719,21 +772,28 @@ function UserAccount({
         {/* Follow Up Form Overlay */}
         {isFollowUpFormOpen && (
           <div className="ua-followup-overlay fixed inset-0 z-[200] flex items-center justify-center bg-slate-900/60 p-4 backdrop-blur-sm animate-in fade-in duration-300">
-            <div ref={followUpFormRef} className="relative w-full max-w-4xl overflow-hidden rounded-[1rem] bg-white shadow-[0_32px_64px_-16px_rgba(0,0,0,0.15)] ring-1 ring-slate-200 animate-in zoom-in-95 slide-in-from-bottom-4 duration-500">
-              <div className="flex items-center justify-between border-b border-orange-100 bg-[#fff5eb] px-6 py-4">
-                <h2 className="text-lg font-bold text-[#ea580c]">Lead Follow-up</h2>
-                <button onClick={() => setIsFollowUpFormOpen(false)} className="text-[#ea580c]/60 transition-colors hover:text-[#ea580c]">
+            <div ref={followUpFormRef} className="relative w-full max-w-2xl rounded-[2.5rem] bg-white shadow-[0_32px_64px_-16px_rgba(0,0,0,0.15)] ring-1 ring-slate-200 animate-in zoom-in-95 slide-in-from-bottom-4 duration-500">
+              <div className="relative flex items-center justify-between border-b border-slate-50 px-8 py-7">
+                <div>
+                  <h2 className="text-xl font-black tracking-tight text-slate-900">Add Follow Up</h2>
+                  <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Log a new interaction</p>
+                </div>
+                <button onClick={() => setIsFollowUpFormOpen(false)} className="group flex size-10 items-center justify-center rounded-xl bg-slate-50 text-slate-400 transition-all hover:bg-rose-50 hover:text-rose-500">
                   <IconX />
                 </button>
               </div>
-              <div className="flex flex-col gap-5 bg-white p-6">
-                <div className="ua-followup-field space-y-1">
-                  <label className="text-[11px] font-bold text-slate-500">Sell.Do Lead ID</label>
-                  <input type="text" value={followUpFormValues.sellDoLeadId} onChange={(e) => setFollowUpFormValues(p => ({...p, sellDoLeadId: e.target.value}))} className="w-full rounded border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 outline-none transition-all focus:border-[#ea580c] focus:ring-1 focus:ring-[#ea580c]" placeholder="Enter Sell.Do Lead ID..." />
+              <div className="relative grid gap-5 p-8 md:grid-cols-2 max-h-[60vh] overflow-y-auto no-scrollbar">
+                <div className="ua-followup-field space-y-2">
+                  <label className="ml-1 text-[10px] font-black uppercase tracking-widest text-slate-500">Project Name</label>
+                  <input type="text" value={followUpFormValues.project} onChange={(e) => setFollowUpFormValues(p => ({...p, project: e.target.value}))} className="w-full rounded-2xl border border-slate-100 bg-slate-50/50 px-5 py-3 text-sm font-bold text-slate-900 shadow-sm outline-none transition-all focus:border-indigo-500/30 focus:bg-white focus:ring-4 focus:ring-indigo-500/5" placeholder="Project" />
                 </div>
-                <div className="ua-followup-field space-y-1">
-                  <label className="text-[11px] font-bold text-slate-500">Lead Stage</label>
-                  <select value={followUpFormValues.leadStage} onChange={(e) => setFollowUpFormValues(p => ({...p, leadStage: e.target.value}))} className="w-full rounded border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 outline-none transition-all focus:border-[#ea580c] focus:ring-1 focus:ring-[#ea580c]">
+                <div className="ua-followup-field space-y-2">
+                  <label className="ml-1 text-[10px] font-black uppercase tracking-widest text-slate-500">Channel Partner</label>
+                  <input type="text" value={followUpFormValues.channelPartner} onChange={(e) => setFollowUpFormValues(p => ({...p, channelPartner: e.target.value}))} className="w-full rounded-2xl border border-slate-100 bg-slate-50/50 px-5 py-3 text-sm font-bold text-slate-900 shadow-sm outline-none transition-all focus:border-indigo-500/30 focus:bg-white focus:ring-4 focus:ring-indigo-500/5" placeholder="Partner Name" />
+                </div>
+                <div className="ua-followup-field space-y-2">
+                  <label className="ml-1 text-[10px] font-black uppercase tracking-widest text-slate-500">Lead Stage</label>
+                  <select value={followUpFormValues.leadStage} onChange={(e) => setFollowUpFormValues(p => ({...p, leadStage: e.target.value}))} className="w-full rounded-2xl border border-slate-100 bg-slate-50/50 px-5 py-3 text-sm font-bold text-slate-900 shadow-sm outline-none transition-all focus:border-indigo-500/30 focus:bg-white focus:ring-4 focus:ring-indigo-500/5 appearance-none">
                     <option value="Fresh">Fresh</option>
                     <option value="Visit Done">Visit Done</option>
                     <option value="Negotiation">Negotiation</option>
@@ -741,34 +801,28 @@ function UserAccount({
                     <option value="Lost">Lost</option>
                   </select>
                 </div>
-                <div className="ua-followup-field space-y-1">
-                  <label className="text-[11px] font-bold text-slate-500">Lead Status</label>
-                  <select value={followUpFormValues.leadStatus} onChange={(e) => setFollowUpFormValues(p => ({...p, leadStatus: e.target.value}))} className="w-full rounded border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 outline-none transition-all focus:border-[#ea580c] focus:ring-1 focus:ring-[#ea580c]">
+                <div className="ua-followup-field space-y-2">
+                  <label className="ml-1 text-[10px] font-black uppercase tracking-widest text-slate-500">Lead Status</label>
+                  <select value={followUpFormValues.leadStatus} onChange={(e) => setFollowUpFormValues(p => ({...p, leadStatus: e.target.value}))} className="w-full rounded-2xl border border-slate-100 bg-slate-50/50 px-5 py-3 text-sm font-bold text-slate-900 shadow-sm outline-none transition-all focus:border-indigo-500/30 focus:bg-white focus:ring-4 focus:ring-indigo-500/5 appearance-none">
                     <option value="Active">Active</option>
                     <option value="Inactive">Inactive</option>
                   </select>
                 </div>
-                <div className="ua-followup-field space-y-1">
-                  <label className="text-[11px] font-bold text-slate-500">Count Status</label>
-                  <select value={followUpFormValues.countStatus} onChange={(e) => setFollowUpFormValues(p => ({...p, countStatus: e.target.value}))} className="w-full rounded border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 outline-none transition-all focus:border-[#ea580c] focus:ring-1 focus:ring-[#ea580c]">
-                    <option value="Pending">Pending</option>
-                    <option value="Valid">Valid</option>
-                    <option value="Invalid">Invalid</option>
-                  </select>
-                </div>
-                <div className="ua-followup-field space-y-1">
-                  <label className="text-[11px] font-bold text-slate-500">Remarks</label>
-                  <textarea value={followUpFormValues.remark} onChange={(e) => setFollowUpFormValues(p => ({...p, remark: e.target.value}))} className="min-h-[120px] w-full rounded border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 outline-none transition-all focus:border-[#ea580c] focus:ring-1 focus:ring-[#ea580c]" placeholder="Enter follow-up details..." />
+                <div className="ua-followup-field space-y-2 md:col-span-2">
+                  <label className="ml-1 text-[10px] font-black uppercase tracking-widest text-slate-500">Remark</label>
+                  <textarea value={followUpFormValues.remark} onChange={(e) => setFollowUpFormValues(p => ({...p, remark: e.target.value}))} className="w-full rounded-2xl border border-slate-100 bg-slate-50/50 px-5 py-3 text-sm font-bold text-slate-900 shadow-sm outline-none transition-all focus:border-indigo-500/30 focus:bg-white focus:ring-4 focus:ring-indigo-500/5 min-h-[100px]" placeholder="Add your remarks here..." />
                 </div>
               </div>
-              <div className="flex items-center justify-end border-t border-slate-100 bg-[#f8fafc] px-6 py-4">
-                <button onClick={handleSaveFollowUp} className="ua-followup-action rounded bg-[#ea580c] px-6 py-2 text-sm font-bold text-white transition-all hover:bg-[#c2410c] active:scale-95">
-                  Update Lead
+              <div className="relative mt-2 flex items-center justify-end border-t border-slate-50 bg-slate-50/30 px-8 py-7 backdrop-blur-md rounded-b-[2.5rem]">
+                <button onClick={handleSaveFollowUp} className="ua-followup-action group relative flex items-center gap-3 overflow-hidden rounded-2xl bg-indigo-600 px-10 py-3.5 text-sm font-black text-white shadow-[0_10px_20px_-5px_rgba(79,70,229,0.3)] transition-all hover:-translate-y-0.5 hover:bg-indigo-700 active:scale-95">
+                  <div className="absolute inset-0 bg-gradient-to-r from-white/10 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700" />
+                  <span>Save Follow Up</span>
                 </button>
               </div>
             </div>
           </div>
         )}
+
 
         {/* Details Overlay */}
         {isDetailsOpen && viewingAccountIndex !== null && (
