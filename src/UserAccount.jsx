@@ -308,6 +308,18 @@ function UserAccount({
   }, [isFilterOpen])
 
   const setFilterField = (field, value) => setFilterValues((prev) => ({ ...prev, [field]: value }))
+  
+  const resetFilter = () => {
+    setFilterValues({
+      nameEmailPhone: '',
+      sellDoLeadId: '',
+      role: '',
+      confirmation: 'Select',
+      registeredAt: '',
+    })
+    setIsFilterOpen(false)
+  }
+
   const setAddUserField = (field, value) => setAddUserFormValues((prev) => ({ ...prev, [field]: value }))
 
   const resetAddUserForm = () => {
@@ -364,17 +376,16 @@ function UserAccount({
   }
 
   const handleSaveFollowUp = () => {
-    const currentLeads = JSON.parse(localStorage.getItem('mp_leads_v2') || '[]')
+    const currentLeads = JSON.parse(localStorage.getItem('mp_leads_v3') || '[]')
     const existingIndex = currentLeads.findIndex((l) => l.name === followUpFormValues.name)
     if (existingIndex !== -1) {
       currentLeads[existingIndex] = { ...currentLeads[existingIndex], ...followUpFormValues }
     } else {
       currentLeads.unshift({ id: Date.now(), ...followUpFormValues, registeredAt: new Date().toISOString().split('T')[0], validityPeriod: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0] })
     }
-    localStorage.setItem('mp_leads_v2', JSON.stringify(currentLeads))
+    localStorage.setItem('mp_leads_v3', JSON.stringify(currentLeads))
     setAccounts((prev) => prev.map((acc) => acc.name === followUpFormValues.name ? { ...acc, sellDoLeadId: followUpFormValues.sellDoLeadId || acc.sellDoLeadId } : acc))
     setIsFollowUpFormOpen(false)
-    onOpenLeadActive()
   }
 
   const filteredAccounts = accounts.filter((acc) => {
@@ -559,6 +570,53 @@ function UserAccount({
         </div>
 
         {/* Form Overlays (Portals) */}
+        {isFilterOpen && (
+          <div className="ua-filter-overlay fixed inset-0 z-[200] flex items-center justify-center bg-slate-900/60 p-4 backdrop-blur-sm animate-in fade-in duration-300">
+            <div ref={filterPanelRef} className="relative w-full max-w-xl rounded-[2.5rem] bg-white shadow-[0_32px_64px_-16px_rgba(0,0,0,0.15)] ring-1 ring-slate-200 animate-in zoom-in-95 slide-in-from-bottom-4 duration-500">
+              <div className="relative flex items-center justify-between border-b border-slate-50 px-8 py-7">
+                <div>
+                  <h2 className="text-xl font-black tracking-tight text-slate-900">Filter Users</h2>
+                  <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Refine user list by criteria</p>
+                </div>
+                <button onClick={() => setIsFilterOpen(false)} className="group flex size-10 items-center justify-center rounded-xl bg-slate-50 text-slate-400 transition-all hover:bg-rose-50 hover:text-rose-500">
+                  <IconX />
+                </button>
+              </div>
+              <div className="relative grid gap-5 p-8 md:grid-cols-2">
+                <div className="ua-filter-field space-y-2 md:col-span-2">
+                  <label className="ml-1 text-[10px] font-black uppercase tracking-widest text-slate-500">Search Name/Email/Phone</label>
+                  <input type="text" value={filterValues.nameEmailPhone} onChange={(e) => setFilterField('nameEmailPhone', e.target.value)} className="w-full rounded-2xl border border-slate-100 bg-slate-50/50 px-5 py-3 text-sm font-bold text-slate-900 shadow-sm outline-none transition-all focus:border-indigo-500/30 focus:bg-white focus:ring-4 focus:ring-indigo-500/5" placeholder="Search users..." />
+                </div>
+                <div className="ua-filter-field space-y-2">
+                  <label className="ml-1 text-[10px] font-black uppercase tracking-widest text-slate-500">Role</label>
+                  <select value={filterValues.role} onChange={(e) => setFilterField('role', e.target.value)} className="w-full rounded-2xl border border-slate-100 bg-slate-50/50 px-5 py-3 text-sm font-bold text-slate-900 shadow-sm outline-none transition-all focus:border-indigo-500/30 focus:bg-white focus:ring-4 focus:ring-indigo-500/5 appearance-none">
+                    <option value="">All Roles</option>
+                    <option value="Add Administrator">Administrator</option>
+                    <option value="Add Channel Partner">Channel Partner</option>
+                    <option value="Add Presales">Presales</option>
+                    <option value="Add Sales">Sales</option>
+                  </select>
+                </div>
+                <div className="ua-filter-field space-y-2">
+                  <label className="ml-1 text-[10px] font-black uppercase tracking-widest text-slate-500">Status</label>
+                  <select value={filterValues.confirmation} onChange={(e) => setFilterField('confirmation', e.target.value)} className="w-full rounded-2xl border border-slate-100 bg-slate-50/50 px-5 py-3 text-sm font-bold text-slate-900 shadow-sm outline-none transition-all focus:border-indigo-500/30 focus:bg-white focus:ring-4 focus:ring-indigo-500/5 appearance-none">
+                    <option value="Select">All Statuses</option>
+                    <option value="Active">Active</option>
+                    <option value="Pending">Pending</option>
+                  </select>
+                </div>
+              </div>
+              <div className="relative mt-2 flex items-center justify-between border-t border-slate-50 bg-slate-50/30 px-8 py-7 backdrop-blur-md rounded-b-[2.5rem]">
+                <button onClick={resetFilter} className="ua-filter-action text-sm font-bold text-slate-500 hover:text-slate-800 transition-colors">Clear Filters</button>
+                <button onClick={() => setIsFilterOpen(false)} className="ua-filter-action group relative flex items-center gap-3 overflow-hidden rounded-2xl bg-indigo-600 px-8 py-3 text-sm font-black text-white shadow-[0_10px_20px_-5px_rgba(79,70,229,0.3)] transition-all hover:-translate-y-0.5 hover:bg-indigo-700 active:scale-95">
+                  <div className="absolute inset-0 bg-gradient-to-r from-white/10 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700" />
+                  <span>Apply Filters</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
         {isAddUserFormOpen && (
           <div className="ua-add-user-overlay fixed inset-0 z-[200] flex items-center justify-center bg-slate-900/60 p-4 backdrop-blur-sm animate-in fade-in duration-300">
             <div ref={addUserFormRef} className="relative w-full max-w-xl rounded-[2.5rem] bg-white shadow-[0_32px_64px_-16px_rgba(0,0,0,0.15)] ring-1 ring-slate-200 animate-in zoom-in-95 slide-in-from-bottom-4 duration-500">
@@ -654,6 +712,197 @@ function UserAccount({
                     <svg className="size-4 transition-transform group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="3"><path d="M13 7l5 5m0 0l-5 5m5-5H6" /></svg>
                   </button>
                </div>
+            </div>
+          </div>
+        )}
+
+        {/* Follow Up Form Overlay */}
+        {isFollowUpFormOpen && (
+          <div className="ua-followup-overlay fixed inset-0 z-[200] flex items-center justify-center bg-slate-900/60 p-4 backdrop-blur-sm animate-in fade-in duration-300">
+            <div ref={followUpFormRef} className="relative w-full max-w-4xl overflow-hidden rounded-[1rem] bg-white shadow-[0_32px_64px_-16px_rgba(0,0,0,0.15)] ring-1 ring-slate-200 animate-in zoom-in-95 slide-in-from-bottom-4 duration-500">
+              <div className="flex items-center justify-between border-b border-orange-100 bg-[#fff5eb] px-6 py-4">
+                <h2 className="text-lg font-bold text-[#ea580c]">Lead Follow-up</h2>
+                <button onClick={() => setIsFollowUpFormOpen(false)} className="text-[#ea580c]/60 transition-colors hover:text-[#ea580c]">
+                  <IconX />
+                </button>
+              </div>
+              <div className="flex flex-col gap-5 bg-white p-6">
+                <div className="ua-followup-field space-y-1">
+                  <label className="text-[11px] font-bold text-slate-500">Sell.Do Lead ID</label>
+                  <input type="text" value={followUpFormValues.sellDoLeadId} onChange={(e) => setFollowUpFormValues(p => ({...p, sellDoLeadId: e.target.value}))} className="w-full rounded border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 outline-none transition-all focus:border-[#ea580c] focus:ring-1 focus:ring-[#ea580c]" placeholder="Enter Sell.Do Lead ID..." />
+                </div>
+                <div className="ua-followup-field space-y-1">
+                  <label className="text-[11px] font-bold text-slate-500">Lead Stage</label>
+                  <select value={followUpFormValues.leadStage} onChange={(e) => setFollowUpFormValues(p => ({...p, leadStage: e.target.value}))} className="w-full rounded border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 outline-none transition-all focus:border-[#ea580c] focus:ring-1 focus:ring-[#ea580c]">
+                    <option value="Fresh">Fresh</option>
+                    <option value="Visit Done">Visit Done</option>
+                    <option value="Negotiation">Negotiation</option>
+                    <option value="Booked">Booked</option>
+                    <option value="Lost">Lost</option>
+                  </select>
+                </div>
+                <div className="ua-followup-field space-y-1">
+                  <label className="text-[11px] font-bold text-slate-500">Lead Status</label>
+                  <select value={followUpFormValues.leadStatus} onChange={(e) => setFollowUpFormValues(p => ({...p, leadStatus: e.target.value}))} className="w-full rounded border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 outline-none transition-all focus:border-[#ea580c] focus:ring-1 focus:ring-[#ea580c]">
+                    <option value="Active">Active</option>
+                    <option value="Inactive">Inactive</option>
+                  </select>
+                </div>
+                <div className="ua-followup-field space-y-1">
+                  <label className="text-[11px] font-bold text-slate-500">Count Status</label>
+                  <select value={followUpFormValues.countStatus} onChange={(e) => setFollowUpFormValues(p => ({...p, countStatus: e.target.value}))} className="w-full rounded border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 outline-none transition-all focus:border-[#ea580c] focus:ring-1 focus:ring-[#ea580c]">
+                    <option value="Pending">Pending</option>
+                    <option value="Valid">Valid</option>
+                    <option value="Invalid">Invalid</option>
+                  </select>
+                </div>
+                <div className="ua-followup-field space-y-1">
+                  <label className="text-[11px] font-bold text-slate-500">Remarks</label>
+                  <textarea value={followUpFormValues.remark} onChange={(e) => setFollowUpFormValues(p => ({...p, remark: e.target.value}))} className="min-h-[120px] w-full rounded border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 outline-none transition-all focus:border-[#ea580c] focus:ring-1 focus:ring-[#ea580c]" placeholder="Enter follow-up details..." />
+                </div>
+              </div>
+              <div className="flex items-center justify-end border-t border-slate-100 bg-[#f8fafc] px-6 py-4">
+                <button onClick={handleSaveFollowUp} className="ua-followup-action rounded bg-[#ea580c] px-6 py-2 text-sm font-bold text-white transition-all hover:bg-[#c2410c] active:scale-95">
+                  Update Lead
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Details Overlay */}
+        {isDetailsOpen && viewingAccountIndex !== null && (
+          <div className="fixed inset-0 z-[200] flex items-center justify-center bg-slate-900/60 p-4 backdrop-blur-sm animate-in fade-in duration-300">
+            <div className="relative w-full max-w-2xl rounded-[2.5rem] bg-white shadow-[0_32px_64px_-16px_rgba(0,0,0,0.15)] ring-1 ring-slate-200 animate-in zoom-in-95 slide-in-from-bottom-4 duration-500">
+              <div className="relative flex items-center justify-between border-b border-slate-50 px-8 py-7">
+                <div>
+                  <h2 className="text-xl font-black tracking-tight text-slate-900">Account Details</h2>
+                  <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Viewing user profile</p>
+                </div>
+                <button onClick={() => setIsDetailsOpen(false)} className="group flex size-10 items-center justify-center rounded-xl bg-slate-50 text-slate-400 transition-all hover:bg-rose-50 hover:text-rose-500">
+                  <IconX />
+                </button>
+              </div>
+              <div className="p-8 space-y-6 max-h-[75vh] overflow-y-auto no-scrollbar">
+                <div className="flex items-center gap-6">
+                  <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-[2rem] bg-indigo-50 font-black text-3xl text-indigo-600 shadow-sm">
+                    {accounts[viewingAccountIndex].name.charAt(0)}
+                  </div>
+                  <div>
+                    <h3 className="text-2xl font-black text-slate-900">{accounts[viewingAccountIndex].name}</h3>
+                    <p className="text-sm font-bold text-slate-500">{accounts[viewingAccountIndex].email}</p>
+                    <p className="text-sm font-bold text-slate-500">{accounts[viewingAccountIndex].countryCode} {accounts[viewingAccountIndex].phone}</p>
+                  </div>
+                </div>
+                <div className="grid grid-cols-2 gap-6 rounded-3xl bg-slate-50 p-6 border border-slate-100">
+                   <div>
+                      <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Role</p>
+                      <p className="text-sm font-bold text-slate-900">{accounts[viewingAccountIndex].role}</p>
+                   </div>
+                   <div>
+                      <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Status</p>
+                      <span className={`mt-1 inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-[10px] font-black uppercase tracking-wider ${
+                        accounts[viewingAccountIndex].status === 'Active' ? 'bg-emerald-50 text-emerald-600 ring-1 ring-emerald-200' : 
+                        accounts[viewingAccountIndex].status === 'Pending' ? 'bg-amber-50 text-amber-600 ring-1 ring-amber-200' :
+                        'bg-slate-100 text-slate-500 ring-1 ring-slate-200'
+                      }`}>
+                        <span className={`h-1 w-1 rounded-full ${accounts[viewingAccountIndex].status === 'Active' ? 'bg-emerald-500' : accounts[viewingAccountIndex].status === 'Pending' ? 'bg-amber-500' : 'bg-slate-400'}`} />
+                        {accounts[viewingAccountIndex].status}
+                      </span>
+                   </div>
+                   <div>
+                      <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Sell.Do Lead ID</p>
+                      <p className="text-sm font-bold text-slate-900">{accounts[viewingAccountIndex].sellDoLeadId || '-'}</p>
+                   </div>
+                   <div>
+                      <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">System ID</p>
+                      <p className="text-sm font-bold text-slate-900">{accounts[viewingAccountIndex].id}</p>
+                   </div>
+                </div>
+
+                {/* Optional Extended Details (e.g. for Channel Partners) */}
+                {(accounts[viewingAccountIndex].companyName || accounts[viewingAccountIndex].bankName || accounts[viewingAccountIndex].city) && (
+                  <>
+                    <h3 className="pt-2 text-lg font-black text-slate-900">Partner Details</h3>
+                    <div className="grid grid-cols-2 gap-6 rounded-3xl bg-slate-50 p-6 border border-slate-100">
+                      {accounts[viewingAccountIndex].companyName && (
+                         <div className="col-span-2">
+                            <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Company Name</p>
+                            <p className="text-sm font-bold text-slate-900">{accounts[viewingAccountIndex].companyName}</p>
+                         </div>
+                      )}
+                      {accounts[viewingAccountIndex].rera && (
+                         <div>
+                            <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">RERA Number</p>
+                            <p className="text-sm font-bold text-slate-900">{accounts[viewingAccountIndex].rera}</p>
+                         </div>
+                      )}
+                      {accounts[viewingAccountIndex].pan && (
+                         <div>
+                            <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">PAN</p>
+                            <p className="text-sm font-bold text-slate-900 uppercase">{accounts[viewingAccountIndex].pan}</p>
+                         </div>
+                      )}
+                    </div>
+
+                    <h3 className="pt-2 text-lg font-black text-slate-900">Address</h3>
+                    <div className="grid grid-cols-2 gap-6 rounded-3xl bg-slate-50 p-6 border border-slate-100">
+                      {(accounts[viewingAccountIndex].house || accounts[viewingAccountIndex].street) && (
+                        <div className="col-span-2">
+                          <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Street Address</p>
+                          <p className="text-sm font-bold text-slate-900">{accounts[viewingAccountIndex].house ? `${accounts[viewingAccountIndex].house}, ` : ''}{accounts[viewingAccountIndex].street}</p>
+                        </div>
+                      )}
+                      {accounts[viewingAccountIndex].city && (
+                        <div>
+                          <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">City & State</p>
+                          <p className="text-sm font-bold text-slate-900">{accounts[viewingAccountIndex].city}, {accounts[viewingAccountIndex].state || '-'}</p>
+                        </div>
+                      )}
+                      {accounts[viewingAccountIndex].country && (
+                        <div>
+                          <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Country & Pincode</p>
+                          <p className="text-sm font-bold text-slate-900">{accounts[viewingAccountIndex].country} - {accounts[viewingAccountIndex].zip || '-'}</p>
+                        </div>
+                      )}
+                    </div>
+
+                    <h3 className="pt-2 text-lg font-black text-slate-900">Financial Information</h3>
+                    <div className="grid grid-cols-2 gap-6 rounded-3xl bg-slate-50 p-6 border border-slate-100">
+                      {accounts[viewingAccountIndex].bankName && (
+                         <div className="col-span-2">
+                            <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Bank Name</p>
+                            <p className="text-sm font-bold text-slate-900">{accounts[viewingAccountIndex].bankName}</p>
+                         </div>
+                      )}
+                      {accounts[viewingAccountIndex].accountNumber && (
+                         <div className="col-span-2">
+                            <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Account Number</p>
+                            <p className="text-sm font-bold text-slate-900 font-mono">{accounts[viewingAccountIndex].accountNumber}</p>
+                         </div>
+                      )}
+                      {accounts[viewingAccountIndex].ifsc && (
+                         <div>
+                            <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">IFSC Code</p>
+                            <p className="text-sm font-bold text-slate-900 uppercase">{accounts[viewingAccountIndex].ifsc}</p>
+                         </div>
+                      )}
+                      {accounts[viewingAccountIndex].accountType && (
+                         <div>
+                            <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Account Type</p>
+                            <p className="text-sm font-bold text-slate-900">{accounts[viewingAccountIndex].accountType}</p>
+                         </div>
+                      )}
+                      {accounts[viewingAccountIndex].gstNumber && (
+                         <div className="col-span-2 mt-2 pt-6 border-t border-slate-200">
+                            <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">GST Number</p>
+                            <p className="text-sm font-bold text-slate-900 uppercase">{accounts[viewingAccountIndex].gstNumber}</p>
+                         </div>
+                      )}
+                    </div>
+                  </>
+                )}
+              </div>
             </div>
           </div>
         )}
