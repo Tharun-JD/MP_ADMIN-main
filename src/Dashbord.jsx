@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
+import Navbar from './Navbar.jsx'
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -58,32 +59,19 @@ function Icon({ name, className = 'h-4 w-4' }) {
   )
 }
 
-const navItems = [
-  {
-    label: 'Dashbord',
-    icon: 'dashboard',
-  },
-  {
-    label: 'UserAccount',
-    icon: 'user',
-  },
-  {
-    label: 'Lead Activity',
-    icon: 'lead',
-  },
-  {
-    label: 'More',
-    icon: 'more',
-    options: [
-      { label: 'Channel Partner Application', icon: 'docs' },
-      { label: 'Emails', icon: 'mail' },
-      { label: 'SMSs', icon: 'sms' },
-      { label: 'Reports', icon: 'reports' },
-    ],
-  },
-]
+// Shared navItems are now in Navbar.jsx
 
-function Dashbord({ onSignOut, onBackToDashboard, onOpenUserAccount, onOpenLeadActive, onOpenChannelPartners, onOpenEmails, onOpenSms, onOpenReports }) {
+function Dashbord({ 
+  onSignOut, 
+  onBackToDashboard, 
+  onOpenUserAccount, 
+  onOpenLeadActive, 
+  onOpenChannelPartners, 
+  onOpenEmails, 
+  onOpenSms, 
+  onOpenReports,
+  onOpenCpApprove 
+}) {
   const [openMenu, setOpenMenu] = useState(null)
   const [openWelcome, setOpenWelcome] = useState(false)
   const [isFilterOpen, setIsFilterOpen] = useState(false)
@@ -513,163 +501,19 @@ function Dashbord({ onSignOut, onBackToDashboard, onOpenUserAccount, onOpenLeadA
         </div>
       )}
 
-      <header className="dash-nav relative z-20 border-b border-[#e2e8f0] bg-gradient-to-r from-[#f0f9ff] to-[#e0f2fe] backdrop-blur-md">
-        <div className="pointer-events-none absolute inset-0 overflow-hidden">
-          <div
-            ref={(node) => {
-              navBeamRefs.current[0] = node
-            }}
-            className="absolute -left-20 top-0 h-full w-[28rem] rotate-[3deg] bg-gradient-to-r from-transparent via-[#2f3fa9]/20 to-transparent blur-xl"
-          />
-          <div
-            ref={(node) => {
-              navBeamRefs.current[1] = node
-            }}
-            className="absolute right-0 top-0 h-full w-[24rem] rotate-[-2deg] bg-gradient-to-r from-transparent via-[#1a79d1]/18 to-transparent blur-xl"
-          />
-          <div
-            ref={(node) => {
-              navBeamRefs.current[2] = node
-            }}
-            className="absolute left-1/3 top-0 h-full w-[22rem] rotate-[1deg] bg-gradient-to-r from-transparent via-[#eb7a26]/16 to-transparent blur-xl"
-          />
-        </div>
-        <div className="relative flex w-full items-center justify-between gap-8 overflow-visible px-6 py-4 lg:px-10">
-          {/* Brand Logo - Left */}
-          <div className="flex shrink-0 items-center gap-3">
-            <div className="text-[1.75rem] font-black tracking-tighter text-[#2b45ba]">MP</div>
-            <div className="flex flex-col -space-y-1">
-              <div className="text-[1rem] font-bold tracking-tight text-[#2b45ba]">Developers</div>
-              <div className="text-[8.5px] font-black uppercase tracking-[0.2em] text-[#f18a3a]">Trust Forever</div>
-            </div>
-          </div>
-
-          {/* Centered Premium Navigation Hub */}
-          <nav className="absolute left-1/2 top-1/2 flex -translate-x-1/2 -translate-y-1/2 items-center gap-1 rounded-[2.5rem] border border-[#f1f5f9] bg-white/40 p-1 shadow-sm backdrop-blur-xl">
-            {navItems.map((item) => (
-              <div key={item.label} className="relative">
-                <button
-                  type="button"
-                  onClick={() => {
-                    setOpenWelcome(false)
-                    if (item.label === 'More') {
-                      setOpenMenu((current) => (current === item.label ? null : item.label))
-                    } else {
-                      setOpenMenu(null)
-                      showToast(`Opened ${item.label}`, 'success')
-                      if (item.label === 'Dashbord') onBackToDashboard?.()
-                      if (item.label === 'UserAccount') onOpenUserAccount?.()
-                      if (item.label === 'Lead Activity') onOpenLeadActive?.()
-                    }
-                  }}
-                  className={`group relative flex items-center gap-2 rounded-full px-6 py-2 text-[10.5px] font-black uppercase tracking-wider transition-all duration-300 ${item.label === 'Dashbord'
-                      ? 'bg-white text-[#6366f1] shadow-[0_12px_25px_rgba(99,102,241,0.12)] ring-1 ring-[#6366f1]/20'
-                      : 'text-slate-500 hover:bg-white/80 hover:text-[#0f172a]'
-                    }`}
-                >
-                  <Icon name={item.icon} className={`h-4 w-4 transition-transform group-hover:scale-110 ${item.label === 'Dashbord' ? 'text-[#6366f1]' : 'text-[#94a3b8]'
-                    }`} />
-                  <span>{item.label}</span>
-                  {item.label === 'More' && <Icon name="chevron" className={`h-3 w-3 transition-transform duration-300 ${openMenu === 'More' ? 'rotate-180' : ''}`} />}
-                </button>
-
-                {item.label === 'More' && openMenu === item.label && (
-                  <div className="animate-fall absolute left-1/2 top-full z-30 mt-4 w-72 -translate-x-1/2 overflow-hidden rounded-[2rem] border border-white bg-white/95 p-2 shadow-[0_25px_60px_rgba(0,0,0,0.12)] backdrop-blur-xl">
-                    <div className="absolute inset-0 bg-gradient-to-br from-[#6366f1]/5 to-transparent opacity-50" />
-                    <div className="relative space-y-1">
-                      {item.options.map((option) => (
-                        <button
-                          key={option.label}
-                          type="button"
-                          onClick={() => {
-                            setOpenMenu(null)
-                            showToast(`Opening ${option.label}`, 'success')
-                            if (option.label === 'Channel Partner Application') onOpenChannelPartners?.()
-                            if (option.label === 'Emails') onOpenEmails?.()
-                            if (option.label === 'SMSs') onOpenSms?.()
-                            if (option.label === 'Reports') onOpenReports?.()
-                          }}
-                          className="flex w-full items-center gap-3 rounded-2xl px-4 py-3 text-left transition-all duration-300 hover:bg-[#6366f1] hover:text-white hover:shadow-lg hover:shadow-indigo-100"
-                        >
-                          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-indigo-50 text-[#6366f1] transition-colors group-hover:bg-white/20 group-hover:text-white">
-                            <Icon name={option.icon} className="h-4 w-4" />
-                          </div>
-                          <div>
-                            <div className="text-sm font-black">{option.label}</div>
-                            <div className="text-[10px] font-bold uppercase tracking-widest opacity-60">Management Tool</div>
-                          </div>
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                )}
-              </div>
-            ))}
-          </nav>
-
-          {/* User Profile Hub - Right */}
-          <div className="relative shrink-0">
-            <button
-              type="button"
-              onClick={() => {
-                setOpenMenu(null)
-                setOpenWelcome((current) => !current)
-              }}
-              className={`group flex items-center gap-3 rounded-2xl px-6 py-2 text-[10.5px] font-black uppercase tracking-widest transition-all duration-300 hover:shadow-[0_12px_25px_rgba(0,0,0,0.08)] active:scale-95 ${openWelcome ? 'bg-white text-[#6366f1] ring-1 ring-[#6366f1]/20' : 'bg-slate-50 text-slate-600 hover:bg-white'
-                }`}
-            >
-              <div className={`flex h-7 w-7 items-center justify-center rounded-lg transition-transform group-hover:scale-110 ${openWelcome ? 'bg-[#6366f1] text-white' : 'bg-slate-200 text-slate-500'}`}>
-                <Icon name="user" className="h-4 w-4" />
-              </div>
-              <span>Welcome</span>
-              <Icon name="chevron" className={`h-3 w-3 transition-transform duration-300 ${openWelcome ? 'rotate-180' : ''}`} />
-            </button>
-
-            {openWelcome && (
-              <div className="animate-rise absolute right-0 top-full z-30 mt-4 w-72 overflow-hidden rounded-[2rem] border border-white bg-white/95 p-2 shadow-[0_25px_60px_rgba(0,0,0,0.12)] backdrop-blur-xl">
-                <div className="absolute inset-0 bg-gradient-to-br from-[#6366f1]/5 to-transparent opacity-50" />
-                <div className="relative space-y-1">
-                  <button type="button" className="group flex w-full items-center gap-3 rounded-2xl px-4 py-3 text-left transition-all duration-300 hover:bg-[#6366f1] hover:text-white hover:shadow-lg hover:shadow-indigo-100">
-                    <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-indigo-50 text-[#6366f1] transition-colors group-hover:bg-white/20 group-hover:text-white">
-                      <Icon name="profile" className="h-4 w-4" />
-                    </div>
-                    <div>
-                      <div className="text-sm font-black text-inherit">My Profile</div>
-                      <div className="text-[10px] font-bold uppercase tracking-widest opacity-60">Account Settings</div>
-                    </div>
-                  </button>
-                  <button type="button" className="group flex w-full items-center gap-3 rounded-2xl px-4 py-3 text-left transition-all duration-300 hover:bg-[#6366f1] hover:text-white hover:shadow-lg hover:shadow-indigo-100">
-                    <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-indigo-50 text-[#6366f1] transition-colors group-hover:bg-white/20 group-hover:text-white">
-                      <Icon name="settings" className="h-4 w-4" />
-                    </div>
-                    <div>
-                      <div className="text-sm font-black text-inherit">Settings</div>
-                      <div className="text-[10px] font-bold uppercase tracking-widest opacity-60">Preferences</div>
-                    </div>
-                  </button>
-                  <div className="my-1 h-px bg-slate-100" />
-                  <button
-                    type="button"
-                    onClick={() => {
-                      showToast('Signing out', 'warning')
-                      setTimeout(() => onSignOut?.(), 250)
-                    }}
-                    className="group flex w-full items-center gap-3 rounded-2xl px-4 py-3 text-left transition-all duration-300 hover:bg-rose-500 hover:text-white hover:shadow-lg hover:shadow-rose-100"
-                  >
-                    <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-rose-50 text-rose-500 transition-colors group-hover:bg-white/20 group-hover:text-white">
-                      <Icon name="signout" className="h-4 w-4" />
-                    </div>
-                    <div>
-                      <div className="text-sm font-black text-inherit">Sign Out</div>
-                      <div className="text-[10px] font-bold uppercase tracking-widest opacity-60">End Session</div>
-                    </div>
-                  </button>
-                </div>
-              </div>
-            )}
-          </div>
-        </div>
-      </header>
+      <Navbar
+        activePage="dashboard"
+        className="dash-nav"
+        onBackToDashboard={onBackToDashboard}
+        onOpenUserAccount={onOpenUserAccount}
+        onOpenLeadActive={onOpenLeadActive}
+        onOpenChannelPartners={onOpenChannelPartners}
+        onOpenEmails={onOpenEmails}
+        onOpenSms={onOpenSms}
+        onOpenReports={onOpenReports}
+        onOpenCpApprove={onOpenCpApprove}
+        onSignOut={onSignOut}
+      />
 
       <section className="relative z-10 flex min-h-[calc(100vh-88px)] w-full items-start justify-center px-4 py-6 lg:px-8">
         <div ref={canvasRef} className="relative w-full [transform-style:preserve-3d]">

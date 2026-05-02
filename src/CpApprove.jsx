@@ -18,6 +18,15 @@ function IconX() {
   )
 }
 
+function IconEye() {
+  return (
+    <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="2.2">
+      <path strokeLinecap="round" strokeLinejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.644C3.399 8.049 7.452 5 12 5s8.601 3.049 9.964 6.678c.07.185.07.392 0 .577C20.601 15.951 16.548 19 12 19s-8.601-3.049-9.964-6.678z" />
+      <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+    </svg>
+  )
+}
+
 function CpApprove({
   onBackToDashboard,
   onOpenUserAccount,
@@ -26,29 +35,44 @@ function CpApprove({
   onOpenEmails,
   onOpenSms,
   onOpenReports,
+  onOpenCpApprove,
   onSignOut
 }) {
   const [approvals, setApprovals] = useState([])
 
   useEffect(() => {
-    // Fetch pending partners from API
-    fetch('http://localhost:3000/partners?status=Pending')
+    // Fetch partners from API and filter for pending status
+    fetch('http://localhost:3000/partners')
       .then(res => res.json())
-      .then(data => setApprovals(data))
+      .then(data => {
+        if (Array.isArray(data)) {
+          // Filter for status: Pending (case-insensitive to be safe)
+          const pending = data.filter(p => 
+            p.status && p.status.toLowerCase() === 'pending'
+          )
+          setApprovals(pending)
+        }
+      })
       .catch(err => {
         console.error('Error fetching approvals:', err)
-        // Fallback to local storage if API fails
+        // Fallback to local storage
         const saved = localStorage.getItem('mp_user_accounts_v4')
         if (saved) {
-          const accounts = JSON.parse(saved)
-          setApprovals(accounts.filter(acc => 
-            (acc.role.includes('Channel Partner')) && acc.status === 'Pending'
-          ))
+          try {
+            const accounts = JSON.parse(saved)
+            setApprovals(accounts.filter(acc => 
+              acc.status === 'Pending' && (acc.role ? acc.role.includes('Channel Partner') : true)
+            ))
+          } catch (e) {
+            console.error('Error parsing local accounts:', e)
+          }
         }
       })
   }, [])
 
   const [toastMessage, setToastMessage] = useState('')
+  const [selectedItem, setSelectedItem] = useState(null)
+  const [isDetailsOpen, setIsDetailsOpen] = useState(false)
   const pageRef = useRef(null)
 
   useEffect(() => {
@@ -111,6 +135,7 @@ function CpApprove({
         onOpenEmails={onOpenEmails}
         onOpenSms={onOpenSms}
         onOpenReports={onOpenReports}
+        onOpenCpApprove={onOpenCpApprove}
         onSignOut={onSignOut}
       />
 
@@ -174,6 +199,16 @@ function CpApprove({
                     <td className="px-8 py-6">
                       <div className="flex items-center justify-end gap-3">
                         <button
+                          onClick={() => {
+                            setSelectedItem(item)
+                            setIsDetailsOpen(true)
+                          }}
+                          className="flex h-10 w-10 items-center justify-center rounded-xl bg-slate-100 text-slate-600 transition-all hover:bg-slate-200 hover:text-slate-900"
+                          title="View Details"
+                        >
+                          <IconEye />
+                        </button>
+                        <button
                           onClick={() => handleReject(item.id)}
                           className="flex h-10 w-10 items-center justify-center rounded-xl bg-rose-50 text-rose-500 transition-all hover:bg-rose-500 hover:text-white hover:shadow-lg hover:shadow-rose-200"
                           title="Reject"
@@ -204,6 +239,284 @@ function CpApprove({
                <IconCheck />
             </div>
             {toastMessage}
+          </div>
+        </div>
+      )}
+      {/* High-Fidelity Details View (Redesigned based on UI Reference) */}
+      {isDetailsOpen && selectedItem && (
+        <div className="fixed inset-0 z-[1100] flex flex-col bg-[#f8fafc] overflow-y-auto no-scrollbar animate-fade-in">
+          <Navbar
+            activePage="cp-approve"
+            onBackToDashboard={onBackToDashboard}
+            onOpenUserAccount={onOpenUserAccount}
+            onOpenLeadActive={onOpenLeadActive}
+            onOpenChannelPartners={onOpenChannelPartners}
+            onOpenEmails={onOpenEmails}
+            onOpenSms={onOpenSms}
+            onOpenReports={onOpenReports}
+            onOpenCpApprove={onOpenCpApprove}
+            onSignOut={onSignOut}
+          />
+
+          {/* Top Header Section */}
+          <div className="mx-auto w-full max-w-[1440px] px-6 pt-8">
+            <div className="flex h-24 items-center justify-between rounded-3xl border border-white bg-white/80 px-8 shadow-sm backdrop-blur-xl">
+              <div className="flex items-center gap-5">
+                <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-indigo-600 text-white shadow-lg shadow-indigo-200">
+                  <svg className="h-7 w-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" /><circle cx="8.5" cy="7" r="4" /></svg>
+                </div>
+                <div>
+                  <h2 className="font-sora text-2xl font-black text-slate-900">{selectedItem.name}</h2>
+                  <div className="mt-0.5 flex items-center gap-3 text-[10px] font-bold uppercase tracking-widest text-slate-400">
+                    <span>PARTNER ID: #{selectedItem.id ? selectedItem.id.slice(-8).toUpperCase() : 'N/A'}</span>
+                    <span className="h-1 w-1 rounded-full bg-slate-300" />
+                    <span className="text-indigo-500">{selectedItem.companyName || 'INDIVIDUAL PARTNER'}</span>
+                  </div>
+                </div>
+              </div>
+              <div className="flex items-center gap-4">
+                <button
+                  onClick={() => setIsDetailsOpen(false)}
+                  className="flex items-center gap-2 rounded-2xl border border-slate-200 bg-white px-6 py-2.5 text-[11px] font-black uppercase tracking-widest text-slate-600 transition-all hover:bg-slate-50 hover:shadow-md"
+                >
+                  <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="3"><path d="M19 12H5M12 19l-7-7 7-7" /></svg>
+                  Back to CP
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {/* Main Content Grid */}
+          <div className="mx-auto grid w-full max-w-[1440px] grid-cols-1 gap-8 px-6 py-8 lg:grid-cols-3">
+            {/* Left Column: 2/3 Width */}
+            <div className="lg:col-span-2 space-y-8">
+              {/* Identity Records Card */}
+              <div className="rounded-[2.5rem] border border-white bg-white p-10 shadow-sm">
+                <div className="mb-10 flex items-center justify-between">
+                  <div className="flex items-center gap-4">
+                    <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-indigo-50 text-indigo-500">
+                      <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
+                    </div>
+                    <div>
+                      <h3 className="text-xl font-black text-slate-900">Identity Records</h3>
+                      <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400">Comprehensive Partner Intelligence</p>
+                    </div>
+                  </div>
+                  <span className="rounded-full bg-emerald-50 px-4 py-1.5 text-[10px] font-black uppercase tracking-widest text-emerald-600 ring-1 ring-emerald-100">
+                    NEW APPLICATION
+                  </span>
+                </div>
+
+                <div className="grid grid-cols-2 gap-y-10">
+                  <div className="space-y-1.5">
+                    <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 flex items-center gap-2">
+                       <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="3"><path d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
+                       Full Name
+                    </p>
+                    <p className="text-lg font-black text-slate-900">{selectedItem.name}</p>
+                  </div>
+                  <div className="space-y-1.5">
+                    <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 flex items-center gap-2">
+                       <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="3"><path d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
+                       Email Address
+                    </p>
+                    <p className="text-lg font-black text-slate-900">{selectedItem.email}</p>
+                  </div>
+                  <div className="space-y-1.5">
+                    <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 flex items-center gap-2">
+                       <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="3"><path d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" /></svg>
+                       Primary Phone
+                    </p>
+                    <p className="text-lg font-black text-slate-900">{selectedItem.phonePrefix || '+91'} {selectedItem.phone}</p>
+                  </div>
+                  <div className="space-y-1.5">
+                    <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 flex items-center gap-2">
+                       <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="3"><path d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
+                       Registration Stage
+                    </p>
+                    <span className="inline-flex rounded-lg bg-indigo-50 px-3 py-1 text-[10px] font-black uppercase tracking-wider text-indigo-600 ring-1 ring-indigo-200">
+                       <span className="mr-1.5 h-1 w-1 rounded-full bg-indigo-500 animate-pulse" />
+                       {selectedItem.status}
+                    </span>
+                  </div>
+                  <div className="space-y-1.5">
+                    <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 flex items-center gap-2">
+                       <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="3"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                       Compliance Status
+                    </p>
+                    <span className="inline-flex rounded-lg bg-emerald-50 px-3 py-1 text-[10px] font-black uppercase tracking-wider text-emerald-600 ring-1 ring-emerald-200">
+                       <span className="mr-1.5 h-1 w-1 rounded-full bg-emerald-500" />
+                       Verified
+                    </span>
+                  </div>
+                  <div className="space-y-1.5">
+                    <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 flex items-center gap-2">
+                       <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="3"><path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                       Submission Date
+                    </p>
+                    <p className="text-lg font-black text-slate-900">{new Date(selectedItem.createdAt || Date.now()).toLocaleDateString('en-GB')}</p>
+                  </div>
+                  <div className="space-y-1.5">
+                    <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 flex items-center gap-2">
+                       <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="3"><path d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" /></svg>
+                       Company Name
+                    </p>
+                    <p className="text-lg font-black text-slate-900 truncate pr-4">{selectedItem.companyName || 'N/A'}</p>
+                  </div>
+                  <div className="space-y-1.5">
+                    <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 flex items-center gap-2">
+                       <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="3"><path d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                       Business Pan
+                    </p>
+                    <p className="text-lg font-black text-slate-900 uppercase">{selectedItem.pan || 'N/A'}</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Engagement History Card */}
+              <div className="rounded-[2.5rem] border border-white bg-white p-10 shadow-sm">
+                <div className="mb-8 flex items-center justify-between">
+                  <div className="flex items-center gap-4">
+                    <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-indigo-50 text-indigo-500">
+                      <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                    </div>
+                    <div>
+                      <h3 className="text-xl font-black text-slate-900">Onboarding History</h3>
+                      <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400">Past & Upcoming Interactions</p>
+                    </div>
+                  </div>
+                  <button className="rounded-xl bg-indigo-50 px-4 py-2 text-[10px] font-black uppercase tracking-widest text-indigo-600 hover:bg-indigo-600 hover:text-white transition-all">
+                    + New Interaction
+                  </button>
+                </div>
+
+                <div className="overflow-hidden rounded-2xl border border-slate-50">
+                  <table className="w-full text-left">
+                    <thead>
+                      <tr className="bg-slate-50/50">
+                        <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-slate-400">Subject</th>
+                        <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-slate-400">Status</th>
+                        <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-slate-400">Scheduled</th>
+                        <th className="px-6 py-4 text-right text-[10px] font-black uppercase tracking-widest text-slate-400">Action</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-slate-50">
+                      <tr>
+                        <td className="px-6 py-5 text-sm font-bold text-slate-700">Initial Registration</td>
+                        <td className="px-6 py-5">
+                          <span className="rounded-full bg-amber-50 px-2.5 py-1 text-[9px] font-black uppercase tracking-widest text-amber-600 ring-1 ring-amber-100">Pending</span>
+                        </td>
+                        <td className="px-6 py-5 text-sm font-bold text-slate-700">{new Date(selectedItem.createdAt || Date.now()).toLocaleDateString('en-GB')}</td>
+                        <td className="px-6 py-5 text-right">
+                          <button className="text-slate-300 hover:text-slate-600">
+                             <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><circle cx="12" cy="12" r="1" /><circle cx="5" cy="12" r="1" /><circle cx="19" cy="12" r="1" /></svg>
+                          </button>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+
+            {/* Right Column: Sidebar Width */}
+            <div className="space-y-8">
+              {/* Site Engagement Card */}
+              <div className="rounded-[2.5rem] border border-white bg-white p-8 shadow-sm">
+                <div className="mb-8 flex items-center gap-4">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-50 text-indigo-500">
+                    <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5"><path d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+                  </div>
+                  <h3 className="text-sm font-black uppercase tracking-widest text-slate-900">Application Review</h3>
+                </div>
+                
+                <div className="space-y-8">
+                  <div>
+                    <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Review Date</p>
+                    <p className="mt-1 text-sm font-black text-slate-800">Not scheduled</p>
+                  </div>
+                  <div>
+                    <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Approval Status</p>
+                    <div className="mt-2">
+                       <span className="rounded-full bg-amber-50 px-3 py-1 text-[10px] font-black uppercase tracking-widest text-amber-600 ring-1 ring-amber-100">
+                          Pending Review
+                       </span>
+                    </div>
+                  </div>
+                  <div>
+                    <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Assigned Executive</p>
+                    <p className="mt-1 text-sm font-black text-slate-800">Unassigned</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* System Logs Card */}
+              <div className="rounded-[2.5rem] border border-white bg-white p-8 shadow-sm">
+                <div className="mb-8 flex items-center gap-4">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-slate-50 text-slate-400">
+                    <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5"><path d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
+                  </div>
+                  <h3 className="text-sm font-black uppercase tracking-widest text-slate-900">System Logs</h3>
+                </div>
+                
+                <div className="space-y-4">
+                  <div className="rounded-2xl bg-slate-50/50 p-4 border border-slate-100">
+                    <p className="text-[11px] font-medium italic text-slate-500 leading-relaxed">
+                      "Partner registration captured via MP Developers portal."
+                    </p>
+                  </div>
+                  <div className="rounded-2xl border border-slate-100 p-4">
+                    <p className="text-[11px] font-medium italic text-slate-400 leading-relaxed">
+                       Current status identified as: Pending Approval
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Collaborative Notes Card */}
+              <div className="group relative overflow-hidden rounded-[2.5rem] bg-slate-900 p-8 shadow-xl">
+                <div className="absolute -right-4 -top-4 h-24 w-24 rounded-full bg-white/5 blur-2xl group-hover:bg-white/10 transition-colors" />
+                <div className="relative mb-6 flex items-center justify-between">
+                   <div className="flex items-center gap-3">
+                      <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-white/10 text-white">
+                         <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5"><path d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>
+                      </div>
+                      <h3 className="text-[13px] font-black uppercase tracking-widest text-white">Verification Notes</h3>
+                   </div>
+                   <button className="flex h-8 w-8 items-center justify-center rounded-lg bg-white/20 text-white hover:bg-white/30 transition-all">
+                      <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="3"><path d="M12 4v16m8-8H4" /></svg>
+                   </button>
+                </div>
+                <p className="text-[11px] font-medium leading-relaxed text-slate-400">
+                  No internal collaboration notes have been recorded for this partner yet. Use notes to share insights with your team.
+                </p>
+              </div>
+
+              {/* Approval Actions Card */}
+              <div className="rounded-[2.5rem] bg-white p-8 shadow-xl ring-2 ring-indigo-500/10">
+                <h3 className="mb-6 text-sm font-black uppercase tracking-widest text-slate-900">Compliance Action</h3>
+                <div className="space-y-3">
+                  <button
+                    onClick={() => {
+                      handleApprove(selectedItem.id)
+                      setIsDetailsOpen(false)
+                    }}
+                    className="w-full rounded-2xl bg-indigo-600 py-4 text-sm font-black uppercase tracking-widest text-white shadow-lg shadow-indigo-200 transition-all hover:bg-indigo-700 hover:-translate-y-0.5 active:translate-y-0"
+                  >
+                    Approve Partner
+                  </button>
+                  <button
+                    onClick={() => {
+                      handleReject(selectedItem.id)
+                      setIsDetailsOpen(false)
+                    }}
+                    className="w-full rounded-2xl border border-rose-100 bg-rose-50/50 py-4 text-sm font-black uppercase tracking-widest text-rose-500 transition-all hover:bg-rose-500 hover:text-white"
+                  >
+                    Reject Application
+                  </button>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       )}

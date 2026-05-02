@@ -71,7 +71,7 @@ const initialFormValues = {
 
 const initialChannelPartners = []
 
-function Moreoption({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, onOpenChannelPartners, onOpenEmails, onOpenSms, onOpenReports, onSignOut }) {
+function Moreoption({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, onOpenChannelPartners, onOpenEmails, onOpenSms, onOpenReports, onOpenCpApprove, onSignOut }) {
   const [isExportOpen, setIsExportOpen] = useState(false)
   const [isFilterOpen, setIsFilterOpen] = useState(false)
   const [isStatusOpen, setIsStatusOpen] = useState(false)
@@ -557,6 +557,7 @@ function Moreoption({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, on
         onOpenEmails={onOpenEmails}
         onOpenSms={onOpenSms}
         onOpenReports={onOpenReports}
+        onOpenCpApprove={onOpenCpApprove}
         onSignOut={onSignOut}
       />
 

@@ -12,7 +12,7 @@ function IconReports({ className = "h-6 w-6" }) {
   )
 }
 
-function ReportsPage({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, onOpenChannelPartners, onOpenEmails, onOpenSms, onOpenReports, onSignOut }) {
+function ReportsPage({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, onOpenChannelPartners, onOpenEmails, onOpenSms, onOpenReports, onOpenCpApprove, onSignOut }) {
   const pageRef = useRef(null)
   const headerRef = useRef(null)
   const cardRef = useRef(null)
@@ -58,6 +58,7 @@ function ReportsPage({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, o
         onOpenEmails={onOpenEmails}
         onOpenSms={onOpenSms}
         onOpenReports={onOpenReports}
+        onOpenCpApprove={onOpenCpApprove}
         onSignOut={onSignOut}
       />
 

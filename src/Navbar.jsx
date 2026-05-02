@@ -225,7 +225,7 @@ function Navbar({
                     if (item.label === 'Lead Activity') onOpenLeadActive?.()
                     if (item.label === 'CP Approve') onOpenCpApprove?.()
                   }}
-                  className={`group relative flex items-center gap-2 rounded-full px-6 py-2 text-[10.5px] font-black uppercase tracking-wider transition-all duration-300 ${
+                  className={`nav-btn group relative flex items-center gap-2 rounded-full px-6 py-2 text-[10.5px] font-black uppercase tracking-wider transition-all duration-300 ${
                     (activePage === 'dashboard' && item.label === 'Dashbord') ||
                     (activePage === 'user-account' && item.label === 'UserAccount') ||
                     (activePage === 'lead-active' && item.label === 'Lead Activity') ||
