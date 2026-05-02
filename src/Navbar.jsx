@@ -42,6 +42,7 @@ const navItems = [
   { label: 'Dashbord', icon: 'dashboard' },
   { label: 'UserAccount', icon: 'user' },
   { label: 'Lead Activity', icon: 'lead' },
+  { label: 'CP Approve', icon: 'docs' },
   {
     label: 'More',
     icon: 'more',
@@ -63,6 +64,7 @@ function Navbar({
   onOpenEmails,
   onOpenSms,
   onOpenReports,
+  onOpenCpApprove,
   onSignOut,
   className = '',
 }) {
@@ -93,7 +95,7 @@ function Navbar({
   }, [profileValues])
 
   const [passwordValues, setPasswordValues] = useState({
-    Newpassword: '',
+    password: '',
     confirmPassword: '',
   })
   const welcomeMenuRef = useRef(null)
@@ -221,11 +223,13 @@ function Navbar({
                     if (item.label === 'Dashbord') onBackToDashboard?.()
                     if (item.label === 'UserAccount') onOpenUserAccount?.()
                     if (item.label === 'Lead Activity') onOpenLeadActive?.()
+                    if (item.label === 'CP Approve') onOpenCpApprove?.()
                   }}
                   className={`group relative flex items-center gap-2 rounded-full px-6 py-2 text-[10.5px] font-black uppercase tracking-wider transition-all duration-300 ${
                     (activePage === 'dashboard' && item.label === 'Dashbord') ||
                     (activePage === 'user-account' && item.label === 'UserAccount') ||
                     (activePage === 'lead-active' && item.label === 'Lead Activity') ||
+                    (activePage === 'cp-approve' && item.label === 'CP Approve') ||
                     ((activePage === 'channel-partners' || activePage === 'emails' || activePage === 'sms' || activePage === 'reports') && item.label === 'More')
                       ? 'bg-white text-[#6366f1] shadow-[0_12px_25px_rgba(99,102,241,0.12)] ring-1 ring-[#6366f1]/20'
                       : 'text-slate-500 hover:bg-white/80 hover:text-[#0f172a]'
@@ -235,6 +239,7 @@ function Navbar({
                     (activePage === 'dashboard' && item.label === 'Dashbord') ||
                     (activePage === 'user-account' && item.label === 'UserAccount') ||
                     (activePage === 'lead-active' && item.label === 'Lead Activity') ||
+                    (activePage === 'cp-approve' && item.label === 'CP Approve') ||
                     ((activePage === 'channel-partners' || activePage === 'emails' || activePage === 'sms' || activePage === 'reports') && item.label === 'More')
                       ? 'text-[#6366f1]'
                       : 'text-[#94a3b8]'

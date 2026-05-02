@@ -121,18 +121,24 @@ function LeadActive({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, on
     countStatus: 'Select',
     registeredAt: '',
   })
-  const [leads, setLeads] = useState(() => {
-    const saved = localStorage.getItem('mp_leads_v3')
-    if (saved) {
-      try {
-        const parsed = JSON.parse(saved)
-        if (parsed.length > 0) return parsed
-      } catch (e) {
-        console.error('Error loading leads', e)
-      }
-    }
-    return initialLeads
-  })
+  const [leads, setLeads] = useState(initialLeads)
+
+  useEffect(() => {
+    // Fetch leads from API
+    fetch('http://localhost:3000/leads')
+      .then(res => res.json())
+      .then(data => {
+        setLeads(data)
+      })
+      .catch(err => {
+        console.error('Error fetching leads:', err)
+        // Fallback to local storage if API fails
+        const saved = localStorage.getItem('mp_leads_v3')
+        if (saved) {
+          setLeads(JSON.parse(saved))
+        }
+      })
+  }, [])
   const [viewingLeadIndex, setViewingLeadIndex] = useState(null)
   const [isDetailsOpen, setIsDetailsOpen] = useState(false)
   const [openActionIndex, setOpenActionIndex] = useState(null)
@@ -173,21 +179,9 @@ function LeadActive({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, on
   const addLeadModalRef = useRef(null)
 
   useEffect(() => {
-    const savedLeads = localStorage.getItem('mp_leads_v2')
-    if (savedLeads) {
-      try {
-        const parsed = JSON.parse(savedLeads)
-        // Filter out any seeded leads if they exist
-        const filtered = parsed.filter((l) => typeof l.id === 'string' && !l.id.startsWith('seed-'))
-        if (filtered.length !== parsed.length) {
-          setLeads(filtered)
-          localStorage.setItem('mp_leads_v2', JSON.stringify(filtered))
-        }
-      } catch (e) {
-        console.error('Error filtering leads', e)
-      }
+    if (leads.length > 0) {
+      localStorage.setItem('mp_leads_v3', JSON.stringify(leads))
     }
-    localStorage.setItem('mp_leads_v2', JSON.stringify(leads))
   }, [leads])
   const pageRef = useRef(null)
   const headerRef = useRef(null)

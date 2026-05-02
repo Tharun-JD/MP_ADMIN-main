@@ -103,9 +103,25 @@ function Dashbord({ onSignOut, onBackToDashboard, onOpenUserAccount, onOpenLeadA
   const [toast, setToast] = useState(null)
 
   // Data persistence counts
-  const [leadsCount] = useState(() => JSON.parse(localStorage.getItem('mp_leads_v3') || '[]').length || 0)
-  const [partnersCount] = useState(() => JSON.parse(localStorage.getItem('mp_channel_partners_v3') || '[]').length || 0)
-  const [accountsCount] = useState(() => JSON.parse(localStorage.getItem('mp_user_accounts_v4') || '[]').length || 0)
+  const [leadsCount, setLeadsCount] = useState(0)
+  const [partnersCount, setPartnersCount] = useState(0)
+  const [accountsCount, setAccountsCount] = useState(0)
+
+  useEffect(() => {
+    // Fetch live counts from API
+    fetch('http://localhost:3000/leads')
+      .then(res => res.json())
+      .then(data => setLeadsCount(data.length))
+      .catch(() => setLeadsCount(JSON.parse(localStorage.getItem('mp_leads_v3') || '[]').length))
+
+    fetch('http://localhost:3000/partners')
+      .then(res => res.json())
+      .then(data => setPartnersCount(data.length))
+      .catch(() => setPartnersCount(JSON.parse(localStorage.getItem('mp_channel_partners_v3') || '[]').length))
+
+    // Note: User accounts are still local for now as per plan
+    setAccountsCount(JSON.parse(localStorage.getItem('mp_user_accounts_v4') || '[]').length)
+  }, [])
 
   const canvasRef = useRef(null)
   const sceneRef = useRef(null)
