@@ -482,6 +482,17 @@ function Moreoption({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, on
     setIsFilterOpen(false)
   }
 
+  const closeAllDropdowns = () => {
+    setIsPhonePrefixOpen(false)
+    setIsAltPhonePrefixOpen(false)
+    setIsCountryDropdownOpen(false)
+    setIsStateDropdownOpen(false)
+    setPhoneAnchor(null)
+    setAltPhoneAnchor(null)
+    setCountryAnchor(null)
+    setStateAnchor(null)
+  }
+
   const handleSavePartner = () => {
     const requiredFields = ['name', 'phone', 'email', 'aadhaar', 'pan']
     const missingRequired = requiredFields.some((field) => !String(formValues[field] || '').trim())
@@ -769,7 +780,10 @@ function Moreoption({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, on
                     </button>
                   </div>
 
-                  <div className="flex-1 overflow-y-auto px-8 py-8 no-scrollbar">
+                  <div 
+                    onScroll={closeAllDropdowns}
+                    className="flex-1 overflow-y-auto px-8 py-8 no-scrollbar"
+                  >
                     <div className="space-y-10">
                       {/* Basic Profile */}
                       <section>
