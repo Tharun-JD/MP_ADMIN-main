@@ -857,6 +857,10 @@ function Moreoption({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, on
                                               type="button"
                                               onClick={() => {
                                                 setFormField('phonePrefix', p.code)
+                                                // Auto-select country if not already selected
+                                                if (formValues.country === 'Select country') {
+                                                  setFormField('country', p.country)
+                                                }
                                                 setIsPhonePrefixOpen(false)
                                                 setPhoneAnchor(null)
                                                 setPhoneSearch('')
@@ -1208,9 +1212,9 @@ function Moreoption({ onBackToDashboard, onOpenUserAccount, onOpenLeadActive, on
                                       className="w-full rounded-xl border border-[#f1f5f9] bg-[#f8fafc] px-4 py-2 text-sm font-bold text-[#0f172a] outline-none focus:border-[#f59e0b]"
                                     />
                                   </div>
-                                  <div className="max-h-60 overflow-y-auto no-scrollbar">
-                                    {countries
-                                      .filter(c => c.name.toLowerCase().includes(countrySearch.toLowerCase()))
+                                  <div className="max-h-60 overflow-y-auto no-scrollbar py-1">
+                                    {(countries || [])
+                                      .filter(c => c && c.name && c.name.toLowerCase().includes((countrySearch || '').toLowerCase()))
                                       .map(c => {
                                         const flag = countryPhoneOptions.find(opt => opt.country === c.name)?.flag || '🌐'
                                         return (
