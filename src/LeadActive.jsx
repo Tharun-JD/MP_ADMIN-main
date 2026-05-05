@@ -471,7 +471,22 @@ function LeadActive({
     })
   }
 
+  const filteredLeads = (leads || []).filter((lead) => {
+    if (!lead) return false
+    const matchName = !filterValues.lead || (lead.name && lead.name.toLowerCase().includes(filterValues.lead.toLowerCase()))
+    const matchId = !filterValues.sellDoLeadId || (lead.sellDoLeadId && lead.sellDoLeadId.toString().includes(filterValues.sellDoLeadId))
+    const matchStage = !filterValues.leadStage || lead.leadStage === filterValues.leadStage
+    const matchCP = !filterValues.channelPartner || (lead.channelPartner && lead.channelPartner.toLowerCase().includes(filterValues.channelPartner.toLowerCase()))
+    const matchProject = !filterValues.project || (lead.project && lead.project.toLowerCase().includes(filterValues.project.toLowerCase()))
+    const matchCount = !filterValues.countStatus || filterValues.countStatus === 'Select' || lead.countStatus === filterValues.countStatus
+    const matchReg = !filterValues.registeredAt || (lead.registeredAt && lead.registeredAt.includes(filterValues.registeredAt))
+    const matchStatus = !filterValues.leadStatus || lead.leadStatus === filterValues.leadStatus
+    
+    return matchName && matchId && matchStage && matchCP && matchProject && matchCount && matchReg && matchStatus
+  })
+
   return (
+
     <main ref={pageRef} className="relative min-h-screen overflow-x-hidden bg-[#f8fafc] text-[#0f172a]">
       <div className="pointer-events-none absolute inset-0">
         <div className="absolute inset-0 bg-[linear-gradient(transparent_36px,rgba(129,144,177,0.08)_37px),linear-gradient(90deg,transparent_36px,rgba(129,144,177,0.08)_37px)] bg-[size:37px_37px]" />
@@ -561,7 +576,7 @@ function LeadActive({
                     </tr>
                   </thead>
                   <tbody>
-                    {leads.length === 0 ? (
+                    {filteredLeads.length === 0 ? (
                       <tr>
                         <td colSpan={8} className="py-24">
                           <div className="flex flex-col items-center justify-center text-center">
@@ -573,19 +588,19 @@ function LeadActive({
                                 </svg>
                               </div>
                             </div>
-                            <h3 className="text-xl font-bold text-[#1e293b]">No activities found</h3>
-                            <p className="mt-2 text-sm text-[#94a3b8]">Get started by adding your first lead to the system.</p>
+                            <h3 className="text-xl font-bold text-[#1e293b]">No leads matching filters</h3>
+                            <p className="mt-2 text-sm text-[#94a3b8]">No leads match your current filter criteria.</p>
                             <button
-                              onClick={() => setIsAddLeadOpen(true)}
+                              onClick={resetFilter}
                               className="mt-8 rounded-full bg-[#2549b8] px-8 py-3.5 text-sm font-bold text-white shadow-xl shadow-blue-200 transition hover:bg-[#1e3a8a] active:scale-95"
                             >
-                              + Add Lead Now
+                              Clear All Filters
                             </button>
                           </div>
                         </td>
                       </tr>
                     ) : (
-                      leads.map((lead, index) => (
+                      filteredLeads.map((lead, index) => (
                         <tr key={lead.id || index} className="group transition-colors hover:bg-[#f8fafc]/80">
                           <td className="py-5 pr-4 pl-0">
                             <div className="flex items-center gap-3">
@@ -673,11 +688,93 @@ function LeadActive({
                 </button>
               </div>
               <div className="p-8">
-                {/* Filter content here */}
+                <div className="grid gap-6 md:grid-cols-2">
+                  <div className="space-y-2">
+                    <label className="text-xs font-bold uppercase tracking-wider text-[#64748b]">Lead Name</label>
+                    <input
+                      type="text"
+                      value={filterValues.lead}
+                      onChange={(e) => setFilterField('lead', e.target.value)}
+                      placeholder="Search by name..."
+                      className="w-full rounded-xl border border-[#e2e8f0] bg-[#f8fafc] px-4 py-3 text-sm outline-none focus:border-[#6366f1] transition"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-xs font-bold uppercase tracking-wider text-[#64748b]">Lead ID</label>
+                    <input
+                      type="text"
+                      value={filterValues.sellDoLeadId}
+                      onChange={(e) => setFilterField('sellDoLeadId', e.target.value)}
+                      placeholder="Search by ID..."
+                      className="w-full rounded-xl border border-[#e2e8f0] bg-[#f8fafc] px-4 py-3 text-sm outline-none focus:border-[#6366f1] transition"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-xs font-bold uppercase tracking-wider text-[#64748b]">Lead Stage</label>
+                    <select
+                      value={filterValues.leadStage}
+                      onChange={(e) => setFilterField('leadStage', e.target.value)}
+                      className="w-full rounded-xl border border-[#e2e8f0] bg-[#f8fafc] px-4 py-3 text-sm outline-none focus:border-[#6366f1] transition"
+                    >
+                      <option value="">All Stages</option>
+                      <option>Fresh</option>
+                      <option>Enquiry Received</option>
+                      <option>Visit Done</option>
+                      <option>Interested</option>
+                      <option>Not Interested</option>
+                    </select>
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-xs font-bold uppercase tracking-wider text-[#64748b]">Project</label>
+                    <input
+                      type="text"
+                      value={filterValues.project}
+                      onChange={(e) => setFilterField('project', e.target.value)}
+                      placeholder="Search by project..."
+                      className="w-full rounded-xl border border-[#e2e8f0] bg-[#f8fafc] px-4 py-3 text-sm outline-none focus:border-[#6366f1] transition"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-xs font-bold uppercase tracking-wider text-[#64748b]">Count Status</label>
+                    <select
+                      value={filterValues.countStatus}
+                      onChange={(e) => setFilterField('countStatus', e.target.value)}
+                      className="w-full rounded-xl border border-[#e2e8f0] bg-[#f8fafc] px-4 py-3 text-sm outline-none focus:border-[#6366f1] transition"
+                    >
+                      <option value="Select">All Status</option>
+                      <option>Pending</option>
+                      <option>Count Given</option>
+                      <option>No Count</option>
+                    </select>
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-xs font-bold uppercase tracking-wider text-[#64748b]">Registered Date</label>
+                    <input
+                      type="date"
+                      value={filterValues.registeredAt}
+                      onChange={(e) => setFilterField('registeredAt', e.target.value)}
+                      className="w-full rounded-xl border border-[#e2e8f0] bg-[#f8fafc] px-4 py-3 text-sm outline-none focus:border-[#6366f1] transition"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-xs font-bold uppercase tracking-wider text-[#64748b]">Lead Status</label>
+                    <select
+                      value={filterValues.leadStatus}
+                      onChange={(e) => setFilterField('leadStatus', e.target.value)}
+                      className="w-full rounded-xl border border-[#e2e8f0] bg-[#f8fafc] px-4 py-3 text-sm outline-none focus:border-[#6366f1] transition"
+                    >
+                      <option value="">All Statuses</option>
+                      <option>Active</option>
+                      <option>Inactive</option>
+                      <option>Closed</option>
+                    </select>
+                  </div>
+                </div>
+
               </div>
               <div className="flex items-center justify-end gap-3 border-t border-[#f1f5f9] bg-[#f8fafc]/50 px-8 py-6 rounded-b-[2.5rem]">
-                <button onClick={() => setIsFilterOpen(false)} className="px-6 py-3 text-sm font-bold text-[#64748b]">Clear</button>
-                <button className="rounded-xl bg-[#6366f1] px-8 py-3 text-sm font-bold text-white shadow-lg shadow-indigo-100">Apply Filter</button>
+                <button onClick={resetFilter} className="px-6 py-3 text-sm font-bold text-[#64748b]">Clear All</button>
+                <button onClick={() => setIsFilterOpen(false)} className="rounded-xl bg-[#6366f1] px-8 py-3 text-sm font-bold text-white shadow-lg shadow-indigo-100">Apply Filter</button>
               </div>
             </div>
           </div>
